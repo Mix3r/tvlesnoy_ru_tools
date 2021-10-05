@@ -10,6 +10,7 @@ DefaultGroupName=My Program
 DisableProgramGroupPage=yes
 OutputDir=userdocs:
 OutputBaseFilename=tvlesnoy_vegaspro_scripts_updater
+ShowLanguageDialog=auto
 SolidCompression=yes
 Uninstallable=no
 WizardStyle=modern
