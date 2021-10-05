@@ -35,7 +35,7 @@ begin
     DownloadPage := CreateDownloadPage(SetupMessage(msgWizardPreparing), SetupMessage(msgPreparingDesc), @OnDownloadProgress);
 end;
 
-procedure GitDown(whattoget)
+procedure GitDown(whattoget:string);
 var gittmp:string; i:integer;
 begin
     gittmp:='';
