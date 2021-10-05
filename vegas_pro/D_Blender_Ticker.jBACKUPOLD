@@ -1,0 +1,64 @@
+import System;
+import System.Text;
+import System.IO;
+import System.Windows.Forms;
+import Sony.Vegas;
+
+try {
+    var trackEnum = new Enumerator(Vegas.Project.Tracks);
+    while (!trackEnum.atEnd()) {
+          var track : Track = Track(trackEnum.item());
+          if (track.IsVideo()) {
+	     var evntEnum = new Enumerator(track.Events);
+	     while (!evntEnum.atEnd()) {
+                      var evnt : VideoEvent = VideoEvent(evntEnum.item());
+		      if (evnt.Selected) {
+                         var keyframeid = 0;
+                         var d_width = 0;
+                         var d_height = 0;
+
+                         for (var key_frame : VideoMotionKeyframe in evnt.VideoMotion.Keyframes) {
+                             d_width = key_frame.TopRight.X   - key_frame.TopLeft.X;
+                             if (d_width < 0) {
+                                d_width = d_width * -1;
+                             }
+                             d_height = key_frame.BottomLeft.Y - key_frame.TopLeft.Y;
+                             if (d_height < 0) {
+                                d_height = d_height * -1;
+                             }
+                             // key_frame.RotateBy(-key_frame.Rotation);
+                             var moveby1 = new VideoMotionVertex(Vegas.Project.Video.Width/d_width,Vegas.Project.Video.Height/d_height);
+                             key_frame.ScaleBy(moveby1);
+
+                             keyframeid = keyframeid + 1;
+                             if (keyframeid == 1) {
+                                var moveby2 = new VideoMotionVertex(-1*(key_frame.Center.X-Vegas.Project.Video.Width*0.5),-1*(key_frame.Center.Y+375));
+                                key_frame.MoveBy(moveby2);
+                             } else {
+                                key_frame.Position = evnt.Length - Timecode.FromFrames(1);
+                                var moveby2 = new VideoMotionVertex(Vegas.Project.Video.Width*(TrackEvent(evntEnum.item()).FadeIn.Gain*2-1),-1*(key_frame.Center.Y+375));
+                                key_frame.MoveBy(moveby2);
+                             }
+                         }
+                         Vegas.Cursor = evnt.Start + evnt.Length - Timecode.FromFrames(1);
+                         if (keyframeid < 2) {
+                            var add_key = new VideoMotionKeyframe(Vegas.Project, evnt.Length - Timecode.FromFrames(1));
+                            evnt.VideoMotion.Keyframes.Add(add_key);
+                            var moveby2 = new VideoMotionVertex(Vegas.Project.Video.Width*1,-1*(add_key.Center.Y+375));
+                            add_key.MoveBy(moveby2);
+                            if (evnt.ActiveTake != null) {
+                               var medi_a = Vegas.Project.MediaPool[evnt.ActiveTake.MediaPath];
+                               medi_a.Streams[0].AlphaChannel = "Straight";
+                            }
+                         }
+                      }
+                      evntEnum.moveNext();
+             }
+          }
+          trackEnum.moveNext();
+    }
+}
+
+catch (e) {
+    MessageBox.Show(e);
+}
