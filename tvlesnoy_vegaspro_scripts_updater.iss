@@ -14,6 +14,10 @@ SolidCompression=yes
 Uninstallable=no
 WizardStyle=modern
 
+[Languages]
+Name: "english"; MessagesFile: "compiler:Default.isl";
+Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl";
+
 [Files]
 ; Place any regular files here
 ; These files will be downloaded
