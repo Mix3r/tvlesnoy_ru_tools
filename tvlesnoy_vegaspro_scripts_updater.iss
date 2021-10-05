@@ -8,7 +8,7 @@ Compression=lzma
 DefaultDirName={autopf64}\VEGAS\VEGAS Pro 13.0
 DefaultGroupName=My Program
 DisableProgramGroupPage=yes
-OutputDir=.
+OutputDir=userdocs:
 OutputBaseFilename=tvlesnoy_vegaspro_scripts_updater
 SolidCompression=yes
 Uninstallable=no
@@ -53,7 +53,38 @@ function NextButtonClick(CurPageID: Integer): Boolean;
 begin
   if CurPageID = wpReady then begin
     DownloadPage.Clear;
+    GitDown('ConvertAllMpegHD_AVI-DV.js');
+    GitDown('ConvertAllMpegHD_AVI-DV.js.png');
+    GitDown('CTC Titles.js');
     GitDown('CTC Titles.js.png');
+    GitDown('ctc-sample.png');
+    GitDown('ctc-sample.psd');
+    GitDown('D_Blender_Ticker.jBACKUPOLD');
+    GitDown('D_Blender_Ticker.js');
+    GitDown('D_Blender_Ticker.js.png');
+    GitDown('FdOnAir_Export.js');
+    GitDown('FdOnAir_Export.js.png');
+    GitDown('Fish_Accomplish.js');
+    GitDown('Fish_Accomplish.js.png');
+    GitDown('GG.dxp');
+    GitDown('Norm_Arbitrary.js');
+    GitDown('Norm_Arbitrary.js.png');
+    GitDown('playlist_settime.exe');
+    GitDown('Remove Letterboxing.cs');
+    GitDown('Remove Letterboxing.cs.png');
+    GitDown('Remove_Doubles.js');
+    GitDown('Render_Youtube_1080_30p.js');
+    GitDown('Render_Youtube_1080_30p.js.png');
+    GitDown('SetHD720pAndRender.js');
+    GitDown('SetHD720pAndRender.js.png');
+    GitDown('SetLowerFieldAndRender.js');
+    GitDown('setlowerfieldandrender.js.png');
+    GitDown('SetLowerFieldAndRender_360.js');
+    GitDown('SetLowerFieldAndRender_360.js.png');
+    GitDown('smai75x75_alpha75_hd.png');
+    GitDown('WindowsMediaVideo.js');
+    GitDown('WindowsMediaVideo.js.png');
+    GitDown('Титры_спектрмаи.psd');
     DownloadPage.Show;
     try
       try
