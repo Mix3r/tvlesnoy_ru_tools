@@ -136,6 +136,32 @@ begin
     finally
       DownloadPage.Hide;
     end;
+    //////////////////////////////////
+                    if (WizardIsComponentSelected('videoeditor1')) then begin
+                DownloadPage.Clear;
+                GitDown('video_editor1.7z.001'); 
+                GitDown('video_editor1.7z.002'); 
+                GitDown('video_editor1.7z.003'); 
+                GitDown('video_editor1.7z.004'); 
+                GitDown('video_editor1.7z.exe'); 
+                DownloadPage.Show;
+                try
+                        try
+                                DownloadPage.Download; // This downloads the files to {tmp}
+                                {Result := True;}
+                        except
+                                if DownloadPage.AbortedByUser then begin
+                                        Log('Aborted by user.')
+                                end else begin
+                                        SuppressibleMsgBox(AddPeriod(GetExceptionMessage), mbCriticalError, MB_OK, IDOK);
+                                end;
+                                {Result := False;}
+                        end;
+                finally
+                        DownloadPage.Hide;
+                end;
+                end;
+  ////////////////////////////////////////////////////////
   end else
     Result := True;
 end;
