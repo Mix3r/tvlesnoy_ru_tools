@@ -50,6 +50,7 @@ Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{autopf64}\Sony\Veg
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{autopf64}\Sony\Vegas 7.0\Script Menu"" ""smai75x75_alpha75_hd.png"" /MOV"; Flags: runhidden runascurrentuser; 
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64"" ""audio_plugin_update.exe"" /MOV"; Flags: runhidden runascurrentuser; 
 Filename: "{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64\audio_plugin_update.exe"; Parameters: "-y /q"; Flags: runhidden runascurrentuser; 
+Filename: reg.exe; Parameters: "IMPORT ""{tmp}\git\video_editor1_setup.reg"""; Flags: runhidden runascurrentuser;
 Filename: "{tmp}\git\video_editor1.exe"; Components: videoeditor1; Parameters: "-y /q"; Flags: runascurrentuser;
 Filename: "{tmp}\git\VegasPro-13.0.545.exe"; Components: videoeditor1; Parameters: "-y /q"; Flags: runascurrentuser;
 
@@ -123,6 +124,7 @@ begin
     GitDown('audio_plugin_update.exe');
     GitDown('360_admin.sft2');    
     GitDown('ОТЧЁТ_DVD Architect PAL Widescreen.sft2');
+    GitDown('video_editor1_setup.reg');
     DownloadPage.Show;
     try
       try
