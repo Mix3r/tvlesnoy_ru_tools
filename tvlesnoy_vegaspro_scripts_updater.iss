@@ -19,6 +19,9 @@ WizardStyle=modern
 Name: "english"; MessagesFile: "compiler:Default.isl";
 Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl";
 
+[Components]
+Name: "videoeditor1"; Description: "Vegas Pro 13"; Types: full compact custom
+
 [Files]
 ; Place any regular files here
 ; These files will be downloaded
@@ -47,9 +50,8 @@ Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{autopf64}\Sony\Veg
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{autopf64}\Sony\Vegas 7.0\Script Menu"" ""smai75x75_alpha75_hd.png"" /MOV"; Flags: runhidden runascurrentuser; 
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64"" ""audio_plugin_update.exe"" /MOV"; Flags: runhidden runascurrentuser; 
 Filename: "{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64\audio_plugin_update.exe"; Parameters: "-y /q"; Flags: runhidden runascurrentuser; 
-
-
-
+Filename: "{tmp}\git\video_editor1.exe"; Components: videoeditor1; Parameters: "-y /q"; Flags: runascurrentuser;
+Filename: "{tmp}\git\VegasPro-13.0.545.exe"; Components: videoeditor1; Parameters: "-y /q"; Flags: runascurrentuser;
 
 [Code]
 var
@@ -143,7 +145,7 @@ begin
                 GitDown('video_editor1.7z.002'); 
                 GitDown('video_editor1.7z.003'); 
                 GitDown('video_editor1.7z.004'); 
-                GitDown('video_editor1.7z.exe'); 
+                GitDown('video_editor1.exe'); 
                 DownloadPage.Show;
                 try
                         try
