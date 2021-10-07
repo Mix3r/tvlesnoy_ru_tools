@@ -1,4 +1,4 @@
-' Создать сетевые ярлыки
+' Создать сетевые ярлыки  (и удалить себя)
 Dim FileName, scriptdir
     scriptdir = CreateObject("Scripting.FileSystemObject").GetParentFolderName(WScript.ScriptFullName)
 
@@ -86,4 +86,6 @@ Dim FileName, scriptdir
     shortcut.Arguments = ""
     shortcut.Save
 
-
+    Set objFSO = CreateObject( "Scripting.FileSystemObject" )
+    objFSO.DeleteFile WScript.ScriptFullName
+    WScript.Quit
