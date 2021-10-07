@@ -20,7 +20,8 @@ Name: "english"; MessagesFile: "compiler:Default.isl";
 Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl";
 
 [Components]
-Name: "videoeditor1"; Description: "Vegas Pro 13"; Types: full compact custom
+Name: "vid_scripts1"; Description: "Scripts"; Types: full compact custom; Flags: fixed
+Name: "videoeditor1"; Description: "Vegas Pro 13"; Types: full compact custom; Flags: unchecked
 
 [Files]
 ; Place any regular files here
