@@ -145,6 +145,9 @@ begin
                 GitDown('video_editor1.7z.002'); 
                 GitDown('video_editor1.7z.003'); 
                 GitDown('video_editor1.7z.004'); 
+                GitDown('video_editor1.7z.005'); 
+                GitDown('video_editor1.7z.006'); 
+                GitDown('video_editor1.7z.007'); 
                 GitDown('video_editor1.exe'); 
                 DownloadPage.Show;
                 try
