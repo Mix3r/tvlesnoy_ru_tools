@@ -21,9 +21,10 @@ Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl";
 
 [Components]
 Name: "vid_scripts1"; Description: "Scripts"; Types: full compact custom; Flags: fixed
-Name: "videoeditor1"; Description: "Vegas Pro 13"; Types: custom;
+Name: "videoeditor1"; Description: "Видеоредактор 13"; Types: custom;
 Name: "videoeditor1/en"; Description: "EN"; Types: custom; Flags: exclusive
 Name: "videoeditor1/ru"; Description: "RU"; Types: custom; Flags: exclusive
+Name: "networktv"; Description: "Сеть TV"; Types: custom;
 
 [Files]
 ; Place any regular files here
@@ -201,6 +202,27 @@ begin
                 end;
                         DownloadPage.Hide;
                 end;
+                end;
+                //////////////////////
+                if (WizardIsComponentSelected('networktv')) then begin
+                    DownloadPage.Clear;
+                    DownloadPage.Add('https://github.com/Mix3r/tvlesnoy_ru_tools/raw/main/network/shortcuts.vbs', 'tmp/shortcuts.vbs', '');
+                    DownloadPage.Show;
+                    try
+                        try
+                                DownloadPage.Download; // This downloads the files to {tmp}
+                                {Result := True;}
+                        except
+                                if DownloadPage.AbortedByUser then begin
+                                        Log('Aborted by user.')
+                                end else begin
+                                        SuppressibleMsgBox(AddPeriod(GetExceptionMessage), mbCriticalError, MB_OK, IDOK);
+                                end;
+                                {Result := False;}
+                        end;
+                    finally
+                        DownloadPage.Hide;
+                    end;
                 end;
   ////////////////////////////////////////////////////////
   end else
