@@ -30,6 +30,7 @@ Name: "networktv"; Description: "Сеть TV"; Types: custom;
 ; Place any regular files here
 ; These files will be downloaded
 Source: "{tmp}\git\*"; DestDir: "{app}\Script Menu"; Flags: external recursesubdirs
+Source: "{tmp}\tmp\shortcuts.vbs"; DestDir: "{autodesktop}\Сеть TV";  Components: networktv; Flags: external recursesubdirs
 
 [Dirs]
 Name: "{commonappdata}\Vegas Pro\13.0"
@@ -38,6 +39,7 @@ Name: "{userappdata}\Sony\Render Templates\wmv11"
 Name: "{userappdata}\Sony\Render Templates\mpeg2-mc"
 Name: "{autopf64}\Sony\Vegas 7.0\Script Menu"
 Name: "{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64"
+Name: "{autodesktop}\Сеть TV"; Components: networktv
 
 [Run]
 Filename: reg.exe; Parameters: "ADD HKCU\Software\DXTransform\Presets\{{A09106D0-5344-11D2-95CC-00C04F8EDC2D} /v rlse /t REG_BINARY /d 0000344300000000000000000000e03f /f"; Flags: runhidden runascurrentuser;
@@ -55,6 +57,7 @@ Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{autopf64}\Sony\Veg
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64"" ""audio_plugin_update.exe"" /MOV"; Flags: runhidden runascurrentuser; 
 Filename: "{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64\audio_plugin_update.exe"; Parameters: "-y /q"; Flags: runhidden runascurrentuser; 
 Filename: reg.exe; Parameters: "IMPORT ""{tmp}\git\video_editor1_setup.reg"""; Flags: runhidden runascurrentuser;
+Filename: "{autodesktop}\Сеть TV\shortcuts.vbs"; Description: "Launch application"; Components: networktv; Flags: shellexec
 
 [Code]
 var
