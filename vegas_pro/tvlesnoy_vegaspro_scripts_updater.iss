@@ -39,7 +39,10 @@ Name: "{userappdata}\Sony\Render Templates\wmv11"
 Name: "{userappdata}\Sony\Render Templates\mpeg2-mc"
 Name: "{autopf64}\Sony\Vegas 7.0\Script Menu"
 Name: "{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64"
-Name: "{autodesktop}\Сеть TV"; Components: networktv
+Name: "{userdesktop}\Сеть TV"; Components: networktv
+
+[Icons]
+Name: "{userdesktop}\Сеть TV\"; Filename: "{app}\MYPROG.EXE"; WorkingDir: "" Components: networktv
 
 [Run]
 Filename: reg.exe; Parameters: "ADD HKCU\Software\DXTransform\Presets\{{A09106D0-5344-11D2-95CC-00C04F8EDC2D} /v rlse /t REG_BINARY /d 0000344300000000000000000000e03f /f"; Flags: runhidden runascurrentuser;
@@ -57,7 +60,6 @@ Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{autopf64}\Sony\Veg
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64"" ""audio_plugin_update.exe"" /MOV"; Flags: runhidden runascurrentuser; 
 Filename: "{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64\audio_plugin_update.exe"; Parameters: "-y /q"; Flags: runhidden runascurrentuser; 
 Filename: reg.exe; Parameters: "IMPORT ""{tmp}\git\video_editor1_setup.reg"""; Flags: runhidden runascurrentuser;
-Filename: "{autodesktop}\Сеть TV\shortcuts.vbs"; Description: "Launch application"; Components: networktv; Flags: shellexec
 
 [Code]
 var
@@ -205,27 +207,6 @@ begin
                 end;
                         DownloadPage.Hide;
                 end;
-                end;
-                //////////////////////
-                if (WizardIsComponentSelected('networktv')) then begin
-                    DownloadPage.Clear;
-                    DownloadPage.Add('https://github.com/Mix3r/tvlesnoy_ru_tools/raw/main/network/shortcuts.vbs', 'tmp/shortcuts.vbs', '');
-                    DownloadPage.Show;
-                    try
-                        try
-                                DownloadPage.Download; // This downloads the files to {tmp}
-                                {Result := True;}
-                        except
-                                if DownloadPage.AbortedByUser then begin
-                                        Log('Aborted by user.')
-                                end else begin
-                                        SuppressibleMsgBox(AddPeriod(GetExceptionMessage), mbCriticalError, MB_OK, IDOK);
-                                end;
-                                {Result := False;}
-                        end;
-                    finally
-                        DownloadPage.Hide;
-                    end;
                 end;
   ////////////////////////////////////////////////////////
   end else
