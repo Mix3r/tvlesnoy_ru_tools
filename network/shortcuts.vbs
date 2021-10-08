@@ -1,74 +1,74 @@
-' –°–æ–∑–¥–∞—Ç—å —Å–µ—Ç–µ–≤—ã–µ —è—Ä–ª—ã–∫–∏  (–∏ —É–¥–∞–ª–∏—Ç—å —Å–µ–±—è)
+' —ÓÁ‰‡Ú¸ ÒÂÚÂ‚˚Â ˇÎ˚ÍË  (Ë Û‰‡ÎËÚ¸ ÒÂ·ˇ)
 Dim FileName, scriptdir
     scriptdir = CreateObject("Scripting.FileSystemObject").GetParentFolderName(WScript.ScriptFullName)
 
-    FileName = "_–ö–£–†_–ó–í–£–ö–û–†–ï–ñ–ò–°–°–ï–†"
+    FileName = "_ ”–_«¬” Œ–≈∆»——≈–"
     Set shortcut = CreateObject("WScript.Shell").CreateShortcut(scriptdir + "\" + FileName + ".lnk")
-    shortcut.TargetPath = "\\xrebtova\–ú–æ–Ω—Ç–∞–∂ –∑–≤—É–∫–∞"
+    shortcut.TargetPath = "\\xrebtova\ÃÓÌÚ‡Ê Á‚ÛÍ‡"
     shortcut.Arguments = ""
     shortcut.Save
 
-    FileName = "_–ö–£–†_–ú–ï–•–ê–ù–ò–ö"
+    FileName = "_ ”–_Ã≈’¿Õ» "
     Set shortcut = CreateObject("WScript.Shell").CreateShortcut(scriptdir + "\" + FileName + ".lnk")
-    shortcut.TargetPath = "\\MIKHEEV\–ó–∞—Ö–≤–∞—Ç"
+    shortcut.TargetPath = "\\MIKHEEV\«‡ı‚‡Ú"
     shortcut.Arguments = ""
     shortcut.Save
 
-    FileName = "_–ö–£–†_–ö–û–†–†–ï–°–ü–û–ù–î–ï–ù–¢"
+    FileName = "_ ”–_ Œ––≈—œŒÕƒ≈Õ“"
     Set shortcut = CreateObject("WScript.Shell").CreateShortcut(scriptdir + "\" + FileName + ".lnk")
-    shortcut.TargetPath = "\\Ostanina\–û–±—â–µ–µ"
+    shortcut.TargetPath = "\\Ostanina\Œ·˘ÂÂ"
     shortcut.Arguments = ""
     shortcut.Save
 
-    FileName = "_–ù–û–í_–ö–û–†–†–ï–°–ü–û–ù–î–ï–ù–¢"
+    FileName = "_ÕŒ¬_ Œ––≈—œŒÕƒ≈Õ“"
     Set shortcut = CreateObject("WScript.Shell").CreateShortcut(scriptdir + "\" + FileName + ".lnk")
     shortcut.TargetPath = "\\Reporter1\RepShared"
     shortcut.Arguments = ""
     shortcut.Save
 
-    FileName = "_–ù–û–í_–†–ï–î–ê–ö–¢–û–†"
+    FileName = "_ÕŒ¬_–≈ƒ¿ “Œ–"
     Set shortcut = CreateObject("WScript.Shell").CreateShortcut(scriptdir + "\" + FileName + ".lnk")
     shortcut.TargetPath = "\\aza\D"
     shortcut.Arguments = ""
     shortcut.Save
 
-    FileName = "_–ù–û–í_–ù–û–í–û–°–¢–ò"
+    FileName = "_ÕŒ¬_ÕŒ¬Œ—“»"
     Set shortcut = CreateObject("WScript.Shell").CreateShortcut(scriptdir + "\" + FileName + ".lnk")
-    shortcut.TargetPath = "\\smolkina\–í–°–ï!!!!"
+    shortcut.TargetPath = "\\smolkina\¬—≈!!!!"
     shortcut.Arguments = ""
     shortcut.Save
 
-    FileName = "_–ì–õ–ê–í–†–ï–î"
+    FileName = "_√À¿¬–≈ƒ"
     Set shortcut = CreateObject("WScript.Shell").CreateShortcut(scriptdir + "\" + FileName + ".lnk")
-    shortcut.TargetPath = "\\Glavred\–û–±—â–µ–µ"
+    shortcut.TargetPath = "\\Glavred\Œ·˘ÂÂ"
     shortcut.Arguments = ""
     shortcut.Save
 
-    FileName = "_–†–ï–ö_–†–ï–ö–õ–ê–ú–ê"
+    FileName = "_–≈ _–≈ À¿Ã¿"
     Set shortcut = CreateObject("WScript.Shell").CreateShortcut(scriptdir + "\" + FileName + ".lnk")
-    shortcut.TargetPath = "\\Korepina\–û–±—â–µ–µ"
+    shortcut.TargetPath = "\\Korepina\Œ·˘ÂÂ"
     shortcut.Arguments = ""
     shortcut.Save
 
-    FileName = "_–°–¢–£_–†–ï–ñ–ò–°–°–ï–†"
+    FileName = "_—“”_–≈∆»——≈–"
     Set shortcut = CreateObject("WScript.Shell").CreateShortcut(scriptdir + "\" + FileName + ".lnk")
-    shortcut.TargetPath = "\\Regisser\–æ–±—â–µ–µ"
+    shortcut.TargetPath = "\\Regisser\Ó·˘ÂÂ"
     shortcut.Arguments = ""
     shortcut.Save
 
-    FileName = "_–°–¢–£_–°–£–§–õ–ï–†"
+    FileName = "_—“”_—”‘À≈–"
     Set shortcut = CreateObject("WScript.Shell").CreateShortcut(scriptdir + "\" + FileName + ".lnk")
     shortcut.TargetPath = "\\studio\Share"
     shortcut.Arguments = ""
     shortcut.Save
 
-    FileName = "_–≠–¢2_–†–ï–ñ–ò–°–°–ï–†"
+    FileName = "_›“2_–≈∆»——≈–"
     Set shortcut = CreateObject("WScript.Shell").CreateShortcut(scriptdir + "\" + FileName + ".lnk")
-    shortcut.TargetPath = "\\IVANOVA\–æ–±—â–µ–µ"
+    shortcut.TargetPath = "\\IVANOVA\Ó·˘ÂÂ"
     shortcut.Arguments = ""
     shortcut.Save
 
-    FileName = "_–≠–¢2_–ú–ï–•–ê–ù–ò–ö"
+    FileName = "_›“2_Ã≈’¿Õ» "
     Set shortcut = CreateObject("WScript.Shell").CreateShortcut(scriptdir + "\" + FileName + ".lnk")
     shortcut.TargetPath = "\\anton\Disc_E"
     shortcut.Arguments = ""
@@ -76,11 +76,11 @@ Dim FileName, scriptdir
 
     FileName = "_CEPBEP"
     Set shortcut = CreateObject("WScript.Shell").CreateShortcut(scriptdir + "\" + FileName + ".lnk")
-    shortcut.TargetPath = "\\Server\–ó–∞—Ö–≤–∞—Ç (e)"
+    shortcut.TargetPath = "\\Server\«‡ı‚‡Ú (e)"
     shortcut.Arguments = ""
     shortcut.Save
 
-    FileName = "_–í–ï–°–¢_–ú–û–î–ï–†"
+    FileName = "_¬≈—“_ÃŒƒ≈–"
     Set shortcut = CreateObject("WScript.Shell").CreateShortcut(scriptdir + "\" + FileName + ".lnk")
     shortcut.TargetPath = "\\METELKINA\Share"
     shortcut.Arguments = ""
