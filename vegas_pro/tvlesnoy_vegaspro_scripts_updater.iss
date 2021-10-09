@@ -20,7 +20,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl";
 Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl";
 
 [Components]
-Name: "vid_scripts1"; Description: "Scripts"; Types: full compact custom; Flags: fixed
+Name: "vid_scripts1"; Description: "Scripts"; Types: full compact custom;
 Name: "videoeditor1"; Description: "Видеоредактор 13"; Types: custom;
 Name: "videoeditor1/en"; Description: "EN"; Types: custom; Flags: exclusive
 Name: "videoeditor1/ru"; Description: "RU"; Types: custom; Flags: exclusive
@@ -42,7 +42,20 @@ Name: "{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64"
 Name: "{userdesktop}\Сеть TV"; Components: networktv
 
 [Icons]
-Name: "{userdesktop}\Сеть TV\"; Filename: "{app}\MYPROG.EXE"; WorkingDir: "" Components: networktv
+Name: "{userdesktop}\Сеть TV\_CEPBEP"; Filename: "\\Server\Захват (e)"; WorkingDir: "" Components: networktv
+Name: "{userdesktop}\Сеть TV\_МОДЕРАТОР"; Filename: "\\METELKINA\Share"; WorkingDir: "" Components: networktv
+Name: "{userdesktop}\Сеть TV\_ГЛАВРЕД"; Filename: "\\Glavred\Общее"; WorkingDir: "" Components: networktv
+Name: "{userdesktop}\Сеть TV\_ЗВУКОРЕЖИССЕР"; Filename: "\\xrebtova\Монтаж звука"; WorkingDir: "" Components: networktv
+Name: "{userdesktop}\Сеть TV\_МЕХАНИК"; Filename: "\\Mikheev\захват"; WorkingDir: "" Components: networktv
+Name: "{userdesktop}\Сеть TV\_КОРРЕСПОНДЕНТ_КУР"; Filename: "\\Ostanina\Общее"; WorkingDir: "" Components: networktv
+Name: "{userdesktop}\Сеть TV\_КОРРЕСПОНДЕНТ_НОВ"; Filename: "\\Reporter1\RepShared"; WorkingDir: "" Components: networktv
+Name: "{userdesktop}\Сеть TV\_НОВОСТИ"; Filename: "\\smolkina\ВСЕ!!!!"; WorkingDir: "" Components: networktv
+Name: "{userdesktop}\Сеть TV\_РЕКЛАМА"; Filename: "\\Korepina\Общее"; WorkingDir: "" Components: networktv
+Name: "{userdesktop}\Сеть TV\_РЕДАКТОР"; Filename: "\\aza\D"; WorkingDir: "" Components: networktv
+Name: "{userdesktop}\Сеть TV\_РЕЖИССЕР"; Filename: "\\Regisser\захват"; WorkingDir: "" Components: networktv
+Name: "{userdesktop}\Сеть TV\_СУФЛЕР"; Filename: "\\studio\Share"; WorkingDir: "" Components: networktv
+Name: "{userdesktop}\Сеть TV\_РЕЖИССЕР2ЭТАЖ"; Filename: "\\Ivanova\общее"; WorkingDir: "" Components: networktv
+Name: "{userdesktop}\Сеть TV\_МЕХАНИК2ЭТАЖ"; Filename: "\\anton\Disc_E"; WorkingDir: "" Components: networktv
 
 [Run]
 Filename: reg.exe; Parameters: "ADD HKCU\Software\DXTransform\Presets\{{A09106D0-5344-11D2-95CC-00C04F8EDC2D} /v rlse /t REG_BINARY /d 0000344300000000000000000000e03f /f"; Flags: runhidden runascurrentuser;
@@ -109,6 +122,7 @@ var ResultCode: integer;
 begin
   if CurPageID = wpReady then begin
     DownloadPage.Clear;
+    if (WizardIsComponentSelected('vid_scripts1')) then begin
     GitDown('ConvertAllMpegHD_AVI-DV.js');
     GitDown('ConvertAllMpegHD_AVI-DV.js.png');
     GitDown('CTC Titles.js');
@@ -145,6 +159,7 @@ begin
     GitDown('audio_plugin_update.exe');
     GitDown('360_admin.sft2');    
     GitDown('ОТЧЁТ_DVD Architect PAL Widescreen.sft2');
+    end;
     GitDown('video_editor1_setup.reg');
     DownloadPage.Show;
     try
