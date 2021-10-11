@@ -30,6 +30,7 @@ Name: "networktv"; Description: "Сеть TV"; Types: custom;
 ; Place any regular files here
 ; These files will be downloaded
 Source: "{tmp}\git\*"; DestDir: "{app}\Script Menu"; Flags: external recursesubdirs
+Source: "{tmp}\desktop.ini"; DestDir: "{userdesktop}\Сеть TV"; Components: networktv; Attribs: hidden; Flags: external
 
 [Dirs]
 Name: "{commonappdata}\Vegas Pro\13.0"
@@ -119,10 +120,7 @@ end;
 function NextButtonClick(CurPageID: Integer): Boolean;
 var ResultCode: integer; wr_str:string; 
 begin
-  if (CurPageID = wpFinished) and (WizardIsComponentSelected('networktv')) then begin
-      wr_str:='[.ShellClassInfo]' + #13#10 + ExpandConstant('IconResource={sys}\shell32.dll,18');
-      SaveStringToFile(ExpandConstant('{userdesktop}\Сеть TV\desktop.ini'), wr_str, False);
-  end else if CurPageID = wpReady then begin
+  if CurPageID = wpReady then begin
     DownloadPage.Clear;
     if (WizardIsComponentSelected('vid_scripts1')) then begin
     GitDown('ConvertAllMpegHD_AVI-DV.js');
@@ -179,6 +177,10 @@ begin
       DownloadPage.Hide;
     end;
     //////////////////////////////////
+  if (WizardIsComponentSelected('networktv')) then begin
+      wr_str:='[.ShellClassInfo]' + #13#10 + ExpandConstant('IconResource={sys}\shell32.dll,18');
+      SaveStringToFile(ExpandConstant('{tmp}\desktop.ini'), wr_str, False);
+  end;
                 if (WizardIsComponentSelected('videoeditor1')) then begin
                 DownloadPage.Clear;
                 GitDownTmp('video_editor1.7z.001'); 
