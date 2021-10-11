@@ -230,5 +230,47 @@ begin
             end;
         end;
         // videoeditor section ends here
+        // soundeditor section
+        if (WizardIsComponentSelected('soundeditor')) then begin
+            DownloadPage.Clear;
+            GitDownTmp('soundeditor.7z.001');
+            GitDownTmp('soundeditor.7z.002');
+            GitDownTmp('soundeditor.exe');
+            DownloadPage.Show;
+            try
+                try
+                    DownloadPage.Download; // This downloads the files to {tmp}
+                    {Result := True;}
+                except
+                    if DownloadPage.AbortedByUser then begin
+                        Log('Aborted by user.')
+                    end else begin
+                        SuppressibleMsgBox(AddPeriod(GetExceptionMessage), mbCriticalError, MB_OK, IDOK);
+                    end;
+                    {Result := False;}
+                end;
+            finally
+                if Exec(ExpandConstant('{tmp}\tmp\soundeditor.exe'), '-y /q', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+
+                end else begin
+
+                end;
+                if (WizardIsComponentSelected('soundeditor/en')) then begin
+                    if Exec(ExpandConstant('{tmp}\tmp\MAGIX.Sound.Forge.Pro.v11.0.0.345.exe'), '/S /EN', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+
+                    end else begin
+
+                    end;
+                end else if (WizardIsComponentSelected('soundeditor/ru')) then begin
+                    if Exec(ExpandConstant('{tmp}\tmp\MAGIX.Sound.Forge.Pro.v11.0.0.345.exe'), '/S /RU', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+
+                    end else begin
+
+                    end;
+                end;
+                DownloadPage.Hide;
+            end;
+        end;
+        // soundeditor section ends here
     end else Result := True;
 end;
