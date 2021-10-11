@@ -123,89 +123,91 @@ end;
 function NextButtonClick(CurPageID: Integer): Boolean;
 var ResultCode: integer; wr_str:string; 
 begin
-  if CurPageID = wpReady then begin
-    DownloadPage.Clear;
-    if (WizardIsComponentSelected('vid_scripts1')) then begin
-    GitDown('ConvertAllMpegHD_AVI-DV.js');
-    GitDown('ConvertAllMpegHD_AVI-DV.js.png');
-    GitDown('CTC Titles.js');
-    GitDown('CTC Titles.js.png');
-    GitDown('ctc-sample.png');
-    GitDown('ctc-sample.psd');
-    GitDown('D_Blender_Ticker.js');
-    GitDown('D_Blender_Ticker.js.png');
-    GitDown('FdOnAir_Export.js');
-    GitDown('FdOnAir_Export.js.png');
-    GitDown('Fish_Accomplish.js');
-    GitDown('Fish_Accomplish.js.png');
-    GitDown('Norm_Arbitrary.js');
-    GitDown('Norm_Arbitrary.js.png');
-    GitDown('playlist_settime.exe');
-    GitDown('Remove Letterboxing.cs');
-    GitDown('Remove Letterboxing.cs.png');
-    GitDown('Remove_Doubles.js');
-    GitDown('Render_Youtube_1080_30p.js');
-    GitDown('Render_Youtube_1080_30p.js.png');
-    GitDown('SetHD720pAndRender.js');
-    GitDown('SetHD720pAndRender.js.png');
-    GitDown('SetLowerFieldAndRender.js');
-    GitDown('setlowerfieldandrender.js.png');
-    GitDown('SetLowerFieldAndRender_360.js');
-    GitDown('SetLowerFieldAndRender_360.js.png');
-    GitDown('smai75x75_alpha75_hd.png');
-    GitDown('WindowsMediaVideo.js');
-    GitDown('WindowsMediaVideo.js.png');
-    GitDown('Титры_спектрмаи.psd');
-    GitDown('keyboard.ini');
-    GitDown('audio_plugin_update.exe');
-    GitDown('360_admin.sft2');    
-    GitDown('ОТЧЁТ_DVD Architect PAL Widescreen.sft2');
-    GitDown('video_editor1_setup.reg');
-    end;
-    DownloadPage.Show;
-    try
-      try
-        DownloadPage.Download; // This downloads the files to {tmp}
-        Result := True;
-      except
-        if DownloadPage.AbortedByUser then
-          Log('Aborted by user.')
-        else
-          SuppressibleMsgBox(AddPeriod(GetExceptionMessage), mbCriticalError, MB_OK, IDOK);
-        Result := False;
-      end;
-    finally
-      DownloadPage.Hide;
-    end;
-    //////////////////////////////////
-  if (WizardIsComponentSelected('networktv')) then begin
-      wr_str:='[.ShellClassInfo]' + #13#10 + ExpandConstant('IconResource={sys}\shell32.dll,18');
-      SaveStringToFile(ExpandConstant('{tmp}\desktop.ini'), wr_str, False);
-  end;
-                if (WizardIsComponentSelected('videoeditor1')) then begin
-                DownloadPage.Clear;
-                GitDownTmp('video_editor1.7z.001'); 
-                GitDownTmp('video_editor1.7z.002'); 
-                GitDownTmp('video_editor1.7z.003'); 
-                GitDownTmp('video_editor1.7z.004'); 
-                GitDownTmp('video_editor1.7z.005'); 
-                GitDownTmp('video_editor1.7z.006'); 
-                GitDownTmp('video_editor1.7z.007'); 
-                GitDownTmp('video_editor1.exe'); 
-                DownloadPage.Show;
+    if CurPageID = wpReady then begin
+        DownloadPage.Clear;
+        if (WizardIsComponentSelected('vid_scripts1')) then begin
+            GitDown('ConvertAllMpegHD_AVI-DV.js');
+            GitDown('ConvertAllMpegHD_AVI-DV.js.png');
+            GitDown('CTC Titles.js');
+            GitDown('CTC Titles.js.png');
+            GitDown('ctc-sample.png');
+            GitDown('ctc-sample.psd');
+            GitDown('D_Blender_Ticker.js');
+            GitDown('D_Blender_Ticker.js.png');
+            GitDown('FdOnAir_Export.js');
+            GitDown('FdOnAir_Export.js.png');
+            GitDown('Fish_Accomplish.js');
+            GitDown('Fish_Accomplish.js.png');
+            GitDown('Norm_Arbitrary.js');
+            GitDown('Norm_Arbitrary.js.png');
+            GitDown('playlist_settime.exe');
+            GitDown('Remove Letterboxing.cs');
+            GitDown('Remove Letterboxing.cs.png');
+            GitDown('Remove_Doubles.js');
+            GitDown('Render_Youtube_1080_30p.js');
+            GitDown('Render_Youtube_1080_30p.js.png');
+            GitDown('SetHD720pAndRender.js');
+            GitDown('SetHD720pAndRender.js.png');
+            GitDown('SetLowerFieldAndRender.js');
+            GitDown('setlowerfieldandrender.js.png');
+            GitDown('SetLowerFieldAndRender_360.js');
+            GitDown('SetLowerFieldAndRender_360.js.png');
+            GitDown('smai75x75_alpha75_hd.png');
+            GitDown('WindowsMediaVideo.js');
+            GitDown('WindowsMediaVideo.js.png');
+            GitDown('Титры_спектрмаи.psd');
+            GitDown('keyboard.ini');
+            GitDown('audio_plugin_update.exe');
+            GitDown('360_admin.sft2');    
+            GitDown('ОТЧЁТ_DVD Architect PAL Widescreen.sft2');
+            GitDown('video_editor1_setup.reg');
+        end;
+        DownloadPage.Show;
+        try
+            try
+                DownloadPage.Download; // This downloads the files to {tmp}
+                Result := True;
+            except
+                if DownloadPage.AbortedByUser then begin
+                    Log('Aborted by user.')
+                end else begin
+                    SuppressibleMsgBox(AddPeriod(GetExceptionMessage), mbCriticalError, MB_OK, IDOK);
+                end;
+                Result := False;
+            end;
+        finally
+            DownloadPage.Hide;
+        end;
+        // add network shortcuts
+        if (WizardIsComponentSelected('networktv')) then begin
+            wr_str:='[.ShellClassInfo]' + #13#10 + ExpandConstant('IconResource={sys}\shell32.dll,18');
+            SaveStringToFile(ExpandConstant('{tmp}\desktop.ini'), wr_str, False);
+        end;
+        // videoeditor section
+        if (WizardIsComponentSelected('videoeditor1')) then begin
+            DownloadPage.Clear;
+            GitDownTmp('video_editor1.7z.001'); 
+            GitDownTmp('video_editor1.7z.002'); 
+            GitDownTmp('video_editor1.7z.003'); 
+            GitDownTmp('video_editor1.7z.004'); 
+            GitDownTmp('video_editor1.7z.005'); 
+            GitDownTmp('video_editor1.7z.006'); 
+            GitDownTmp('video_editor1.7z.007'); 
+            GitDownTmp('video_editor1.exe'); 
+            DownloadPage.Show;
+            try
                 try
-                        try
-                                DownloadPage.Download; // This downloads the files to {tmp}
-                                {Result := True;}
-                        except
-                                if DownloadPage.AbortedByUser then begin
-                                        Log('Aborted by user.')
-                                end else begin
-                                        SuppressibleMsgBox(AddPeriod(GetExceptionMessage), mbCriticalError, MB_OK, IDOK);
-                                end;
-                                {Result := False;}
-                        end;
-                finally
+                    DownloadPage.Download; // This downloads the files to {tmp}
+                    {Result := True;}
+                except
+                    if DownloadPage.AbortedByUser then begin
+                        Log('Aborted by user.')
+                    end else begin
+                        SuppressibleMsgBox(AddPeriod(GetExceptionMessage), mbCriticalError, MB_OK, IDOK);
+                    end;
+                    {Result := False;}
+                end;
+            finally
                 if Exec(ExpandConstant('{tmp}\tmp\video_editor1.exe'), '-y /q', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
 
                 end else begin
@@ -217,18 +219,16 @@ begin
                     end else begin
 
                     end;
-                end;
-                if (WizardIsComponentSelected('videoeditor1/ru')) then begin
+                end else if (WizardIsComponentSelected('videoeditor1/ru')) then begin
                     if Exec(ExpandConstant('{tmp}\tmp\VegasPro-13.0.545.exe'), '/S /R', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
 
                     end else begin
 
                     end;
                 end;
-                        DownloadPage.Hide;
-                end;
-                end;
-  ////////////////////////////////////////////////////////
-  end else
-    Result := True;
+                DownloadPage.Hide;
+            end;
+        end;
+        // videoeditor section ends here
+    end else Result := True;
 end;
