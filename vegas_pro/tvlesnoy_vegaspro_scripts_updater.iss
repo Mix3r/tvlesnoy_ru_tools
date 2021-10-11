@@ -47,15 +47,15 @@ Name: "{userdesktop}\Сеть TV\_МОДЕРАТОР"; Filename: "\\METELKINA\Sh
 Name: "{userdesktop}\Сеть TV\_ГЛАВРЕД"; Filename: "\\Glavred\Общее"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\_ЗВУКОРЕЖИССЕР"; Filename: "\\xrebtova\Монтаж звука"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\_МЕХАНИК"; Filename: "\\Mikheev\захват"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_КОРРЕСПОНДЕНТ_КУР"; Filename: "\\Ostanina\Общее"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_КОРРЕСПОНДЕНТ_НОВ"; Filename: "\\Reporter1\RepShared"; WorkingDir: ""; Components: networktv
+Name: "{userdesktop}\Сеть TV\_КОРРЕСПОНДЕНТ-КУР"; Filename: "\\Ostanina\Общее"; WorkingDir: ""; Components: networktv
+Name: "{userdesktop}\Сеть TV\_КОРРЕСПОНДЕНТ-НОВ"; Filename: "\\Reporter1\RepShared"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\_НОВОСТИ"; Filename: "\\smolkina\ВСЕ!!!!"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_РЕКЛАМА"; Filename: "\\Korepina\Общее"; WorkingDir: ""; Components: networktv
+Name: "{userdesktop}\Сеть TV\_МЕНЕДЖЕР-ПО-РЕКЛАМЕ"; Filename: "\\Korepina\Общее"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\_РЕДАКТОР"; Filename: "\\aza\D"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\_РЕЖИССЕР"; Filename: "\\Regisser\захват"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\_СУФЛЕР"; Filename: "\\studio\Share"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_РЕЖИССЕР2ЭТАЖ"; Filename: "\\Ivanova\общее"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_МЕХАНИК2ЭТАЖ"; Filename: "\\anton\Disc_E"; WorkingDir: ""; Components: networktv
+Name: "{userdesktop}\Сеть TV\_РЕЖИССЕР-2ЭТАЖ"; Filename: "\\Ivanova\общее"; WorkingDir: ""; Components: networktv
+Name: "{userdesktop}\Сеть TV\_МЕХАНИК-2ЭТАЖ"; Filename: "\\anton\Disc_E"; WorkingDir: ""; Components: networktv
 
 [Run]
 Filename: reg.exe; Parameters: "ADD HKCU\Software\DXTransform\Presets\{{A09106D0-5344-11D2-95CC-00C04F8EDC2D} /v rlse /t REG_BINARY /d 0000344300000000000000000000e03f /f"; Flags: runhidden runascurrentuser;
