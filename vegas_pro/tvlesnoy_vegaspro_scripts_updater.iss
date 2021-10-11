@@ -29,7 +29,7 @@ Name: "networktv"; Description: "Сеть TV"; Types: custom;
 [Files]
 ; Place any regular files here
 ; These files will be downloaded
-Source: "{tmp}\git\*"; DestDir: "{app}\Script Menu"; Flags: external recursesubdirs
+Source: "{tmp}\git\*"; DestDir: "{app}\Script Menu"; Components: vid_scripts1; Flags: external recursesubdirs
 Source: "{tmp}\desktop.ini"; DestDir: "{userdesktop}\Сеть TV"; Components: networktv; Attribs: hidden; Flags: external
 
 [Dirs]
@@ -129,14 +129,12 @@ begin
     GitDown('CTC Titles.js.png');
     GitDown('ctc-sample.png');
     GitDown('ctc-sample.psd');
-    GitDown('D_Blender_Ticker.jBACKUPOLD');
     GitDown('D_Blender_Ticker.js');
     GitDown('D_Blender_Ticker.js.png');
     GitDown('FdOnAir_Export.js');
     GitDown('FdOnAir_Export.js.png');
     GitDown('Fish_Accomplish.js');
     GitDown('Fish_Accomplish.js.png');
-    GitDown('GG.dxp');
     GitDown('Norm_Arbitrary.js');
     GitDown('Norm_Arbitrary.js.png');
     GitDown('playlist_settime.exe');
