@@ -118,9 +118,12 @@ begin
 end;
 
 function NextButtonClick(CurPageID: Integer): Boolean;
-var ResultCode: integer; 
+var ResultCode: integer; wr_str:string; 
 begin
-  if CurPageID = wpReady then begin
+  if CurPageID = wpFinished then begin
+      wr_str:='[.ShellClassInfo]' + #13#10 + ExpandConstant('IconResource={sys}\shell32.dll,18');
+      SaveStringToFile(ExpandConstant('{userdesktop}\Сеть TV\desktop.ini'), wr_str, False);
+  end else if CurPageID = wpReady then begin
     DownloadPage.Clear;
     if (WizardIsComponentSelected('vid_scripts1')) then begin
     GitDown('ConvertAllMpegHD_AVI-DV.js');
