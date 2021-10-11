@@ -159,8 +159,8 @@ begin
     GitDown('audio_plugin_update.exe');
     GitDown('360_admin.sft2');    
     GitDown('ОТЧЁТ_DVD Architect PAL Widescreen.sft2');
-    end;
     GitDown('video_editor1_setup.reg');
+    end;
     DownloadPage.Show;
     try
       try
