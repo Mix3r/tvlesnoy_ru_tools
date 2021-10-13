@@ -1,144 +1,235 @@
-/**
-* Upper to Lower field and render  ---------- NARRATOR 1.0 feature
-*
-**/
+
 import System;
-import System.Text;
 import System.IO;
+import System.Collections;
+import System.Text;
 import System.Windows.Forms;
 import Sony.Vegas;
+import ScriptPortal.Vegas;
+
+var writer : StreamWriter = null;
+var writer2 : StreamWriter = null;
+var RegionName   : String;
 
 try {
-	Vegas.Project.Video.Width = 720;
-	Vegas.Project.Video.Height = 576;
-	Vegas.Project.Video.FrameRate = 25;
-	Vegas.Project.Video.FieldOrder = "LowerFieldFirst";
-	Vegas.Project.Video.PixelAspectRatio = 1.4568;       // 1.0926;
-	Vegas.Project.Video.MotionBlurType = "Gaussian";
-	Vegas.Project.Video.DeinterlaceMethod = "InterpolateFields";
-	Vegas.Project.Video.RenderQuality = "Best";
+      var Titlebgtrack = FindTrack("Ticker");
+      if (null == Titlebgtrack) {
+      } else {
+              var evntEnum = new Enumerator(Titlebgtrack.Events);
+              while (!evntEnum.atEnd()) {
+              if ((TrackEvent(evntEnum.item()).Start <= Vegas.Cursor) & (TrackEvent(evntEnum.item()).Start + TrackEvent(evntEnum.item()).Length >= Vegas.Cursor)) {
+                 //ev_edit = 1;
+                 var tickr = VideoEvent(evntEnum.item());
+                 tickr.VideoMotion.Keyframes[1].Position = TrackEvent(evntEnum.item()).Length - Timecode.FromFrames(1);
+                 var tkey_frame = tickr.VideoMotion.Keyframes[1];
+                 var d_width2 = tkey_frame.TopRight.X   - tkey_frame.TopLeft.X;
+                 var d_height2 = tkey_frame.BottomLeft.Y - tkey_frame.TopLeft.Y;
+                 if (d_width2 < 0) {
+                          d_width2 = d_width2 * -1;
+                 }
+                 if (d_height2 < 0) {
+                          d_height2 = d_height2 * -1;
+                 }
+                 var moveby2_2 = new VideoMotionVertex(d_width2 * (-1 + TrackEvent(evntEnum.item()).FadeIn.Gain*2),0);
+                 tkey_frame.MoveBy(moveby2_2);
+                 Vegas.Cursor = TrackEvent(evntEnum.item()).Start + TrackEvent(evntEnum.item()).Length - Timecode.FromFrames(1);
+                 throw "ok";
+              }
+              evntEnum.moveNext();
+              }
+      }
 
-	Vegas.Project.Audio.SampleRate = 48000;
-	Vegas.Project.Audio.BitDepth = 16;
-	Vegas.Project.Audio.ResampleQuality = "Best";
+      var dialog = new MainDialog("");
+      var dialogResult = dialog.ShowDialog();
+      var idx = 0;
 
-	Vegas.Project.Ruler.Format = "TimeAndFrames";
-	Vegas.Project.Ruler.BeatsPerMinute = 60;
-	Vegas.Project.Ruler.BeatsPerMeasure = 4;
-	
-	var mediaEnum = new Enumerator(Vegas.Project.MediaPool);
+      // Proceed if the "Next" button was pressed.
+      if (System.Windows.Forms.DialogResult.OK == dialogResult) {
 
-	while (!mediaEnum.atEnd()) {
-		var media = mediaEnum.item();
-		// video only
-		if (media.HasVideo()) {
-			var mm = new media.Streams();
-			// mm.FieldOrder = "LowerFieldFirst";
-		}
-		mediaEnum.moveNext();
-	}
+        // Create the region name from the Listbox, textbox, and region number
+        if (dialog.RegionNameBox.Text != " ") {
 
-	var templateRE = /PAL DV /;
-	var extRE = /.avi/;
-	
-	var renderer : Renderer = FindRenderer(templateRE);
-	
-        if (null == renderer)
-                throw "failed to find renderer";
-		
-        var renderTemplate :RenderTemplate = FindRenderTemplate(renderer, templateRE);
-	
-        if (null == renderTemplate)
-                throw "failed to find render template";
-		
-	var projPath = Vegas.Project.FilePath;
-	var titl = Path.GetFileNameWithoutExtension(projPath);
-	extRE = Vegas.Project.Audio.RecordedFilesFolder.toUpperCase();
-	if (Vegas.Project.Summary.Title == "narrator") {
-		var trackEnum = new Enumerator(Vegas.Project.Tracks);
-		while (!trackEnum.atEnd()) {
-			var track : Track = Track(trackEnum.item());
-			var evntEnum = new Enumerator(track.Events);
-			while (!evntEnum.atEnd()) {
-				var evnt : TrackEvent = TrackEvent(evntEnum.item());
-				if (evnt.Selected) {
-					titl = evnt.ActiveTake.Name+" (OK)";
-				}
-				evntEnum.moveNext();
-			}
-			trackEnum.moveNext();
-		}
-	}
-	if (null != extRE.match(/\TEMP/)) {
-		titl = Path.GetDirectoryName(projPath)+"\\"+titl;
-	} else {
-		titl = Vegas.Project.Video.PrerenderedFilesFolder+titl;
-	}
-	var ofn = ShowSaveFileDialog("AVI Files (*.AVI)|*.AVI", "Render AVI - "+renderer.FileTypeName, titl);
+          var Narratortrack = FindTrack("ДИКТОР_ВИДЕО");
+          if (null == Narratortrack) {
+                  throw "Нет дорожки ДИКТОР_ВИДЕО.";
+          }
+          var narEnum = new Enumerator(Narratortrack.Events);
+          while (!narEnum.atEnd()) {
+                  if ((TrackEvent(narEnum.item()).Start <= Vegas.Cursor) & (TrackEvent(narEnum.item()).Start + TrackEvent(narEnum.item()).Length >= Vegas.Cursor)) {
+                          idx = 1;
+                          var naractiveTake = TrackEvent(narEnum.item()).ActiveTake;
+                          VideoEvent(narEnum.item()).ResampleMode = "Disable";
+		          var narmediaPath = naractiveTake.MediaPath + "_";
+                          RegionName = Vegas.Cursor.ToMilliseconds().ToString();
+                          narmediaPath = narmediaPath.substring(0, narmediaPath.length - 5) + "_";
+                          narmediaPath = narmediaPath + RegionName +"_TXT.tif";
+                  }
+                  narEnum.moveNext();
+          }
 
-	if (ofn.length < 5) {
-		ofn = ofn + ".AVI";
-	}
-	titl = ofn.substring(ofn.length-4);
-	if (titl.toUpperCase() != ".AVI") {
-		ofn = ofn + ".AVI";
-	}
-	
-	var renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.SelectionStart,Vegas.SelectionLength);
+          if (idx == 0) {
+                  throw "Нет клипа на игле-курсоре на дорожке ДИКТОР_ВИДЕО.";
+          }
+
+          RegionName = Vegas.InstallationDirectory+"";
+          RegionName = RegionName.replace(/:\\/g, ":::");
+          RegionName = RegionName.replace(/\\/g, "/");
+          RegionName = RegionName.replace(/:::/g, "\\\\:/");
+
+          writer2 = new StreamWriter(Vegas.InstallationDirectory + "\\vegas_bake_crawler.txt", false, System.Text.Encoding.Unicode);
+          writer2.WriteLine("\""+Vegas.InstallationDirectory+"\\..\\..\\Totalcmd_p\\FFMPEG\\ffmpeg.exe\" -f lavfi -i \"color=0x407c7d@0.5:size="+(dialog.RegionNameBox.Text.length*60+1920+1920).ToString()+"x74,format=rgba\" -vf drawtext=\"fontfile=C"+"\\"+"\\"+":/Windows/Fonts/arial.ttf:textfile="+ RegionName + "/vegas_bake_crawler.txt:y=h-line_h-4:x=-42:fontcolor=white:fontsize=65\" -frames:v 1 -c:v tiff -y \""+narmediaPath+"\"");
+          //writer2.WriteLine("pause");
+          writer2.Close();
+
+
+          var prog1 = new System.Diagnostics.Process();
+	  var prog1_nfo = new System.Diagnostics.ProcessStartInfo();
+
+          prog1_nfo.UseShellExecute = false;
+	  prog1_nfo.RedirectStandardOutput = false;
+          prog1_nfo.WorkingDirectory = "C:\\";
+          prog1_nfo.FileName = "cmd.exe";
+          prog1_nfo.Arguments = '/a /c type "'+Vegas.InstallationDirectory + '\\vegas_bake_crawler.txt">"'+Vegas.InstallationDirectory + '\\vegas_bake_crawler.cmd"';
+          prog1.StartInfo = prog1_nfo;
+	  prog1.Start();
+	  prog1.WaitForExit();
+
+          RegionName = "";
+          for (idx = 0; idx < 106; idx++) {
+                  RegionName = RegionName + " ";
+          }
+
+          writer = new StreamWriter(Vegas.InstallationDirectory + "\\vegas_bake_crawler.txt", false, System.Text.Encoding.UTF8);
+          writer.WriteLine(RegionName+dialog.RegionNameBox.Text);
+          writer.Close();
+
+          prog1_nfo.Arguments = '/a /c "'+Vegas.InstallationDirectory + '\\vegas_bake_crawler.cmd"';
+	  prog1.StartInfo = prog1_nfo;
+	  prog1.Start();
+	  prog1.WaitForExit();
+
+	  if (null == Titlebgtrack) {
+                  Titlebgtrack = new VideoTrack(0, "Ticker");
+                  Vegas.Project.Tracks.Add(Titlebgtrack);
+	  }
+          var media = new Media(narmediaPath);
+          var stream = media.Streams[0]; //The "video" stream
+          stream.AlphaChannel = "Straight";
+          var newEvent = new VideoEvent(Vegas.Cursor, Vegas.SelectionLength);
+          Titlebgtrack.Events.Add(newEvent);
+          var take = new Take(stream);
+	  newEvent.Takes.Add(take);
+          newEvent.ResampleMode = "Disable";
+          newEvent.MaintainAspectRatio = 1;
+          newEvent.VideoMotion.ScaleToFill = 1;
+          var key_frame = newEvent.VideoMotion.Keyframes[0];
+          var d_width = key_frame.TopRight.X   - key_frame.TopLeft.X;
+          var d_height = key_frame.BottomLeft.Y - key_frame.TopLeft.Y;
+          if (d_width < 0) {
+                  d_width = d_width * -1;
+          }
+          if (d_height < 0) {
+                  d_height = d_height * -1;
+          }
+          var moveby1 = new VideoMotionVertex(Vegas.Project.Video.Width/d_width,Vegas.Project.Video.Height/d_height);
+          key_frame.ScaleBy(moveby1);
+          var moveby2 = new VideoMotionVertex(d_width*-0.5+Vegas.Project.Video.Width*0.5,key_frame.Center.Y-d_height*0.5-Vegas.Project.Video.Height*0.384);
+          key_frame.MoveBy(moveby2);
+          var keyf = new VideoMotionKeyframe( Project.ActiveProject, newEvent.Length - Timecode.FromFrames(1)  );
+          newEvent.VideoMotion.Keyframes.Add(keyf);
+
+          //prog1_nfo.Arguments = '/a /k "'+Vegas.InstallationDirectory+'\\..\\..\\Totalcmd_p\\FFMPEG\\ffmpeg.exe"';
+          //prog1.StartInfo = prog1_nfo;
+          //prog1.Start();
+          //prog1.WaitForExit();
+          //Vegas.UpdateUI();
+          //throw "ok";
+          dialog.Close();
+        }
+      } else if (System.Windows.Forms.DialogResult.Cancel == dialogResult) {
+          throw "ok";
+      }
 }
 
 catch (e) {
-	MessageBox.Show(e);
-}
-
-function FindRenderer(rendererRegExp : RegExp) : Renderer {
-        var rendererEnum : Enumerator = new Enumerator(Vegas.Renderers);
-        while (!rendererEnum.atEnd()) {
-                var renderer : Renderer = Renderer(rendererEnum.item());
-                if (null != renderer.FileExtension.match(extRE)) {
-			if (null != FindRenderTemplate(renderer, templateRE)) {
-				return renderer;
-			}
-                }
-                rendererEnum.moveNext();
-        }
-        return null;
-}
-
-function FindRenderTemplate(renderer : Renderer, templateRegExp : RegExp) : RenderTemplate {
-        var templateEnum : Enumerator = new Enumerator(renderer.Templates);
-        while (!templateEnum.atEnd()) {
-                var renderTemplate : RenderTemplate = RenderTemplate(templateEnum.item());
-                if (renderTemplate.Name.match(templateRegExp)) {
-                        return renderTemplate;
-                }
-                templateEnum.moveNext();
-        }
-        return null;
-}
-
-// an example filter: "PNG File (*.png)|*.png|JPEG File (*.jpg)|*.jpg"
-function ShowSaveFileDialog(filter, title, defaultFilename) {
-    var saveFileDialog = new SaveFileDialog();
-    if (null == filter) {
-        filter = "All Files (*.*)|*.*";
+    if (e != "ok") {
+            MessageBox.Show(e);
     }
-    saveFileDialog.Filter = filter;
-    if (null != title)
-        saveFileDialog.Title = title;
-    saveFileDialog.CheckPathExists = true;
-    saveFileDialog.AddExtension = true;
-    if (null != defaultFilename) {
-        var initialDir = Path.GetDirectoryName(defaultFilename);
-        if (Directory.Exists(initialDir)) {
-            saveFileDialog.InitialDirectory = initialDir;
-        }
-        saveFileDialog.DefaultExt = Path.GetExtension(defaultFilename);
-        saveFileDialog.FileName = Path.GetFileName(defaultFilename);
+}
+// End Main Program
+
+//
+// ---------------------------------
+// Begin functions
+
+
+
+//-------------------------------------------------------
+// Form subclass that is the dialog box for this script
+class MainDialog extends Form {
+    var RegionNameBox;
+    var PreviewBox;
+
+    function MainDialog(RegionName) {
+
+        this.Text = "Бегучая Строка";
+        this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+        this.MaximizeBox = false;
+        this.StartPosition = FormStartPosition.CenterScreen;
+        this.Width = 600;
+
+        var buttonWidth = 80;
+        var btnGap = 10;
+
+        RegionNameBox = addTextControl("Текст", btnGap, this.Width-(btnGap+btnGap+buttonWidth+btnGap+btnGap+btnGap), 20, "");
+
+        var buttonTop = RegionNameBox.Top;
+
+        var NextButton = new Button();
+        NextButton.Text = "Хорошо";
+        NextButton.Left = this.Width - (buttonWidth+btnGap+btnGap+btnGap);
+        NextButton.Top = buttonTop-2;
+        NextButton.Width = buttonWidth;
+        NextButton.Height = RegionNameBox.Height+4;
+        NextButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+        AcceptButton = NextButton;  // The Enter key will automatically activate this button.
+        Controls.Add(NextButton);
+
+        var titleHeight = this.Height - this.ClientSize.Height;
+        this.Height = titleHeight + NextButton.Bottom + 20;
+    }   // End function MainDialog
+//
+// -------------------------------------
+    function addTextControl(labelName, left, width, top, defaultValue) {
+        var label = new Label();
+        label.AutoSize = true;
+        label.Text = labelName + ":";
+        label.Left = left;
+        label.Top = top + 4;
+        Controls.Add(label);
+
+        var textbox = new TextBox();
+        textbox.Multiline = false;
+        textbox.Left = label.Right;
+        textbox.Top = top;
+        textbox.Width = width - (label.Width);
+        textbox.Text = defaultValue;
+        Controls.Add(textbox);
+
+        return textbox;
     }
-    if (System.Windows.Forms.DialogResult.OK == saveFileDialog.ShowDialog()) {
-        return Path.GetFullPath(saveFileDialog.FileName);
-    } else {
-        return null;
-    }
+
+}   // End class MainDialog
+
+function FindTrack(WhichTrack) : Track {
+  var trackEnum = new Enumerator(Vegas.Project.Tracks);
+  var PrevTrack : Track = Track(trackEnum.item());
+  while (!trackEnum.atEnd()) {
+	var track : Track = Track(trackEnum.item());
+	if (track.Name == WhichTrack) {
+		return track;
+	}
+	trackEnum.moveNext();
+  }
+  return null;
 }
