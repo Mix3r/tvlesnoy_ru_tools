@@ -161,6 +161,13 @@ begin
             GitDown('360_admin.sft2');    
             GitDown('ОТЧЁТ_DVD Architect PAL Widescreen.sft2');
             GitDown('video_editor1_setup.reg');
+            GitDown('tvlesnoy_moveleft.js');
+            GitDown('tvlesnoy_moveright.js');
+            GitDown('tvlesnoy_moveup.js');
+            GitDown('tvlesnoy_movedown.js');
+            GitDown('tvlesnoy_movenull.js');
+            GitDown('tvlesnoy_scaleup.js');
+            GitDown('tvlesnoy_scaledown.js');
         end;
         DownloadPage.Show;
         try
