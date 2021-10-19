@@ -170,6 +170,8 @@ begin
             GitDown('tvlesnoy_scaledown.js');
             GitDown('tvlesnoy_scaleup_x.js');
             GitDown('tvlesnoy_scaledown_x.js');
+            GitDown('tvlesnoy_scalexy.js');
+            GitDown('tvlesnoy_rotate.js');            
         end;
         DownloadPage.Show;
         try
