@@ -168,6 +168,8 @@ begin
             GitDown('tvlesnoy_movenull.js');
             GitDown('tvlesnoy_scaleup.js');
             GitDown('tvlesnoy_scaledown.js');
+            GitDown('tvlesnoy_scaleup_x.js');
+            GitDown('tvlesnoy_scaledown_x.js');
         end;
         DownloadPage.Show;
         try
