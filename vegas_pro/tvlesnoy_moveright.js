@@ -4,8 +4,7 @@ import System.IO;
 import System.Object;
 import Sony.Vegas;
 import ScriptPortal.Vegas;
-var dirx = -100;
-var diry = 0;
+var fac1 = Vegas.Project.Video.Height*0.333;
 
 try
 {
@@ -13,33 +12,28 @@ try
         while (!trackEnum.atEnd()) {
                 var evntEnum = new Enumerator(Track(trackEnum.item()).Events);
                 while (!evntEnum.atEnd()) {
-                        if (TrackEvent(evntEnum.item()).Selected) {
+                        if (TrackEvent(evntEnum.item()).Selected && TrackEvent(evntEnum.item()).Start <= Vegas.Cursor && TrackEvent(evntEnum.item()).Start + TrackEvent(evntEnum.item()).Length >= Vegas.Cursor) {
                                 if (TrackEvent(evntEnum.item()).IsVideo()) {
+                                        Vegas.Cursor = TrackEvent(evntEnum.item()).Start;
                                         var key_frame = VideoEvent(evntEnum.item()).VideoMotion.Keyframes[0];
-                                        var d_width = key_frame.TopRight.X   - key_frame.TopLeft.X;
-                                        var d_height = key_frame.BottomLeft.Y - key_frame.TopLeft.Y;
+                                        if (key_frame.Position != Timecode.FromMilliseconds(0)) {
+                                                key_frame.Position = Timecode.FromMilliseconds(0);
+                                        }
                                         var activeTake = TrackEvent(evntEnum.item()).ActiveTake;
                                         var vidstream = activeTake.Media.GetVideoStreamByIndex(activeTake.StreamIndex);
-                                        if (d_width < 0) {
-                                                d_width = d_width * -1;
+                                        if (key_frame.TopLeft.X == 0 && key_frame.TopLeft.Y == 0) {
+                                                var scaleby1 = new VideoMotionVertex(vidstream.Height/vidstream.Width,1);
+                                                key_frame.ScaleBy(scaleby1); // make it squared first
+                                                var scaleby2 = new VideoMotionVertex(Vegas.Project.Video.Width/Vegas.Project.Video.Height,1);
+                                                key_frame.ScaleBy(scaleby2); // fit to project aspect ratio
                                         }
-                                        if (d_height < 0) {
-                                                d_height = d_height * -1;
+                                        var d_height = 1 - TrackEvent(evntEnum.item()).SnapOffset.ToMilliseconds() / TrackEvent(evntEnum.item()).Length.ToMilliseconds();
+
+                                        fac1 = fac1 * d_height;
+                                        if (fac1 < 1) {
+                                                fac1 = 1;
                                         }
-                                        if (d_height > 0) {
-                                                if (key_frame.TopLeft.X == 0 && key_frame.TopLeft.Y == 0) {
-                                                        var scaleby1 = new VideoMotionVertex(vidstream.Height/vidstream.Width,1);
-                                                        key_frame.ScaleBy(scaleby1);
-                                                        var scaleby2 = new VideoMotionVertex(Vegas.Project.Video.Width/Vegas.Project.Video.Height,1);
-                                                        key_frame.ScaleBy(scaleby2);
-                                                }
-                                        }
-                                        d_height =  (TrackEvent(evntEnum.item()).FadeIn.Gain - 0.5)*2;
-                                        if (d_height < 0.01) {
-                                                d_height = 0.01;
-                                        }
-                                        dirx = dirx * d_height;
-                                        var moveby2 = new VideoMotionVertex(dirx,diry);
+                                        var moveby2 = new VideoMotionVertex(-fac1,0);
                                         key_frame.MoveBy(moveby2);
                                 }
                         }

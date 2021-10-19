@@ -16,6 +16,9 @@ try
                         if (TrackEvent(evntEnum.item()).Selected) {
                                 if (TrackEvent(evntEnum.item()).IsVideo()) {
                                         var key_frame = VideoEvent(evntEnum.item()).VideoMotion.Keyframes[0];
+                                        if (key_frame.Position != Timecode.FromMilliseconds(0)) {
+                                                key_frame.Position = Timecode.FromMilliseconds(0);
+                                        }
                                         var activeTake = TrackEvent(evntEnum.item()).ActiveTake;
                                         var d_width = key_frame.TopRight.X   - key_frame.TopLeft.X;
                                         var d_height = key_frame.BottomLeft.Y - key_frame.TopLeft.Y;

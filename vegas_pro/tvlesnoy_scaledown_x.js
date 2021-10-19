@@ -4,7 +4,7 @@ import System.IO;
 import System.Object;
 import Sony.Vegas;
 import ScriptPortal.Vegas;
-var fac1 = Vegas.Project.Video.Height*0.333;
+var fac1 = 0.333;
 
 try
 {
@@ -15,6 +15,9 @@ try
                         if (TrackEvent(evntEnum.item()).Selected && TrackEvent(evntEnum.item()).Start <= Vegas.Cursor && TrackEvent(evntEnum.item()).Start + TrackEvent(evntEnum.item()).Length >= Vegas.Cursor) {
                                 if (TrackEvent(evntEnum.item()).IsVideo()) {
                                         Vegas.Cursor = TrackEvent(evntEnum.item()).Start;
+                                        if (VideoEvent(evntEnum.item()).MaintainAspectRatio != null) {
+                                                VideoEvent(evntEnum.item()).MaintainAspectRatio = null;
+                                        }
                                         var key_frame = VideoEvent(evntEnum.item()).VideoMotion.Keyframes[0];
                                         if (key_frame.Position != Timecode.FromMilliseconds(0)) {
                                                 key_frame.Position = Timecode.FromMilliseconds(0);
@@ -30,11 +33,11 @@ try
                                         var d_height = 1 - TrackEvent(evntEnum.item()).SnapOffset.ToMilliseconds() / TrackEvent(evntEnum.item()).Length.ToMilliseconds();
 
                                         fac1 = fac1 * d_height;
-                                        if (fac1 < 1) {
-                                                fac1 = 1;
+                                        if (fac1 < 0.001) {
+                                                fac1 = 0.001;
                                         }
-                                        var moveby2 = new VideoMotionVertex(0,-fac1);
-                                        key_frame.MoveBy(moveby2);
+                                        var moveby2 = new VideoMotionVertex(1+fac1,1);
+                                        key_frame.ScaleBy(moveby2);
                                 }
                         }
                         evntEnum.moveNext();
