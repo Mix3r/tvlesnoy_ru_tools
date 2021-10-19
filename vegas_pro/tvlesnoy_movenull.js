@@ -3,6 +3,7 @@ import System;
 import System.IO;
 import System.Object;
 import Sony.Vegas;
+//import System.Windows.Forms;
 import ScriptPortal.Vegas;
 
 try
@@ -13,6 +14,17 @@ try
                 while (!evntEnum.atEnd()) {
                         if (TrackEvent(evntEnum.item()).Selected) {
                                 if (TrackEvent(evntEnum.item()).IsVideo()) {
+                                        Vegas.Cursor = TrackEvent(evntEnum.item()).Start;
+                                        var keyEnum = new Enumerator(VideoEvent(evntEnum.item()).VideoMotion.Keyframes);
+                                        var keyz = 0;
+                                        while (!keyEnum.atEnd()) {
+                                                keyz = keyz + 1;
+                                                keyEnum.moveNext();
+                                        }
+                                        while (keyz > 1) {
+                                                VideoEvent(evntEnum.item()).VideoMotion.Keyframes.Remove(VideoEvent(evntEnum.item()).VideoMotion.Keyframes[1]);
+                                                keyz = keyz - 1;
+                                        }
                                         var key_frame = VideoEvent(evntEnum.item()).VideoMotion.Keyframes[0];
                                         if (key_frame.Position != Timecode.FromMilliseconds(0)) {
                                                 key_frame.Position = Timecode.FromMilliseconds(0);
@@ -34,7 +46,6 @@ try
                                         key_frame.ScaleBy(scaleby1);
                                         var moveby2 = new VideoMotionVertex(-1*(c_x-vidstream.Width*0.5),-1*(c_y-vidstream.Height*0.5));
                                         key_frame.MoveBy(moveby2);
-
                                 }
                         }
                         evntEnum.moveNext();

@@ -14,13 +14,22 @@ try
                 while (!evntEnum.atEnd()) {
                         if (TrackEvent(evntEnum.item()).Selected && TrackEvent(evntEnum.item()).Start <= Vegas.Cursor && TrackEvent(evntEnum.item()).Start + TrackEvent(evntEnum.item()).Length >= Vegas.Cursor) {
                                 if (TrackEvent(evntEnum.item()).IsVideo()) {
-                                        Vegas.Cursor = TrackEvent(evntEnum.item()).Start;
-                                        if (VideoEvent(evntEnum.item()).MaintainAspectRatio != null) {
-                                                VideoEvent(evntEnum.item()).MaintainAspectRatio = null;
+                                        var keyEnum = new Enumerator(VideoEvent(evntEnum.item()).VideoMotion.Keyframes);
+                                        var keyz = 0;
+                                        while (!keyEnum.atEnd()) {
+                                                keyz = keyz + 1;
+                                                if (VideoEvent(evntEnum.item()).VideoMotion.Keyframes[keyz-1].Position == Vegas.Cursor-TrackEvent(evntEnum.item()).Start) {
+                                                        keyz = -keyz;
+                                                        break;
+                                                }
+                                                keyEnum.moveNext();
                                         }
-                                        var key_frame = VideoEvent(evntEnum.item()).VideoMotion.Keyframes[0];
-                                        if (key_frame.Position != Timecode.FromMilliseconds(0)) {
-                                                key_frame.Position = Timecode.FromMilliseconds(0);
+                                        if (keyz > 0) {
+                                                var key_frame = new VideoMotionKeyframe( Project.ActiveProject, Vegas.Cursor-TrackEvent(evntEnum.item()).Start);
+                                                VideoEvent(evntEnum.item()).VideoMotion.Keyframes.Add(key_frame);
+                                        } else {
+                                                keyz = -keyz;
+                                                var key_frame = VideoEvent(evntEnum.item()).VideoMotion.Keyframes[keyz-1];
                                         }
                                         var activeTake = TrackEvent(evntEnum.item()).ActiveTake;
                                         var vidstream = activeTake.Media.GetVideoStreamByIndex(activeTake.StreamIndex);
