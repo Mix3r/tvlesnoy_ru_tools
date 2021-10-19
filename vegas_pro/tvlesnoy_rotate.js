@@ -4,7 +4,7 @@ import System.IO;
 import System.Object;
 import Sony.Vegas;
 import ScriptPortal.Vegas;
-var fac1 = 0.333;
+var fac1 = 0.0872665; //5d
 
 try
 {
@@ -37,11 +37,10 @@ try
                                                 fac1 = 0.001;
                                         }
                                         if (Vegas.Project.AudioCD.UPC == "0-0-0000-00000-0-1") {
-                                                var moveby2 = new VideoMotionVertex(1,1-fac1);
+                                                key_frame.RotateBy(-fac1);
                                         } else {
-                                                var moveby2 = new VideoMotionVertex(1-fac1,1);
+                                                key_frame.RotateBy(fac1);
                                         }
-                                        key_frame.ScaleBy(moveby2);
                                 }
                         }
                         evntEnum.moveNext();
