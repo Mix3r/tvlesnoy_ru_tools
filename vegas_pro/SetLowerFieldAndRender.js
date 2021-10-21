@@ -123,7 +123,7 @@ try {
           var take = new Take(stream);
 	  newEvent.Takes.Add(take);
           newEvent.ResampleMode = "Disable";
-          newEvent.MaintainAspectRatio = 1;
+          newEvent.MaintainAspectRatio = null;
           newEvent.VideoMotion.ScaleToFill = 1;
           var key_frame = newEvent.VideoMotion.Keyframes[0];
           var d_width = key_frame.TopRight.X   - key_frame.TopLeft.X;
