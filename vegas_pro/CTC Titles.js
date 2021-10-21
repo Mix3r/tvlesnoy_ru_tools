@@ -31,7 +31,7 @@ try
         var evntEnum = new Enumerator(Titlestrack.Events);
         while (!evntEnum.atEnd()) {
                 var evnt : VideoEvent = VideoEvent(evntEnum.item());
-                if (evnt.Start <= Vegas.Cursor & evnt.End >= Vegas.Cursor) {
+                if (evnt.Start <= Vegas.Transport.CursorPosition & evnt.End >= Vegas.Transport.CursorPosition) {
 
                         var key_frame = evnt.VideoMotion.Keyframes[0];
                         if (key_frame.TopLeft.X == 0) {
@@ -52,10 +52,10 @@ try
                                 repflag = 2;
                                 var med_txt = CreateGeneratedMedia("0FE8789D-0C47-442A-AFB0-0DAF97669317","GG");
                         }
-                        Vegas.Cursor = evnt.Start;
+                        Vegas.Transport.CursorPosition = evnt.Start;
                         Titlestrack.Events.Remove(evnt);
                         var stm_txt = med_txt.Streams[0];
-                        var evt_txt = new VideoEvent(Vegas.Cursor, ttxt_length);
+                        var evt_txt = new VideoEvent(Vegas.Transport.CursorPosition, ttxt_length);
 	                Titlestrack.Events.Add(evt_txt);
                         var txt_take = new Take(stm_txt);
 	                evt_txt.Takes.Add(txt_take);
@@ -79,7 +79,7 @@ try
                                 var bottomEnum = new Enumerator(Titlebgtrack.Events);
                                 while (!bottomEnum.atEnd()) {
                                         var botom : VideoEvent = VideoEvent(bottomEnum.item());
-                                        if (botom.Start <= Vegas.Cursor & botom.End >= Vegas.Cursor) {
+                                        if (botom.Start <= Vegas.Transport.CursorPosition & botom.End >= Vegas.Transport.CursorPosition) {
                                                 botom.FadeOut.Length = Timecode.FromMilliseconds(0);
                                                 botom.Length = evt_txt.End - botom.Start;
                                         }
@@ -93,7 +93,7 @@ try
                                 var bottomEnum = new Enumerator(Titlebgtrack.Events);
                                 while (!bottomEnum.atEnd()) {
                                         var botom3 : VideoEvent = VideoEvent(bottomEnum.item());
-                                        if (botom3.Start <= Vegas.Cursor & botom3.End >= Vegas.Cursor) {
+                                        if (botom3.Start <= Vegas.Transport.CursorPosition & botom3.End >= Vegas.Transport.CursorPosition) {
                                                 botom3.FadeOut.Length = Timecode.FromMilliseconds(0);
                                                 botom3.Length = evt_txt.End - botom3.Start + evt_txt.FadeOut.Length;
                                                 var key_frame3 = botom3.VideoMotion.Keyframes[0];
@@ -123,7 +123,7 @@ try
                                 var bottomEnum = new Enumerator(Titlebgtrack.Events);
                                 while (!bottomEnum.atEnd()) {
                                         var botom2 : VideoEvent = VideoEvent(bottomEnum.item());
-                                        if (botom2.Start <= Vegas.Cursor & botom2.End >= Vegas.Cursor) {
+                                        if (botom2.Start <= Vegas.Transport.CursorPosition & botom2.End >= Vegas.Transport.CursorPosition) {
                                                 botom2.FadeOut.Length = Timecode.FromMilliseconds(560);
                                                 botom2.Length = evt_txt.End - botom2.Start + evt_txt.FadeOut.Length;
                                                 var key_frame2 = botom2.VideoMotion.Keyframes[0];
@@ -153,7 +153,7 @@ try
                         key_frame.MoveBy(moveby2);
 
                         evt_txt.FadeIn.Length = Timecode.FromMilliseconds(400);
-	                Vegas.Cursor = (evt_txt.Start + evt_txt.FadeIn.Length);
+	                Vegas.Transport.CursorPosition = (evt_txt.Start + evt_txt.FadeIn.Length);
                 }
                 evntEnum.moveNext();
         }
@@ -161,7 +161,7 @@ try
 	//var media = new Media(Vegas.InstallationDirectory + "/Script Menu/ctc-sample.png");
 	var media = new Media("C:/Program Files/Sony/Vegas 7.0/Script Menu/ctc-sample.png");
 	var stream = media.Streams[0]; //The "video" stream
-	var newEvent = new VideoEvent(Vegas.Cursor, ttl_length);
+	var newEvent = new VideoEvent(Vegas.Transport.CursorPosition, ttl_length);
 	Titlebgtrack.Events.Add(newEvent);
 	var take = new Take(stream); 
 	newEvent.Takes.Add(take);
@@ -190,8 +190,8 @@ try
 
         var med_txt = CreateGeneratedMedia("0FE8789D-0C47-442A-AFB0-0DAF97669317","GG");
 	var stm_txt = med_txt.Streams[0];
-	Vegas.Cursor = (Vegas.Cursor + Timecode.FromMilliseconds(320));
-	var evt_txt = new VideoEvent(Vegas.Cursor, ttxt_length);
+	Vegas.Transport.CursorPosition = (Vegas.Transport.CursorPosition + Timecode.FromMilliseconds(320));
+	var evt_txt = new VideoEvent(Vegas.Transport.CursorPosition, ttxt_length);
 	Titlestrack.Events.Add(evt_txt);
 	var txt_take = new Take(stm_txt);
 	evt_txt.Takes.Add(txt_take);
@@ -212,7 +212,7 @@ try
 
 	evt_txt.FadeIn.Length = Timecode.FromMilliseconds(400);
 	evt_txt.FadeOut.Length = Timecode.FromMilliseconds(400);
-	Vegas.Cursor = (evt_txt.Start + evt_txt.FadeIn.Length);
+	Vegas.Transport.CursorPosition = (evt_txt.Start + evt_txt.FadeIn.Length);
 	if (null != Vegas.Project.Groups) {
 		var TtlGroup = new TrackEventGroup();
 		Vegas.Project.Groups.Add(TtlGroup);

@@ -12,7 +12,7 @@ try
         while (!trackEnum.atEnd()) {
                 var evntEnum = new Enumerator(Track(trackEnum.item()).Events);
                 while (!evntEnum.atEnd()) {
-                        if (TrackEvent(evntEnum.item()).Selected && TrackEvent(evntEnum.item()).Start <= Vegas.Cursor && TrackEvent(evntEnum.item()).Start + TrackEvent(evntEnum.item()).Length >= Vegas.Cursor) {
+                        if (TrackEvent(evntEnum.item()).Selected && TrackEvent(evntEnum.item()).Start <= Vegas.Transport.CursorPosition && TrackEvent(evntEnum.item()).Start + TrackEvent(evntEnum.item()).Length >= Vegas.Transport.CursorPosition) {
                                 if (TrackEvent(evntEnum.item()).IsVideo()) {
                                         if (VideoEvent(evntEnum.item()).MaintainAspectRatio != null) {
                                                 VideoEvent(evntEnum.item()).MaintainAspectRatio = null;
@@ -21,14 +21,14 @@ try
                                         var keyz = 0;
                                         while (!keyEnum.atEnd()) {
                                                 keyz = keyz + 1;
-                                                if (VideoEvent(evntEnum.item()).VideoMotion.Keyframes[keyz-1].Position == Vegas.Cursor-TrackEvent(evntEnum.item()).Start) {
+                                                if (VideoEvent(evntEnum.item()).VideoMotion.Keyframes[keyz-1].Position == Vegas.Transport.CursorPosition-TrackEvent(evntEnum.item()).Start) {
                                                         keyz = -keyz;
                                                         break;
                                                 }
                                                 keyEnum.moveNext();
                                         }
                                         if (keyz > 0) {
-                                                var key_frame = new VideoMotionKeyframe( Project.ActiveProject, Vegas.Cursor-TrackEvent(evntEnum.item()).Start);
+                                                var key_frame = new VideoMotionKeyframe( Project.ActiveProject, Vegas.Transport.CursorPosition-TrackEvent(evntEnum.item()).Start);
                                                 VideoEvent(evntEnum.item()).VideoMotion.Keyframes.Add(key_frame);
                                         } else {
                                                 keyz = -keyz;

@@ -20,7 +20,7 @@ try
         var evntEnum = new Enumerator(Titlebgtrack.Events);
         //var ev_edit = 0;
         while (!evntEnum.atEnd()) {
-              if ((TrackEvent(evntEnum.item()).Start <= Vegas.Cursor) & (TrackEvent(evntEnum.item()).Start + TrackEvent(evntEnum.item()).Length >= Vegas.Cursor)) {
+              if ((TrackEvent(evntEnum.item()).Start <= Vegas.Transport.CursorPosition) & (TrackEvent(evntEnum.item()).Start + TrackEvent(evntEnum.item()).Length >= Vegas.Transport.CursorPosition)) {
                  //ev_edit = 1;
                  var medi_a = TrackEvent(evntEnum.item()).ActiveTake.Media;
                  medi_a.Length = TrackEvent(evntEnum.item()).Length;
@@ -33,7 +33,7 @@ try
                  locparam.Keyframes[1].Time = TrackEvent(evntEnum.item()).Length - Timecode.FromFrames(1);
                  //MessageBox.Show(NewTickerPos.X, NewTickerPos.Y, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                  locparam.Keyframes[1].Value = NewTickerPos;
-                 Vegas.Cursor = TrackEvent(evntEnum.item()).Start + TrackEvent(evntEnum.item()).Length - Timecode.FromFrames(1);
+                 Vegas.Transport.CursorPosition = TrackEvent(evntEnum.item()).Start + TrackEvent(evntEnum.item()).Length - Timecode.FromFrames(1);
                  throw(1);
               }
               evntEnum.moveNext();
@@ -105,7 +105,7 @@ function CreateGeneratedMedia(ticker_track, presetName) {
       throw "failed to create media; " + presetName + " (" + presetName + ")";
   }
   var stream = media.Streams[0]; //The "video" stream
-  var newEvent = new VideoEvent(new Timecode(Vegas.Cursor), ttl_length);
+  var newEvent = new VideoEvent(new Timecode(Vegas.Transport.CursorPosition), ttl_length);
   ticker_track.Events.Add(newEvent);
   var take = new Take(stream);
   newEvent.Takes.Add(take);

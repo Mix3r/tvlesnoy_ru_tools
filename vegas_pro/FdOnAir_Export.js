@@ -99,7 +99,7 @@ try
 					goto_timer = goto_timer + int(trackEnum.item().Name.substring(4,5)) * 10 + int(trackEnum.item().Name.substring(5,6));
 				}
 			}
-			Vegas.Cursor = Timecode.FromMilliseconds(goto_timer * 1000);
+			Vegas.Transport.CursorPosition = Timecode.FromMilliseconds(goto_timer * 1000);
 			//MessageBox.Show(goto_timer, "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			trackEnum.item().Name = null;
 			throw "fuck";

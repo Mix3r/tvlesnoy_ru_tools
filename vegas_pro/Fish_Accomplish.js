@@ -13,7 +13,7 @@ try
  
 	var FishRegion = FindRegion("Fish");
  	if (null == FishRegion) {
-		FishRegion = new Region(Vegas.Cursor,Timecode.FromMilliseconds(5000),"Fish");
+		FishRegion = new Region(Vegas.Transport.CursorPosition,Timecode.FromMilliseconds(5000),"Fish");
 		Vegas.Project.Regions.Add(FishRegion);
 	} else {
 		var prevlength = Timecode.FromMilliseconds(0);
@@ -23,7 +23,7 @@ try
 			var evntEnum = new Enumerator(track.Events);
 			while (!evntEnum.atEnd()) {
 				var evnt : TrackEvent = TrackEvent(evntEnum.item());
-				if ((evnt.Start <= Vegas.Cursor) & ((evnt.End > Vegas.Cursor) || ((evnt.End == Vegas.Cursor) & (Vegas.SelectionStart+Vegas.SelectionLength == Vegas.Cursor)))          ) {    //  & (evnt.IsVideo())
+				if ((evnt.Start <= Vegas.Transport.CursorPosition) & ((evnt.End > Vegas.Transport.CursorPosition) || ((evnt.End == Vegas.Transport.CursorPosition) & (Vegas.SelectionStart+Vegas.SelectionLength == Vegas.Transport.CursorPosition)))          ) {    //  & (evnt.IsVideo())
 					//evnt.Length = Timecode.FromMilliseconds(3000);
 					//MessageBox.Show(evnt.Group, "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 					if (FishRegion.Length == Timecode.FromMilliseconds(0)) {
@@ -33,10 +33,10 @@ try
 						var mediaPath = activeTake.MediaPath;
 						var media = Vegas.Project.MediaPool[mediaPath];
 						//MessageBox.Show(mediaPath, "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-						if ((Vegas.Cursor == Vegas.SelectionStart) || (Vegas.Cursor == Vegas.SelectionStart+Vegas.SelectionLength)) {
+						if ((Vegas.Transport.CursorPosition == Vegas.SelectionStart) || (Vegas.Transport.CursorPosition == Vegas.SelectionStart+Vegas.SelectionLength)) {
 						} else {
 							Vegas.SelectionLength = Timecode.FromMilliseconds(3000);
-							Vegas.SelectionStart = Vegas.Cursor;
+							Vegas.SelectionStart = Vegas.Transport.CursorPosition;
 						}
 						//FishRegion.Position = FishRegion.Position - prevlength;
 						prevlength = Vegas.SelectionLength;
@@ -74,7 +74,7 @@ try
 			if (FishRegion.Length-prevlength <= Timecode.FromMilliseconds(0)) {
 				FishRegion.Length = prevlength;
 				MessageBox.Show("OK!", "OK", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-				Vegas.Cursor = FishRegion.Position+FishRegion.Length;
+				Vegas.Transport.CursorPosition = FishRegion.Position+FishRegion.Length;
 			}
 			FishRegion.Length = FishRegion.Length-prevlength;
 			FishRegion.Position = FishRegion.Position+prevlength;

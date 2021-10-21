@@ -12,9 +12,9 @@ try
         while (!trackEnum.atEnd()) {
                 var evntEnum = new Enumerator(Track(trackEnum.item()).Events);
                 while (!evntEnum.atEnd()) {
-                        if (TrackEvent(evntEnum.item()).Selected) {
+                        if (TrackEvent(evntEnum.item()).Selected && TrackEvent(evntEnum.item()).Start <= Vegas.Transport.CursorPosition && TrackEvent(evntEnum.item()).Start + TrackEvent(evntEnum.item()).Length >= Vegas.Transport.CursorPosition) {
                                 if (TrackEvent(evntEnum.item()).IsVideo()) {
-                                        Vegas.Cursor = TrackEvent(evntEnum.item()).Start;
+                                        Vegas.Transport.CursorPosition = TrackEvent(evntEnum.item()).Start;
                                         var keyEnum = new Enumerator(VideoEvent(evntEnum.item()).VideoMotion.Keyframes);
                                         var keyz = 0;
                                         while (!keyEnum.atEnd()) {

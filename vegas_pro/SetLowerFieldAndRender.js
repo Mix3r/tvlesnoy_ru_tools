@@ -17,7 +17,7 @@ try {
       } else {
               var evntEnum = new Enumerator(Titlebgtrack.Events);
               while (!evntEnum.atEnd()) {
-              if ((TrackEvent(evntEnum.item()).Start <= Vegas.Cursor) & (TrackEvent(evntEnum.item()).Start + TrackEvent(evntEnum.item()).Length >= Vegas.Cursor)) {
+              if ((TrackEvent(evntEnum.item()).Start <= Vegas.Transport.CursorPosition) & (TrackEvent(evntEnum.item()).Start + TrackEvent(evntEnum.item()).Length >= Vegas.Transport.CursorPosition)) {
                  //ev_edit = 1;
                  var tickr = VideoEvent(evntEnum.item());
                  tickr.VideoMotion.Keyframes[1].Position = TrackEvent(evntEnum.item()).Length - Timecode.FromFrames(1);
@@ -32,7 +32,7 @@ try {
                  }
                  var moveby2_2 = new VideoMotionVertex(d_width2 * (-1 + TrackEvent(evntEnum.item()).FadeIn.Gain*2),0);
                  tkey_frame.MoveBy(moveby2_2);
-                 Vegas.Cursor = TrackEvent(evntEnum.item()).Start + TrackEvent(evntEnum.item()).Length - Timecode.FromFrames(1);
+                 Vegas.Transport.CursorPosition = TrackEvent(evntEnum.item()).Start + TrackEvent(evntEnum.item()).Length - Timecode.FromFrames(1);
                  throw "ok";
               }
               evntEnum.moveNext();
@@ -55,12 +55,12 @@ try {
           }
           var narEnum = new Enumerator(Narratortrack.Events);
           while (!narEnum.atEnd()) {
-                  if ((TrackEvent(narEnum.item()).Start <= Vegas.Cursor) & (TrackEvent(narEnum.item()).Start + TrackEvent(narEnum.item()).Length >= Vegas.Cursor)) {
+                  if ((TrackEvent(narEnum.item()).Start <= Vegas.Transport.CursorPosition) & (TrackEvent(narEnum.item()).Start + TrackEvent(narEnum.item()).Length >= Vegas.Transport.CursorPosition)) {
                           idx = 1;
                           var naractiveTake = TrackEvent(narEnum.item()).ActiveTake;
                           VideoEvent(narEnum.item()).ResampleMode = "Disable";
 		          var narmediaPath = naractiveTake.MediaPath + "_";
-                          RegionName = Vegas.Cursor.ToMilliseconds().ToString();
+                          RegionName = Vegas.Transport.CursorPosition.ToMilliseconds().ToString();
                           narmediaPath = narmediaPath.substring(0, narmediaPath.length - 5) + "_";
                           narmediaPath = narmediaPath + RegionName +"_TXT.tif";
                   }
@@ -115,7 +115,7 @@ try {
           var media = new Media(narmediaPath);
           var stream = media.Streams[0]; //The "video" stream
           stream.AlphaChannel = "Straight";
-          var newEvent = new VideoEvent(Vegas.Transport.LoopRegionStart, Vegas.SelectionLength);
+          var newEvent = new VideoEvent(Vegas.Transport.CursorPosition, Vegas.SelectionLength);
           Titlebgtrack.Events.Add(newEvent);
           var take = new Take(stream);
 	  newEvent.Takes.Add(take);
