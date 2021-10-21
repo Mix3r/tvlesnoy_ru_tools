@@ -115,7 +115,7 @@ try {
           var media = new Media(narmediaPath);
           var stream = media.Streams[0]; //The "video" stream
           stream.AlphaChannel = "Straight";
-          var newEvent = new VideoEvent(Vegas.Cursor, Vegas.SelectionLength);
+          var newEvent = new VideoEvent(Vegas.Transport.LoopRegionStart, Vegas.SelectionLength);
           Titlebgtrack.Events.Add(newEvent);
           var take = new Take(stream);
 	  newEvent.Takes.Add(take);
