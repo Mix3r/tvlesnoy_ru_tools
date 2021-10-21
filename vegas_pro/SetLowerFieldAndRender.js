@@ -115,7 +115,10 @@ try {
           var media = new Media(narmediaPath);
           var stream = media.Streams[0]; //The "video" stream
           stream.AlphaChannel = "Straight";
-          var newEvent = new VideoEvent(Vegas.Transport.CursorPosition, Vegas.SelectionLength);
+          if (Vegas.Transport.CursorPosition == Vegas.Transport.LoopRegionStart + Vegas.Transport.LoopRegionLength) {
+                  Vegas.Transport.CursorPosition = Vegas.Transport.LoopRegionStart;
+          }
+          var newEvent = new VideoEvent(Vegas.Transport.CursorPosition, Vegas.Transport.LoopRegionLength);
           Titlebgtrack.Events.Add(newEvent);
           var take = new Take(stream);
 	  newEvent.Takes.Add(take);
@@ -158,13 +161,8 @@ catch (e) {
 }
 // End Main Program
 
-//
-// ---------------------------------
 // Begin functions
 
-
-
-//-------------------------------------------------------
 // Form subclass that is the dialog box for this script
 class MainDialog extends Form {
     var RegionNameBox;
@@ -197,9 +195,8 @@ class MainDialog extends Form {
 
         var titleHeight = this.Height - this.ClientSize.Height;
         this.Height = titleHeight + NextButton.Bottom + 20;
-    }   // End function MainDialog
-//
-// -------------------------------------
+    }
+
     function addTextControl(labelName, left, width, top, defaultValue) {
         var label = new Label();
         label.AutoSize = true;

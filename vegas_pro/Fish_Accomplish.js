@@ -13,7 +13,10 @@ try
  
 	var FishRegion = FindRegion("Fish");
  	if (null == FishRegion) {
-		FishRegion = new Region(Vegas.Transport.CursorPosition,Timecode.FromMilliseconds(5000),"Fish");
+                if (Vegas.Transport.CursorPosition == Vegas.Transport.LoopRegionStart + Vegas.Transport.LoopRegionLength) {
+                        Vegas.Transport.CursorPosition = Vegas.Transport.LoopRegionStart;
+                }
+		FishRegion = new Region(Vegas.Transport.CursorPosition,Vegas.Transport.LoopRegionLength,"Fish");
 		Vegas.Project.Regions.Add(FishRegion);
 	} else {
 		var prevlength = Timecode.FromMilliseconds(0);
