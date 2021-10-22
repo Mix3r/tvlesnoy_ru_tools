@@ -81,6 +81,11 @@ try {
           //writer2.WriteLine("pause");
           writer2.Close();
 
+          var this_media = Vegas.Project.MediaPool.Find(narmediaPath);
+          if (null == this_media) {
+          } else {
+                  Vegas.Project.MediaPool.Remove(narmediaPath);
+          }
 
           var prog1 = new System.Diagnostics.Process();
 	  var prog1_nfo = new System.Diagnostics.ProcessStartInfo();
@@ -112,6 +117,10 @@ try {
                   Titlebgtrack = new VideoTrack(0, "Ticker");
                   Vegas.Project.Tracks.Add(Titlebgtrack);
 	  }
+
+          //var mrk = new MarkerCommandType("URL");
+          //var newcmd = new CommandMarker(Vegas.Transport.CursorPosition,mrk,dialog.RegionNameBox.Text);
+          //Vegas.Project.CommandMarkers.Add(newcmd);
           var media = new Media(narmediaPath);
           var stream = media.Streams[0]; //The "video" stream
           stream.AlphaChannel = "Straight";
