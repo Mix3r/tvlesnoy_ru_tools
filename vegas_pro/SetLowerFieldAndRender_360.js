@@ -1,6 +1,6 @@
 /**
-* Upper to Lower field and render  ---------- NARRATOR 1.0 feature
-*
+* Render  ---- batch render --- NARRATOR 2.0 feature
+* make regions with full paths to batch render
 **/
 import System;
 import System.Text;
@@ -74,7 +74,6 @@ try {
                 var numregions = 0;
                 var regionEnum = new Enumerator(Vegas.Project.Regions);
                 while (!regionEnum.atEnd()) {
-                        numregions = numregions+1;
 	                var rgn : Region = Region(regionEnum.item());
                         var trackEnum = new Enumerator(Vegas.Project.Tracks);
                         while (!trackEnum.atEnd()) {
@@ -85,6 +84,7 @@ try {
 				                var evnt2 : TrackEvent = TrackEvent(evntEnum.item());
 				                if (evnt2.Start == rgn.Position) {
 					                /////
+                                                        numregions = numregions+1;
                                                         rgn.Label = Vegas.Project.Summary.Copyright+evnt2.ActiveTake.Name+" (OK)";
                                                         var renderStatus = Vegas.Render(rgn.Label + "." + String(extRE).substring(2,String(extRE).length-1), renderTemplate,rgn.Position,rgn.Length);
                                                         /////
@@ -120,15 +120,39 @@ try {
         }
 
 	titl = Vegas.Project.Summary.Copyright+titl;
+        var ex_t = String(extRE).substring(1,String(extRE).length-1);
 
-	var ofn = ShowSaveFileDialog("Видео (*.MP4)|*.MP4", "MP4 для эфира - "+renderer.FileTypeName, titl);
+        ////////////////////
+        var regionEnum2 = new Enumerator(Vegas.Project.Regions);
+        var numregions2 = 0;
+        while (!regionEnum2.atEnd()) {
+	        var rgn2 : Region = Region(regionEnum2.item());
+                var rgn2_st = rgn2.Label.substring(1,2);
+                if (rgn2_st == ":" || rgn2_st == "\\") {
+                        numregions2 = numregions2+1;
+                        if (rgn2.Label.length < 5) {
+		                rgn2.Label = rgn2.Label + ex_t;
+	                }
+	                if (rgn2.Label.substring(rgn2.Label.length-4).toUpperCase() != ex_t.toUpperCase()) {
+		                rgn2.Label = rgn2.Label + ex_t;
+	                }
+                        var renderStatus = Vegas.Render(rgn2.Label, renderTemplate,rgn2.Position,rgn2.Length);
+                }
+	        regionEnum2.moveNext();
+        }
+        if (numregions2 > 0) {
+                throw "ok1";
+        }
+        ////////////////////
+
+	var ofn = ShowSaveFileDialog("Видео (*"+ex_t+")|*"+ex_t, ex_t+" для эфира - "+renderer.FileTypeName, titl);
 
 	if (ofn.length < 5) {
-		ofn = ofn + ".MP4";
+		ofn = ofn + ex_t;
 	}
 	titl = ofn.substring(ofn.length-4);
-	if (titl.toUpperCase() != ".MP4") {
-		ofn = ofn + ".MP4";
+	if (titl.toUpperCase() != ex_t.toUpperCase()) {
+		ofn = ofn + ex_t;
 	}
 
         var renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.SelectionStart,Vegas.SelectionLength);
