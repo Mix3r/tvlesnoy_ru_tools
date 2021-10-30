@@ -24,6 +24,9 @@ Name: "vid_scripts1"; Description: "Cкрипты для видеоредакт�
 Name: "videoeditor1"; Description: "Видеоредактор 13"; Types: custom;
 Name: "videoeditor1/en"; Description: "EN"; Types: custom; Flags: exclusive
 Name: "videoeditor1/ru"; Description: "RU"; Types: custom; Flags: exclusive
+Name: "videoeditor2"; Description: "Видеоредактор 19"; Types: custom;
+Name: "videoeditor2/en"; Description: "EN"; Types: custom; Flags: exclusive
+Name: "videoeditor2/ru"; Description: "RU"; Types: custom; Flags: exclusive
 Name: "soundeditor"; Description: "Звукорежиссёр"; Types: custom;
 Name: "soundeditor/en"; Description: "EN"; Types: custom; Flags: exclusive
 Name: "soundeditor/ru"; Description: "RU"; Types: custom; Flags: exclusive
@@ -232,6 +235,55 @@ begin
                     end;
                 end else if (WizardIsComponentSelected('videoeditor1/ru')) then begin
                     if Exec(ExpandConstant('{tmp}\tmp\VegasPro-13.0.545.exe'), '/S /R', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+
+                    end else begin
+
+                    end;
+                end;
+                DownloadPage.Hide;
+            end;
+        end;
+        // videoeditor section ends here
+        if (WizardIsComponentSelected('videoeditor2')) then begin
+            DownloadPage.Clear;
+            GitDownTmp('ve19p.7z.001');
+            GitDownTmp('ve19p.7z.002');
+            GitDownTmp('ve19p.7z.003');
+            GitDownTmp('ve19p.7z.004');
+            GitDownTmp('ve19p.7z.005');
+            GitDownTmp('ve19p.7z.006');
+            GitDownTmp('ve19p.7z.007');
+            GitDownTmp('ve19p.7z.008');
+            GitDownTmp('ve19p.7z.009');
+            GitDownTmp('ve19p.7z.010');
+            GitDownTmp('ve19p.7z.011');
+            GitDownTmp('ve19p.7z.012');
+            GitDownTmp('ve19p.7z.013');
+            GitDownTmp('ve19p.7z.014');
+            GitDownTmp('ve19p.7z.015');
+            GitDownTmp('ve19p.7z.016');
+            GitDownTmp('ve19p.exe'); 
+            DownloadPage.Show;
+            try
+                try
+                    DownloadPage.Download; // This downloads the files to {tmp}
+                    {Result := True;}
+                except
+                    if DownloadPage.AbortedByUser then begin
+                        Log('Aborted by user.')
+                    end else begin
+                        SuppressibleMsgBox(AddPeriod(GetExceptionMessage), mbCriticalError, MB_OK, IDOK);
+                    end;
+                    {Result := False;}
+                end;
+            finally
+                if Exec(ExpandConstant('{tmp}\tmp\ve19p.exe'), '-y /q', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+
+                end else begin
+
+                end;
+                if (WizardIsComponentSelected('videoeditor2/en')) then begin
+                    if Exec(ExpandConstant('{tmp}\tmp\ve19.exe'), '', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
 
                     end else begin
 
