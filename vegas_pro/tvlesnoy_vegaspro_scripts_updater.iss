@@ -26,7 +26,6 @@ Name: "videoeditor1/en"; Description: "EN"; Types: custom; Flags: exclusive
 Name: "videoeditor1/ru"; Description: "RU"; Types: custom; Flags: exclusive
 Name: "videoeditor2"; Description: "Видеоредактор 19"; Types: custom;
 Name: "videoeditor2/en"; Description: "EN"; Types: custom; Flags: exclusive
-Name: "videoeditor2/ru"; Description: "RU"; Types: custom; Flags: exclusive
 Name: "soundeditor"; Description: "Звукорежиссёр"; Types: custom;
 Name: "soundeditor/en"; Description: "EN"; Types: custom; Flags: exclusive
 Name: "soundeditor/ru"; Description: "RU"; Types: custom; Flags: exclusive
