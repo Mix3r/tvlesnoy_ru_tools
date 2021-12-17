@@ -29,7 +29,7 @@ Name: "videoeditor2/en"; Description: "EN"; Types: custom; Flags: exclusive
 Name: "soundeditor"; Description: "Звукорежиссёр"; Types: custom;
 Name: "soundeditor/en"; Description: "EN"; Types: custom; Flags: exclusive
 Name: "soundeditor/ru"; Description: "RU"; Types: custom; Flags: exclusive
-Name: "networktv"; Description: "Сеть TV"; Types: custom;
+Name: "networktv"; Description: "Сеть TV (папка рабочих мест Телецентра на Рабочем столе)"; Types: custom;
 
 [Files]
 ; Place any regular files here
@@ -127,70 +127,6 @@ var ResultCode: integer; wr_str:string;
 begin
     if CurPageID = wpReady then begin
         DownloadPage.Clear;
-        if (WizardIsComponentSelected('vid_scripts1')) then begin
-            GitDown('ConvertAllMpegHD_AVI-DV.js');
-            GitDown('ConvertAllMpegHD_AVI-DV.js.png');
-            GitDown('CTC Titles.js');
-            GitDown('CTC Titles.js.png');
-            GitDown('ctc-sample.png');
-            GitDown('ctc-sample.psd');
-            GitDown('D_Blender_Ticker.js');
-            GitDown('D_Blender_Ticker.js.png');
-            GitDown('FdOnAir_Export.js');
-            GitDown('FdOnAir_Export.js.png');
-            GitDown('Fish_Accomplish.js');
-            GitDown('Fish_Accomplish.js.png');
-            GitDown('Norm_Arbitrary.js');
-            GitDown('Norm_Arbitrary.js.png');
-            GitDown('playlist_settime.exe');
-            GitDown('Remove Letterboxing.cs');
-            GitDown('Remove Letterboxing.cs.png');
-            GitDown('Remove_Doubles.js');
-            GitDown('Render_Youtube_1080_30p.js');
-            GitDown('Render_Youtube_1080_30p.js.png');
-            GitDown('SetHD720pAndRender.js');
-            GitDown('SetHD720pAndRender.js.png');
-            GitDown('SetLowerFieldAndRender.js');
-            GitDown('setlowerfieldandrender.js.png');
-            GitDown('SetLowerFieldAndRender_360.js');
-            GitDown('SetLowerFieldAndRender_360.js.png');
-            GitDown('smai75x75_alpha75_hd.png');
-            GitDown('WindowsMediaVideo.js');
-            GitDown('WindowsMediaVideo.js.png');
-            GitDown('Титры_спектрмаи.psd');
-            GitDown('keyboard.ini');
-            GitDown('audio_plugin_update.exe');
-            GitDown('360_admin.sft2');    
-            GitDown('ОТЧЁТ_DVD Architect PAL Widescreen.sft2');
-            GitDown('video_editor1_setup.reg');
-            GitDown('tvlesnoy_moveleft.js');
-            GitDown('tvlesnoy_moveright.js');
-            GitDown('tvlesnoy_moveup.js');
-            GitDown('tvlesnoy_movedown.js');
-            GitDown('tvlesnoy_movenull.js');
-            GitDown('tvlesnoy_scaleup.js');
-            GitDown('tvlesnoy_scaledown.js');
-            GitDown('tvlesnoy_scaleup_x.js');
-            GitDown('tvlesnoy_scaledown_x.js');
-            GitDown('tvlesnoy_scalexy.js');
-            GitDown('tvlesnoy_rotate.js');            
-        end;
-        DownloadPage.Show;
-        try
-            try
-                DownloadPage.Download; // This downloads the files to {tmp}
-                Result := True;
-            except
-                if DownloadPage.AbortedByUser then begin
-                    Log('Aborted by user.')
-                end else begin
-                    SuppressibleMsgBox(AddPeriod(GetExceptionMessage), mbCriticalError, MB_OK, IDOK);
-                end;
-                Result := False;
-            end;
-        finally
-            DownloadPage.Hide;
-        end;
         // add network shortcuts
         if (WizardIsComponentSelected('networktv')) then begin
             wr_str:='[.ShellClassInfo]' + #13#10 + ExpandConstant('IconResource={sys}\shell32.dll,18');
@@ -334,5 +270,71 @@ begin
             end;
         end;
         // soundeditor section ends here
+        // scripts section goes here
+        if (WizardIsComponentSelected('vid_scripts1')) then begin
+            GitDown('ConvertAllMpegHD_AVI-DV.js');
+            GitDown('ConvertAllMpegHD_AVI-DV.js.png');
+            GitDown('CTC Titles.js');
+            GitDown('CTC Titles.js.png');
+            GitDown('ctc-sample.png');
+            GitDown('ctc-sample.psd');
+            GitDown('D_Blender_Ticker.js');
+            GitDown('D_Blender_Ticker.js.png');
+            GitDown('FdOnAir_Export.js');
+            GitDown('FdOnAir_Export.js.png');
+            GitDown('Fish_Accomplish.js');
+            GitDown('Fish_Accomplish.js.png');
+            GitDown('Norm_Arbitrary.js');
+            GitDown('Norm_Arbitrary.js.png');
+            GitDown('playlist_settime.exe');
+            GitDown('Remove Letterboxing.cs');
+            GitDown('Remove Letterboxing.cs.png');
+            GitDown('Remove_Doubles.js');
+            GitDown('Render_Youtube_1080_30p.js');
+            GitDown('Render_Youtube_1080_30p.js.png');
+            GitDown('SetHD720pAndRender.js');
+            GitDown('SetHD720pAndRender.js.png');
+            GitDown('SetLowerFieldAndRender.js');
+            GitDown('setlowerfieldandrender.js.png');
+            GitDown('SetLowerFieldAndRender_360.js');
+            GitDown('SetLowerFieldAndRender_360.js.png');
+            GitDown('smai75x75_alpha75_hd.png');
+            GitDown('WindowsMediaVideo.js');
+            GitDown('WindowsMediaVideo.js.png');
+            GitDown('Титры_спектрмаи.psd');
+            GitDown('keyboard.ini');
+            GitDown('audio_plugin_update.exe');
+            GitDown('360_admin.sft2');    
+            GitDown('ОТЧЁТ_DVD Architect PAL Widescreen.sft2');
+            GitDown('video_editor1_setup.reg');
+            GitDown('tvlesnoy_moveleft.js');
+            GitDown('tvlesnoy_moveright.js');
+            GitDown('tvlesnoy_moveup.js');
+            GitDown('tvlesnoy_movedown.js');
+            GitDown('tvlesnoy_movenull.js');
+            GitDown('tvlesnoy_scaleup.js');
+            GitDown('tvlesnoy_scaledown.js');
+            GitDown('tvlesnoy_scaleup_x.js');
+            GitDown('tvlesnoy_scaledown_x.js');
+            GitDown('tvlesnoy_scalexy.js');
+            GitDown('tvlesnoy_rotate.js');            
+        end;
+        DownloadPage.Show;
+        try
+            try
+                DownloadPage.Download; // This downloads the files to {tmp}
+                Result := True;
+            except
+                if DownloadPage.AbortedByUser then begin
+                    Log('Aborted by user.')
+                end else begin
+                    SuppressibleMsgBox(AddPeriod(GetExceptionMessage), mbCriticalError, MB_OK, IDOK);
+                end;
+                Result := False;
+            end;
+        finally
+            DownloadPage.Hide;
+        end;
+        // scripts section ends here
     end else Result := True;
 end;
