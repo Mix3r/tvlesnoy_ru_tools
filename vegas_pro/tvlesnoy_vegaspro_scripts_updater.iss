@@ -3,7 +3,7 @@
 [Setup]
 AppName=Vegas Pro Scripts TVLesnoy
 AppPublisher=Mix3r_Durachok
-AppVersion=1.0
+AppVersion=1.1
 Compression=lzma
 DefaultDirName={autopf64}\VEGAS\VEGAS Pro 13.0
 DefaultGroupName=My Program
