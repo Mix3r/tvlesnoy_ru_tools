@@ -77,7 +77,7 @@ Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{autopf64}\Sony\Veg
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{autopf64}\Sony\Vegas 7.0\Script Menu"" ""smai75x75_alpha75_hd.png"" /MOV"; Flags: runhidden runascurrentuser; 
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64"" ""audio_plugin_update.exe"" /MOV"; Flags: runhidden runascurrentuser; 
 Filename: "{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64\audio_plugin_update.exe"; Parameters: "-y /q"; Flags: runhidden runascurrentuser; 
-Filename: reg.exe; Parameters: "IMPORT ""{tmp}\git\video_editor1_setup.reg"""; Flags: runhidden runascurrentuser;
+Filename: reg.exe; Parameters: "IMPORT ""{tmp}\git\video_editor1_setup.reg"""; Flags: runascurrentuser;
 
 [Code]
 var
@@ -272,6 +272,7 @@ begin
         // soundeditor section ends here
         // scripts section goes here
         if (WizardIsComponentSelected('vid_scripts1')) then begin
+            DownloadPage.Clear;
             GitDown('ConvertAllMpegHD_AVI-DV.js');
             GitDown('ConvertAllMpegHD_AVI-DV.js.png');
             GitDown('CTC Titles.js');
