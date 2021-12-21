@@ -75,9 +75,9 @@ Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{userappdata}\Sony\
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{userappdata}\Sony\Render Templates\mpeg2-mc"" ""*PAL Widescreen.sft2"" /MOV"; Flags: runhidden runascurrentuser; 
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{autopf64}\Sony\Vegas 7.0\Script Menu"" ""ctc-sample.png"" /MOV"; Flags: runhidden runascurrentuser;
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{autopf64}\Sony\Vegas 7.0\Script Menu"" ""smai75x75_alpha75_hd.png"" /MOV"; Flags: runhidden runascurrentuser; 
-Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64"" ""audio_plugin_update.exe"" /MOV"; Flags: runhidden runascurrentuser; 
+Filename: robocopy.exe; Parameters: """{tmp}\tmp"" ""{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64"" ""audio_plugin_update.exe"" /MOV"; Flags: runhidden runascurrentuser; 
 Filename: "{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64\audio_plugin_update.exe"; Parameters: "-y /q"; Flags: runhidden runascurrentuser; 
-Filename: reg.exe; Parameters: "IMPORT ""{tmp}\git\video_editor1_setup.reg"""; Flags: runascurrentuser;
+; Filename: reg.exe; Parameters: "IMPORT ""{app}\Script Menu\video_editor1_setup.reg"""; Flags: runhidden runascurrentuser;
 
 [Code]
 var
@@ -141,7 +141,8 @@ begin
             GitDownTmp('video_editor1.7z.004'); 
             GitDownTmp('video_editor1.7z.005'); 
             GitDownTmp('video_editor1.7z.006'); 
-            GitDownTmp('video_editor1.7z.007'); 
+            GitDownTmp('video_editor1.7z.007');
+            GitDownTmp('audio_plugin_update.exe');
             GitDownTmp('video_editor1.exe'); 
             DownloadPage.Show;
             try
@@ -304,7 +305,6 @@ begin
             GitDown('WindowsMediaVideo.js.png');
             GitDown('Титры_спектрмаи.psd');
             GitDown('keyboard.ini');
-            GitDown('audio_plugin_update.exe');
             GitDown('360_admin.sft2');    
             GitDown('ОТЧЁТ_DVD Architect PAL Widescreen.sft2');
             GitDown('video_editor1_setup.reg');
@@ -335,6 +335,9 @@ begin
             end;
         finally
             DownloadPage.Hide;
+            if Exec('reg.exe',ExpandConstant('IMPORT {tmp}\git\video_editor1_setup.reg'), '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then begin
+            end else begin
+            end;
         end;
         // scripts section ends here
     end else Result := True;
