@@ -3,7 +3,7 @@
 [Setup]
 AppName=Vegas Pro Scripts TVLesnoy
 AppPublisher=Mix3r_Durachok
-AppVersion=1.2
+AppVersion=1.21
 Compression=lzma
 DefaultDirName={autopf64}\VEGAS\VEGAS Pro 13.0
 DefaultGroupName=My Program
@@ -349,7 +349,7 @@ begin
             end;
         finally
             DownloadPage.Hide;
-            if Exec('reg.exe',ExpandConstant('IMPORT {tmp}\git\video_editor1_setup.reg'), '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then begin
+            if Exec('reg.exe',ExpandConstant('IMPORT "{tmp}\git\video_editor1_setup.reg"'), '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then begin
             end else begin
             end;
         end;
