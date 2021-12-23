@@ -271,7 +271,6 @@ Windows Registry Editor Version 5.00
 "10242"=dword:00000000
 "10072"=dword:259af197
 "S10415"="C:\\Program Files\\VEGAS\\VEGAS Pro 13.0\\VidCap60.EXE"
-"S10065"="Intl"
 "10134"=dword:04000015
 "10142"=dword:0400000f
 "10056"=dword:00000000
@@ -382,15 +381,15 @@ Windows Registry Editor Version 5.00
 "10957"=dword:0000009c
 "B1007"=hex:90,01,00,00
 "10345"=dword:00000105
-"S10368"="{Svfx:com.sonycreativesoftware:zoom}"
 "S10369"="{C843A552-AAEB-411C-8481-CF4C52A336E3}"
-"S10370"="{Svfx:com.sonycreativesoftware:push}"
-"S10371"="{Svfx:com.sonycreativesoftware:crosseffect}"
 "10427"=dword:00000001
 "10733"=dword:000000cf
 "10734"=dword:000000c8
 "10735"=dword:00000010
 "S11126"="URL"
+"S10136"="e"
+"S10137"="e"
+"S10138"="e"
 "B1009"=hex:90,01,00,00
 "B3900"=hex:02,00,00,00,02,00,00,00,5e,01,00,00,61,01,00,00,68,01,00,00,00,00,\
   00,00
@@ -405,8 +404,6 @@ Windows Registry Editor Version 5.00
 "B2119"=hex:02,00,00,00,01,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,\
   00,00,15,02,00,00,77,02,00,00,6e,00,00,00,49,00,00,00,83,02,00,00,c0,02,00,\
   00
-"S10474"="SFMMCX"
-"S10476"="ATAPI iHAS122   C XL08"
 "10477"=dword:00000011
 "10478"=dword:00000000
 "10479"=dword:00000002
