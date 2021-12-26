@@ -44,6 +44,8 @@ Name: "{userappdata}\Sony\Render Templates\mpeg2-mc"
 Name: "{autopf64}\Sony\Vegas 7.0\Script Menu"
 Name: "{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64"
 Name: "{userdesktop}\Сеть TV"; Components: networktv
+Name: "{userdocs}\OFX Presets\com.sonycreativesoftware_titlesandtext\Generator"; Components: vid_scripts1
+
 
 [Icons]
 Name: "{userdesktop}\Сеть TV\_CEPBEP"; Filename: "\\Server\Захват (e)"; WorkingDir: ""; Components: networktv
@@ -70,7 +72,7 @@ Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{userappdata}\Sony\
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{userappdata}\Sony\Render Templates\mpeg2-mc"" ""*PAL Widescreen.sft2"" /MOV"; Flags: runhidden runascurrentuser; 
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{autopf64}\Sony\Vegas 7.0\Script Menu"" ""ctc-sample.png"" /MOV"; Flags: runhidden runascurrentuser;
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{autopf64}\Sony\Vegas 7.0\Script Menu"" ""smai75x75_alpha75_hd.png"" /MOV"; Flags: runhidden runascurrentuser; 
-Filename: "{tmp}\tmp\audio_plugin_update.exe"; Parameters: "-y -o""{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64"" /q"; Flags: runhidden runascurrentuser; 
+Filename: "{tmp}\tmp\audio_plugin_update.exe"; Parameters: "-y -o""{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64"" /q"; Components: videoeditor1; Flags: runhidden runascurrentuser; 
 
 [Code]
 var
