@@ -37,14 +37,14 @@ Name: "networktv"; Description: "Сеть TV (папка рабочих мест
 Source: "{tmp}\desktop.ini"; DestDir: "{userdesktop}\Сеть TV"; Components: networktv; Attribs: hidden; Flags: external
 
 [Dirs]
-Name: "{commonappdata}\Vegas Pro\13.0"
-Name: "{userappdata}\Vegas Pro\13.0"
-Name: "{userappdata}\Sony\Render Templates\wmv11"
-Name: "{userappdata}\Sony\Render Templates\mpeg2-mc"
-Name: "{autopf64}\Sony\Vegas 7.0\Script Menu"
-Name: "{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64"
-Name: "{userdesktop}\Сеть TV"; Components: networktv
+Name: "{commonappdata}\Vegas Pro\13.0"; Components: vid_scripts1
+Name: "{userappdata}\Vegas Pro\13.0"; Components: vid_scripts1
+Name: "{userappdata}\Sony\Render Templates\wmv11"; Components: vid_scripts1
+Name: "{userappdata}\Sony\Render Templates\mpeg2-mc"; Components: vid_scripts1
+Name: "{autopf64}\Sony\Vegas 7.0\Script Menu"; Components: vid_scripts1
 Name: "{userdocs}\OFX Presets\com.sonycreativesoftware_titlesandtext\Generator"; Components: vid_scripts1
+Name: "{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64"; Components: videoeditor1
+Name: "{userdesktop}\Сеть TV"; Components: networktv
 
 
 [Icons]
