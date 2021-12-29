@@ -3,17 +3,19 @@ import System;
 import System.IO;
 import System.Object;
 import Sony.Vegas;
-//import System.Windows.Forms;
+import System.Windows.Forms;
 import ScriptPortal.Vegas;
 
 try
 {
         var trackEnum = new Enumerator(Vegas.Project.Tracks);
+        var bIsSelected = 0;
         while (!trackEnum.atEnd()) {
                 var evntEnum = new Enumerator(Track(trackEnum.item()).Events);
                 while (!evntEnum.atEnd()) {
                         if (TrackEvent(evntEnum.item()).Selected && TrackEvent(evntEnum.item()).Start <= Vegas.Transport.CursorPosition && TrackEvent(evntEnum.item()).Start + TrackEvent(evntEnum.item()).Length >= Vegas.Transport.CursorPosition) {
                                 if (TrackEvent(evntEnum.item()).IsVideo()) {
+                                        bIsSelected = 1;
                                         Vegas.Transport.CursorPosition = TrackEvent(evntEnum.item()).Start;
                                         var keyEnum = new Enumerator(VideoEvent(evntEnum.item()).VideoMotion.Keyframes);
                                         var keyz = 0;
@@ -50,10 +52,31 @@ try
                         }
                         evntEnum.moveNext();
                 }
+                if (Track(trackEnum.item()).Selected) {
+                        var tActivTrk : Track = Track(trackEnum.item());
+                }
                 trackEnum.moveNext();
+        }
+        if (bIsSelected == 0) {
+                if (tActivTrk != null) {
+                        var eActivTrkEvts = new Enumerator(tActivTrk.Events);
+                        while (!eActivTrkEvts.atEnd()) {
+                                if (TrackEvent(eActivTrkEvts.item()).Start <= Vegas.Transport.CursorPosition && TrackEvent(eActivTrkEvts.item()).Start + TrackEvent(eActivTrkEvts.item()).Length > Vegas.Transport.CursorPosition) {
+                                        throw "no";
+                                }
+                                eActivTrkEvts.moveNext();
+                        }
+                        var generator = Vegas.Generators.GetChildByClassID(new Guid("8B5DEABC-53BD-49F6-9803-367478307A59"));
+                        var gradientc = new Media(generator, "TV_White");
+                        var stm_txt = gradientc.Streams[0];
+                        var evt_txt = new VideoEvent(Vegas.Transport.CursorPosition, Timecode.FromMilliseconds(1000));
+                        tActivTrk.Events.Add(evt_txt);
+                        var txt_take = new Take(stm_txt);
+                        evt_txt.Takes.Add(txt_take);
+                }
         }
 }
 catch (errorMsg)
 {
-	//MessageBox.Show(errorMsg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        // MessageBox.Show(errorMsg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 }
