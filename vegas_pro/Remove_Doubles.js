@@ -1,5 +1,7 @@
 /** 
 old school
+ffmpeg -f concat -safe 0 -i "C:\Program Files\VEGAS\VEGAS Pro 13.0\vegas_cut_a_slice.txt" -c copy D:\Games\output2b.mp4
+pause
  **/ 
 
 import System;
@@ -7,12 +9,16 @@ import System.IO;
 import System.Object;
 import System.Windows.Forms;
 import Sony.Vegas;
+import ScriptPortal.Vegas;
+
+var writer : StreamWriter = null;
 
 try
 {
  
 	var trackEnum = new Enumerator(Vegas.Project.Tracks);
 	var deleted_items = 0;
+        var writer_go = 0;
 	while (!trackEnum.atEnd()) {
 		var events_present = 1;
 		while (events_present == 1) {
@@ -30,13 +36,38 @@ try
 					}
 					lasteventstart = TrackEvent(evntEnum.item()).Start;
 					lasteventlength = TrackEvent(evntEnum.item()).Length;
-				}
+				} else {
+                                        if (writer_go <= 0) {
+                                                writer_go = 1;
+                                                writer = new StreamWriter(Vegas.InstallationDirectory + "\\vegas_cut_a_slice.txt", false, System.Text.Encoding.ASCII);
+                                        }
+                                        var activeTake = TrackEvent(evntEnum.item()).ActiveTake;
+                                        var mediaPath = activeTake.MediaPath;
+                                        var media = Vegas.Project.MediaPool[mediaPath];
+                                        var stringcache = "file '"+mediaPath+"'";
+                                        stringcache = stringcache.replace(/\\/g, "/");
+                                        writer.WriteLine(stringcache);
+                                        stringcache = "inpoint "+activeTake.Offset.ToString(RulerFormat.TimeAndFrames);
+                                        stringcache = stringcache.replace(/,/g, ".");
+                                        writer.WriteLine(stringcache);
+                                        stringcache = "outpoint "+(activeTake.Offset+TrackEvent(evntEnum.item()).Length).ToString(RulerFormat.TimeAndFrames);
+                                        stringcache = stringcache.replace(/,/g, ".");
+                                        writer.WriteLine(stringcache);
+
+                                }
 				evntEnum.moveNext();
 			}
 		}
+                if (writer_go > 0) {
+                         writer.Close();
+                         writer_go = -1;
+                }
 		trackEnum.moveNext();
 	}
-	MessageBox.Show(deleted_items, "Deleted Doubles", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        if (deleted_items > 0) {
+	        MessageBox.Show(deleted_items, "Deleted Doubles", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+        }
+
 }
 
 catch (errorMsg)
