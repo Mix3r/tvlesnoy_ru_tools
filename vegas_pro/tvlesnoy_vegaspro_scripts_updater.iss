@@ -29,6 +29,7 @@ Name: "videoeditor2/en"; Description: "EN"; Types: custom; Flags: exclusive
 Name: "soundeditor"; Description: "Звукорежиссёр"; Types: custom;
 Name: "soundeditor/en"; Description: "EN"; Types: custom; Flags: exclusive
 Name: "soundeditor/ru"; Description: "RU"; Types: custom; Flags: exclusive
+Name: "doublecmd_p"; Description: "Double Commander for TV"; Types: custom;
 Name: "networktv"; Description: "Сеть TV (папка рабочих мест Телецентра на Рабочем столе)"; Types: custom;
 
 [Files]
@@ -57,7 +58,7 @@ Name: "{userdesktop}\Сеть TV\_КОРРЕСПОНДЕНТ-КУР"; Filename: 
 Name: "{userdesktop}\Сеть TV\_КОРРЕСПОНДЕНТ-НОВ"; Filename: "\\Reporter1\RepShared"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\_НОВОСТИ"; Filename: "\\smolkina\ВСЕ!!!!"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\_МЕНЕДЖЕР-ПО-РЕКЛАМЕ"; Filename: "\\Korepina\Общее"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_РЕДАКТОР"; Filename: "\\aza\D"; WorkingDir: ""; Components: networktv
+Name: "{userdesktop}\Сеть TV\_РЕДАКТОР"; Filename: "\\Aza\D"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\_РЕЖИССЕР"; Filename: "\\Regisser\захват"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\_СУФЛЕР"; Filename: "\\studio\Share"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\_РЕЖИССЕР-2ЭТАЖ"; Filename: "\\Ivanova\общее"; WorkingDir: ""; Components: networktv
@@ -273,6 +274,31 @@ begin
             end;
         end;
         // soundeditor section ends here
+        // Double Commander TV goes here
+        if (WizardIsComponentSelected('doublecmd_p')) then begin
+            DownloadPage.Clear;           
+            GitDownTmp('dc32.exe');
+            DownloadPage.Show;
+            try
+                try
+                    DownloadPage.Download; // This downloads the files to {tmp}
+                    {Result := True;}
+                except
+                    if DownloadPage.AbortedByUser then begin
+                        Log('Aborted by user.')
+                    end else begin
+                        SuppressibleMsgBox(AddPeriod(GetExceptionMessage), mbCriticalError, MB_OK, IDOK);
+                    end;
+                    {Result := False;}
+                end;
+            finally
+                if Exec(ExpandConstant('{tmp}\tmp\dc32.exe'), '/S', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+                end else begin
+                end;
+                DownloadPage.Hide;
+            end;
+        end;
+        // dc tv ends here
         // scripts section goes here
         if (WizardIsComponentSelected('vid_scripts1')) then begin
             DownloadPage.Clear;
