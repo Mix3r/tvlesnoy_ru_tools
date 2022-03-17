@@ -366,24 +366,24 @@ begin
             GitDown('tvlesnoy_scaledown_x.js');
             GitDown('tvlesnoy_scalexy.js');
             GitDown('tvlesnoy_rotate.js');            
-        end;
-        DownloadPage.Show;
-        try
+            DownloadPage.Show;
             try
-                DownloadPage.Download; // This downloads the files to {tmp}
-                Result := True;
-            except
-                if DownloadPage.AbortedByUser then begin
-                    Log('Aborted by user.')
-                end else begin
-                    SuppressibleMsgBox(AddPeriod(GetExceptionMessage), mbCriticalError, MB_OK, IDOK);
+                try
+                    DownloadPage.Download; // This downloads the files to {tmp}
+                    Result := True;
+                except
+                    if DownloadPage.AbortedByUser then begin
+                        Log('Aborted by user.')
+                    end else begin
+                        SuppressibleMsgBox(AddPeriod(GetExceptionMessage), mbCriticalError, MB_OK, IDOK);
+                    end;
+                    Result := False;
                 end;
-                Result := False;
-            end;
-        finally
-            DownloadPage.Hide;
-            if Exec('reg.exe',ExpandConstant('IMPORT "{tmp}\git\video_editor1_setup.reg"'), '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then begin
-            end else begin
+            finally
+                DownloadPage.Hide;
+                if Exec('reg.exe',ExpandConstant('IMPORT "{tmp}\git\video_editor1_setup.reg"'), '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then begin
+                end else begin
+                end;
             end;
         end;
         // scripts section ends here
