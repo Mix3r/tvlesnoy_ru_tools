@@ -163,7 +163,7 @@ begin
             try
                 try
                     DownloadPage.Download; // This downloads the files to {tmp}
-                    {Result := True;}
+                    Result := True;
                 except
                     if DownloadPage.AbortedByUser then begin
                         Log('Aborted by user.')
@@ -225,7 +225,7 @@ begin
             try
                 try
                     DownloadPage.Download; // This downloads the files to {tmp}
-                    {Result := True;}
+                    Result := True;
                 except
                     if DownloadPage.AbortedByUser then begin
                         Log('Aborted by user.')
@@ -261,7 +261,7 @@ begin
             try
                 try
                     DownloadPage.Download; // This downloads the files to {tmp}
-                    {Result := True;}
+                    Result := True;
                 except
                     if DownloadPage.AbortedByUser then begin
                         Log('Aborted by user.')
@@ -301,7 +301,7 @@ begin
             try
                 try
                     DownloadPage.Download; // This downloads the files to {tmp}
-                    {Result := True;}
+                    Result := True;
                 except
                     if DownloadPage.AbortedByUser then begin
                         Log('Aborted by user.')
@@ -327,7 +327,7 @@ begin
             try
                 try
                     DownloadPage.Download; // This downloads the files to {tmp}
-                    {Result := True;}
+                    Result := True;
                 except
                     if DownloadPage.AbortedByUser then begin
                         Log('Aborted by user.')
