@@ -318,6 +318,32 @@ begin
             end;
         end;
         // dc tv ends here
+        // FFMPEG goes here
+        if (WizardIsComponentSelected('ffmpeg_p')) then begin
+            DownloadPage.Clear;           
+            GitDownTmp('@https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl-shared.zip');
+            GitDownTmp('setup_ffmpeg_latest.cmd');
+            DownloadPage.Show;
+            try
+                try
+                    DownloadPage.Download; // This downloads the files to {tmp}
+                    {Result := True;}
+                except
+                    if DownloadPage.AbortedByUser then begin
+                        Log('Aborted by user.')
+                    end else begin
+                        SuppressibleMsgBox(AddPeriod(GetExceptionMessage), mbCriticalError, MB_OK, IDOK);
+                    end;
+                    {Result := False;}
+                end;
+            finally
+                if Exec('cmd.exe', ExpandConstant('/c "{tmp}\tmp\setup_ffmpeg_latest.cmd"'), '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+                end else begin
+                end;
+                DownloadPage.Hide;
+            end;
+        end;
+        // ffmpeg ends here
         // scripts section goes here
         if (WizardIsComponentSelected('vid_scripts1')) then begin
             DownloadPage.Clear;
