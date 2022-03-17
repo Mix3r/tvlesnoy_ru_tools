@@ -30,6 +30,7 @@ Name: "soundeditor"; Description: "Звукорежиссёр"; Types: custom;
 Name: "soundeditor/en"; Description: "EN"; Types: custom; Flags: exclusive
 Name: "soundeditor/ru"; Description: "RU"; Types: custom; Flags: exclusive
 Name: "doublecmd_p"; Description: "Double Commander for TV"; Types: custom;
+Name: "ffmpeg_p"; Description: "FFMPEG (конвертор видео для Vegas и Double Commander)"; Types: custom;
 Name: "networktv"; Description: "Сеть TV (папка рабочих мест Телецентра на Рабочем столе)"; Types: custom;
 
 [Files]
@@ -105,17 +106,35 @@ begin
     DownloadPage.Add('https://github.com/Mix3r/tvlesnoy_ru_tools/raw/main/vegas_pro/'+gittmp, 'git/'+whattoget, '');
 end;
 procedure GitDownTmp(whattoget:string);
-var gittmp:string; i:integer;
+var gittmp:string; i,jcnt:integer;
 begin
     gittmp:='';
-    for i:=1 to Length(whattoget) do begin
-        if (whattoget[i] = ' ') then begin
-            gittmp:=gittmp+'%20';
-        end else begin
+    if (whattoget[1] = '@') then begin
+        for i:=2 to Length(whattoget) do begin
             gittmp:=gittmp+whattoget[i];
+            if (whattoget[i] = '/') then begin
+                jcnt:=i*1;
+            end;
         end;
+        whattoget:='';
+        for i:=jcnt to Length(gittmp) do begin
+            if (gittmp[i] = ' ') then begin
+                whattoget:=whattoget+'%20';
+            end else begin
+                whattoget:=whattoget+gittmp[i];
+            end;
+        end;
+        DownloadPage.Add(gittmp, 'tmp/'+whattoget, '');
+    end else begin
+        for i:=1 to Length(whattoget) do begin
+            if (whattoget[i] = ' ') then begin
+                gittmp:=gittmp+'%20';
+            end else begin
+                gittmp:=gittmp+whattoget[i];
+            end;
+        end;
+        DownloadPage.Add('https://github.com/Mix3r/tvlesnoy_ru_tools/raw/main/vegas_pro/'+gittmp, 'tmp/'+whattoget, '');
     end;
-    DownloadPage.Add('https://github.com/Mix3r/tvlesnoy_ru_tools/raw/main/vegas_pro/'+gittmp, 'tmp/'+whattoget, '');
 end;
 
 function NextButtonClick(CurPageID: Integer): Boolean;
