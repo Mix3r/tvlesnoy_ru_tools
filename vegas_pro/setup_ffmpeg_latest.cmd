@@ -17,4 +17,9 @@ if exist %vbs% del /f /q %vbs%
 >>%vbs% echo Set fso = Nothing
 >>%vbs% echo Set objShell = Nothing
 cscript //nologo %vbs%
+cd /D %1
+robocopy ".\ffmpeg-master-latest-win64-gpl-shared\bin" "..\FFMPEG" /E /MOV
+robocopy ".\ffmpeg-master-latest-win64-gpl-shared\bin" ".\ffmpeg-master-latest-win64-gpl-shared" /MIR
+rmdir /s /q "ffmpeg-master-latest-win64-gpl-shared"
+pause
 if exist %vbs% del /f /q %vbs%
