@@ -27,9 +27,9 @@ Name: "videoeditor1/ru"; Description: "RU"; Types: custom; Flags: exclusive
 Name: "videoeditor2"; Description: "Видеоредактор версии 19"; Types: custom;
 Name: "videoeditor2/en"; Description: "EN"; Types: custom; Flags: exclusive
 Name: "soundeditor"; Description: "Звукорежиссёр"; Types: custom;
-Name: "aradiotempl"; Description: "Звукорежиссёр - шаблон Авторадио"; Types: custom;
 Name: "soundeditor/en"; Description: "EN"; Types: custom; Flags: exclusive
 Name: "soundeditor/ru"; Description: "RU"; Types: custom; Flags: exclusive
+Name: "aradiotempl"; Description: "Звукорежиссёр - шаблон Авторадио"; Types: custom;
 Name: "doublecmd_p"; Description: "Double Commander for TV"; Types: custom;
 Name: "ffmpeg_p"; Description: "FFMPEG (конвертор видео для Vegas и Double Commander)"; Types: custom;
 Name: "networktv"; Description: "Сеть TV (папка рабочих мест Телецентра на Рабочем столе)"; Types: custom;
