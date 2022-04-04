@@ -27,6 +27,7 @@ Name: "videoeditor1/ru"; Description: "RU"; Types: custom; Flags: exclusive
 Name: "videoeditor2"; Description: "Видеоредактор версии 19"; Types: custom;
 Name: "videoeditor2/en"; Description: "EN"; Types: custom; Flags: exclusive
 Name: "soundeditor"; Description: "Звукорежиссёр"; Types: custom;
+Name: "aradiotempl"; Description: "Звукорежиссёр - шаблон Авторадио"; Types: custom;
 Name: "soundeditor/en"; Description: "EN"; Types: custom; Flags: exclusive
 Name: "soundeditor/ru"; Description: "RU"; Types: custom; Flags: exclusive
 Name: "doublecmd_p"; Description: "Double Commander for TV"; Types: custom;
@@ -293,6 +294,33 @@ begin
             end;
         end;
         // soundeditor section ends here
+        // Autoradio template goes here
+        if (WizardIsComponentSelected('aradiotempl')) then begin
+            DownloadPage.Clear;           
+            GitDownTmp('aradiocopy.7z.001');
+            GitDownTmp('aradiocopy.7z.002');
+            GitDownTmp('aradiocopy.exe');
+            DownloadPage.Show;
+            try
+                try
+                    DownloadPage.Download; // This downloads the files to {tmp}
+                    Result := True;
+                except
+                    if DownloadPage.AbortedByUser then begin
+                        Log('Aborted by user.')
+                    end else begin
+                        SuppressibleMsgBox(AddPeriod(GetExceptionMessage), mbCriticalError, MB_OK, IDOK);
+                    end;
+                    {Result := False;}
+                end;
+            finally
+                if Exec(ExpandConstant('{tmp}\tmp\aradiocopy.exe'), '/S', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+                end else begin
+                end;
+                DownloadPage.Hide;
+            end;
+        end;
+        // dc tv ends here
         // Double Commander TV goes here
         if (WizardIsComponentSelected('doublecmd_p')) then begin
             DownloadPage.Clear;           
