@@ -69,9 +69,11 @@ try {
                 throw "failed to find render template";
 
 	var titl = Path.GetFileNameWithoutExtension(Vegas.Project.FilePath);
-
+	
         var trks = new Enumerator(Vegas.Project.Tracks);
         while (!trks.atEnd()) {
+                var evnts = new Enumerator(Track(trks.item()).Events);
+                while (!evnts.atEnd()) {
                         if (TrackEvent(evnts.item()).IsVideo()) {
                                 if (VideoEvent(evnts.item()).ResampleMode != "Force") {
                                         VideoEvent(evnts.item()).ResampleMode = "Disable";
@@ -85,6 +87,8 @@ try {
                                 }
                         }
                         evnts.moveNext();
+                }
+                trks.moveNext();
         }
 
 	if (Vegas.Project.Summary.Title == "narrator") {
