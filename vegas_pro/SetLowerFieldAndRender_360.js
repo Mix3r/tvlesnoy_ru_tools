@@ -56,6 +56,7 @@ try {
 
 	var templateRE = /HQ 1920x1080-50i, /;
 	var extRE = /.MP4/;
+	var bFirstAudioEvent = 0;
 	
 	var renderer : Renderer = FindRenderer(templateRE);
 	
@@ -71,16 +72,19 @@ try {
 
         var trks = new Enumerator(Vegas.Project.Tracks);
         while (!trks.atEnd()) {
-                var evnts = new Enumerator(Track(trks.item()).Events);
-                while (!evnts.atEnd()) {
                         if (TrackEvent(evnts.item()).IsVideo()) {
                                 if (VideoEvent(evnts.item()).ResampleMode != "Force") {
                                         VideoEvent(evnts.item()).ResampleMode = "Disable";
                                 }
+                        } else if (bFirstAudioEvent == 0) {
+                                bFirstAudioEvent = 1;
+                                if (Track(trks.item()).Name == null) {
+					if (Vegas.Project.FilePath != null) {
+                                                Track(trks.item()).Name = Path.GetDirectoryName(Vegas.Project.FilePath);
+					}
+                                }
                         }
                         evnts.moveNext();
-                }
-                trks.moveNext();
         }
 
 	if (Vegas.Project.Summary.Title == "narrator") {
@@ -128,9 +132,6 @@ try {
 			trackEnum.moveNext();
 		}
 	} else {
-                if (Vegas.Project.FilePath != null) {
-                        Vegas.Project.Audio.RecordedFilesFolder = Path.GetDirectoryName(Vegas.Project.FilePath);
-                }
         }
 
 	titl = Vegas.Project.Summary.Copyright+titl;
