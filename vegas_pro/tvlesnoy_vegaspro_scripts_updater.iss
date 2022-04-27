@@ -7,6 +7,7 @@ AppVersion=1.22
 Compression=lzma
 DefaultDirName={autopf64}\VEGAS\VEGAS Pro 13.0
 DefaultGroupName=My Program
+DisableDirPage=yes
 DisableProgramGroupPage=yes
 OutputDir=userdocs:
 OutputBaseFilename=tvlesnoy_vegaspro_scripts_updater
@@ -20,7 +21,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl";
 Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl";
 
 [Components]
-Name: "vid_scripts1"; Description: "Cкрипты для видеоредактора"; Types: full compact custom;
+Name: "vid_scripts1"; Description: "Cкрипты для видеоредактора"; Types: custom;
 Name: "videoeditor1"; Description: "Видеоредактор версии 13"; Types: custom;
 Name: "videoeditor1/en"; Description: "EN"; Types: custom; Flags: exclusive
 Name: "videoeditor1/ru"; Description: "RU"; Types: custom; Flags: exclusive
@@ -54,17 +55,17 @@ Name: "{userdesktop}\Сеть TV"; Components: networktv
 Name: "{userdesktop}\Сеть TV\_CEPBEP"; Filename: "\\Server\Захват (e)"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\_МОДЕРАТОР"; Filename: "\\METELKINA\Share"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\_ГЛАВРЕД"; Filename: "\\Glavred\Общее"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_ЗВУКОРЕЖИССЕР"; Filename: "\\xrebtova\Монтаж звука"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_МЕХАНИК"; Filename: "\\Mikheev\захват"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_КОРРЕСПОНДЕНТ-КУР"; Filename: "\\Ostanina\Общее"; WorkingDir: ""; Components: networktv
+Name: "{userdesktop}\Сеть TV\_XРЕБТОВА"; Filename: "\\xrebtova\Монтаж звука"; WorkingDir: ""; Components: networktv
+Name: "{userdesktop}\Сеть TV\_МИХЕЕВ"; Filename: "\\Mikheev\захват"; WorkingDir: ""; Components: networktv
+Name: "{userdesktop}\Сеть TV\_ЖУРНАЛИСТ"; Filename: "\\Journalist\Общее"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\_КОРРЕСПОНДЕНТ-НОВ"; Filename: "\\Reporter1\RepShared"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_НОВОСТИ"; Filename: "\\smolkina\ВСЕ!!!!"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_МЕНЕДЖЕР-ПО-РЕКЛАМЕ"; Filename: "\\Korepina\Общее"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_РЕДАКТОР"; Filename: "\\Aza\D"; WorkingDir: ""; Components: networktv
+Name: "{userdesktop}\Сеть TV\_СМОЛКИНА"; Filename: "\\smolkina\ВСЕ!!!!"; WorkingDir: ""; Components: networktv
+Name: "{userdesktop}\Сеть TV\_КОРЕПИНА"; Filename: "\\Korepina\Общее"; WorkingDir: ""; Components: networktv
+Name: "{userdesktop}\Сеть TV\_АЗА"; Filename: "\\Aza\D"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\_РЕЖИССЕР"; Filename: "\\Regisser\захват"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\_СУФЛЕР"; Filename: "\\studio\Share"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_РЕЖИССЕР-2ЭТАЖ"; Filename: "\\Ivanova\общее"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_МЕХАНИК-2ЭТАЖ"; Filename: "\\anton\Disc_E"; WorkingDir: ""; Components: networktv
+Name: "{userdesktop}\Сеть TV\_ИВАНОВА"; Filename: "\\Ivanova\общее"; WorkingDir: ""; Components: networktv
+Name: "{userdesktop}\Сеть TV\_АНТОН"; Filename: "\\anton\Disc_E"; WorkingDir: ""; Components: networktv
 
 [Run]
 Filename: robocopy.exe; Parameters: """{tmp}\git"" ""{app}\Script Menu"" /E /MOV"; Flags: runhidden runascurrentuser;
