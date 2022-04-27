@@ -83,7 +83,12 @@ try {
                                 if (Track(trks.item()).Name == null) {
 					if (Vegas.Project.FilePath != null) {
                                                 Track(trks.item()).Name = Path.GetDirectoryName(Vegas.Project.FilePath);
-					}
+					} else {
+                                                if (TrackEvent(evnts.item()).ActiveTake != null) {
+                                                        var mediaPath = TrackEvent(evnts.item()).ActiveTake.MediaPath;
+                                                        Track(trks.item()).Name = Path.GetDirectoryName(mediaPath);
+                                                }
+                                        }
                                 }
                         }
                         evnts.moveNext();
