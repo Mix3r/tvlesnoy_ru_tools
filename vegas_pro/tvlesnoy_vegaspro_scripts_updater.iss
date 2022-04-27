@@ -419,7 +419,8 @@ begin
             GitDown('tvlesnoy_scaleup_x.js');
             GitDown('tvlesnoy_scaledown_x.js');
             GitDown('tvlesnoy_scalexy.js');
-            GitDown('tvlesnoy_rotate.js');            
+            GitDown('tvlesnoy_rotate.js');
+            GitDown('tvlesnoy_vegaspro_scripts_updater.iss');
             DownloadPage.Show;
             try
                 try
