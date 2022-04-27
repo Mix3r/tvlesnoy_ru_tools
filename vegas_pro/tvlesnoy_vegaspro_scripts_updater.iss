@@ -58,7 +58,7 @@ Name: "{userdesktop}\Сеть TV\_ГЛАВРЕД"; Filename: "\\Glavred\Обще
 Name: "{userdesktop}\Сеть TV\_XРЕБТОВА"; Filename: "\\xrebtova\Монтаж звука"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\_МИХЕЕВ"; Filename: "\\Mikheev\захват"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\_ЖУРНАЛИСТ"; Filename: "\\Journalist\Общее"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_КОРРЕСПОНДЕНТ-НОВ"; Filename: "\\Reporter1\RepShared"; WorkingDir: ""; Components: networktv
+Name: "{userdesktop}\Сеть TV\_КОРРЕСПОНДЕНТ"; Filename: "\\korrespondent\ОБЩЕЕ"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\_СМОЛКИНА"; Filename: "\\smolkina\ВСЕ!!!!"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\_КОРЕПИНА"; Filename: "\\Korepina\Общее"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\_АЗА"; Filename: "\\Aza\D"; WorkingDir: ""; Components: networktv
