@@ -3,7 +3,6 @@ import System;
 import System.IO;
 import System.Object;
 import Sony.Vegas;
-import System.Windows.Forms;
 import ScriptPortal.Vegas;
 
 try
@@ -14,6 +13,7 @@ try
                 var evntEnum = new Enumerator(Track(trackEnum.item()).Events);
                 while (!evntEnum.atEnd()) {
                         if (TrackEvent(evntEnum.item()).Selected && TrackEvent(evntEnum.item()).Start <= Vegas.Transport.CursorPosition && TrackEvent(evntEnum.item()).Start + TrackEvent(evntEnum.item()).Length >= Vegas.Transport.CursorPosition) {
+                                TrackEvent(evntEnum.item()).AdjustPlaybackRate(1.0,1);
                                 if (TrackEvent(evntEnum.item()).IsVideo()) {
                                         bIsSelected = 1;
                                         Vegas.Transport.CursorPosition = TrackEvent(evntEnum.item()).Start;
