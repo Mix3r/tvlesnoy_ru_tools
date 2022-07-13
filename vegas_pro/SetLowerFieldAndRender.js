@@ -77,7 +77,7 @@ try {
           RegionName = RegionName.replace(/:::/g, "\\\\:/");
 
           writer2 = new StreamWriter(Vegas.InstallationDirectory + "\\vegas_bake_crawler.txt", false, System.Text.Encoding.Unicode);
-          writer2.WriteLine("\""+Vegas.InstallationDirectory+"\\..\\..\\Totalcmd_p\\FFMPEG\\ffmpeg.exe\" -f lavfi -i \"color=0x407c7d@0.5:size="+(dialog.RegionNameBox.Text.length*60+1920+1920).ToString()+"x74,format=rgba\" -vf drawtext=\"fontfile=C"+"\\"+"\\"+":/Windows/Fonts/arial.ttf:textfile="+ RegionName + "/vegas_bake_crawler.txt:y=h-line_h-4:x=-42:fontcolor=white:fontsize=65\" -frames:v 1 -c:v tiff -y \""+narmediaPath+"\"");
+          writer2.WriteLine("\""+Vegas.InstallationDirectory+"\\..\\..\\Totalcmd_p\\FFMPEG\\ffmpeg.exe\" -f lavfi -i \"color=0x407c7d@0.5:size="+(dialog.RegionNameBox.Text.length*35+1920+1920).ToString()+"x74,format=rgba\" -vf drawtext=\"fontfile=C"+"\\"+"\\"+":/Windows/Fonts/arial.ttf:textfile="+ RegionName + "/vegas_bake_crawler.txt:y=h-line_h-4:x=-42:fontcolor=white:fontsize=65\" -frames:v 1 -c:v tiff -y \""+narmediaPath+"\"");
           //writer2.WriteLine("pause");
           writer2.Close();
 
