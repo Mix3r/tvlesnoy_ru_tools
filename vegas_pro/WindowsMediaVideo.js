@@ -112,7 +112,10 @@ try {
 	}
 
 	var renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.SelectionStart,Vegas.SelectionLength);
-        Vegas.Project.Tracks.Remove(Titlestrack);
+        var TitlestrackKeep = FindTrack("keeplogo");
+        if (null == TitlestrackKeep) {
+                Vegas.Project.Tracks.Remove(Titlestrack);
+        }
         } else {
         var renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.SelectionStart,Vegas.SelectionLength);
         }

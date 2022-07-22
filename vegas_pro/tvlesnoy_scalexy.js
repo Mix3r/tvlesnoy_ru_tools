@@ -44,10 +44,13 @@ try
                                 }
                                 if (streamcount > 0) {
                                         if (Vegas.Transport.CursorPosition >= Timecode.FromSeconds(nRange)) {
-                                                tTargetpos = Vegas.Transport.CursorPosition + Timecode.FromSeconds(nRange);
+                                                var plainhour = Vegas.Transport.CursorPosition.ToMilliseconds();
+                                                plainhour = Math.floor(plainhour / (60*60*1000)) * (60*60*1000);
+                                                tTargetpos = Timecode.FromMilliseconds(plainhour) + Timecode.FromString(Vegas.Project.Summary.Artist,RulerFormat.TimeAndFrames,1);
                                         } else {
                                                 tTargetpos = tTmcodeIn + evnt.ActiveTake.Offset+(Vegas.Transport.CursorPosition-evnt.Start)+Timecode.FromSeconds(nRange);
                                                 Vegas.Project.Summary.Engineer = Vegas.Transport.CursorPosition.ToString(RulerFormat.TimeAndFrames);
+                                                Vegas.Project.Summary.Artist = tTargetpos.ToString(RulerFormat.TimeAndFrames);
                                         }
                                         Vegas.Transport.CursorPosition = tTargetpos;
                                         if (Vegas.Transport.CursorPosition == tTargetpos) {
