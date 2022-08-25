@@ -152,7 +152,7 @@ try {
         while (!regionEnum2.atEnd()) {
 	        var rgn2 : Region = Region(regionEnum2.item());
                 var rgn2_st = rgn2.Label.substring(1,2);
-                if (rgn2_st == ":" || rgn2_st == "\\") {
+                if ((rgn2_st == ":" || rgn2_st == "\\") & Vegas.Transport.LoopRegionStart <= rgn2.Position & Vegas.Transport.LoopRegionStart+Vegas.Transport.LoopRegionLength >= rgn2.Position+rgn2.Length) {
                         numregions2 = numregions2+1;
                         if (rgn2.Label.length < 5) {
 		                rgn2.Label = rgn2.Label + ex_t;
