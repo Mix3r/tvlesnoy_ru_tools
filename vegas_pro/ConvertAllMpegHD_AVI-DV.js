@@ -8,8 +8,8 @@ import ScriptPortal.Vegas;
 
 try {
 
-	var templateRE = /MJPEGNO50P/;
-	var extRE = /.mov/;
+	var templateRE = /Internet 1920x1080-30/;
+	var extRE = /.mp4/;
 	
 	var renderer : Renderer = FindRenderer(templateRE);
 	
@@ -25,7 +25,10 @@ try {
 
         while (!regionEnum.atEnd()) {
 	        var rgn : Region = Region(regionEnum.item());
-	        var renderStatus = Vegas.Render(rgn.Label + "." + String(extRE).substring(2,String(extRE).length-1), renderTemplate,rgn.Position,rgn.Length);
+                var rlbl = rgn.Label.substring(1,2);
+                if ((rlbl == ":" || rlbl == "\\") & Vegas.Transport.LoopRegionStart <= rgn.Position & Vegas.Transport.LoopRegionStart+Vegas.Transport.LoopRegionLength >= rgn.Position+rgn.Length) {
+	                var renderStatus = Vegas.Render(rgn.Label + "." + String(extRE).substring(2,String(extRE).length-1), renderTemplate,rgn.Position,rgn.Length);
+                }
 	        regionEnum.moveNext();
         }
 }
