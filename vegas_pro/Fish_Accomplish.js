@@ -81,15 +81,15 @@ try
                                                 }
 
                                                 if (evnt.IsAudio() || streamcount == 1) {
+                                                        if (evnt.Locked != 1 ) {
+                                                                evnt.Split(Vegas.Transport.LoopRegionStart+Vegas.Transport.LoopRegionLength-evnt.Start);
 
-                                                        evnt.Split(Vegas.Transport.LoopRegionStart+Vegas.Transport.LoopRegionLength-evnt.Start);
-
-						        if (Vegas.Transport.LoopRegionStart-evnt.Start <= Timecode.FromMilliseconds(0)) {
-							        track.Events.Remove(evnt);
-						        } else {
-							        evnt.Length=Vegas.Transport.LoopRegionStart-evnt.Start;
-						        }
-
+						                if (Vegas.Transport.LoopRegionStart-evnt.Start <= Timecode.FromMilliseconds(0)) {
+							                track.Events.Remove(evnt);
+						                } else {
+							                evnt.Length=Vegas.Transport.LoopRegionStart-evnt.Start;
+						                }
+                                                        }
                                                 }
 					}
 					break;
