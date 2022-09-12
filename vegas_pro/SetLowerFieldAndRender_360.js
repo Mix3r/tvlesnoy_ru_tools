@@ -26,33 +26,6 @@ try {
 	Vegas.Project.Ruler.Format = "TimeAndFrames";
 	Vegas.Project.Ruler.BeatsPerMinute = 60;
 	Vegas.Project.Ruler.BeatsPerMeasure = 4;
-	
-	var mediaEnum = new Enumerator(Vegas.Project.MediaPool);
-
-	while (!mediaEnum.atEnd()) {
-		var media = mediaEnum.item();
-		// FIX FIELD ORDER ROUTINE. --------------
-		if (media.IsOffline()) {
-                } else {
-                        if (media.HasVideo()) {
-			        var mm = new media.Streams();
-                                if (mm.Width == 1920 && mm.Height == 1080) {
-                                        if (mm.Format == "MPEG-2" && mm.FrameRate == 25.000) {
-                                                mm.FieldOrder = "UpperFieldFirst";
-                                        } else if (mm.Format == "Фото - JPEG" && mm.FrameRate == 25.000) {
-                                                mm.FieldOrder = "UpperFieldFirst";
-                                        }  else if (mm.Format == "Sony Motion JPEG" && mm.FrameRate == 25.000) {
-                                                mm.FieldOrder = "UpperFieldFirst";
-                                        }
-                                } else if (mm.Width == 720 && mm.Height == 576) {
-                                        if (mm.FrameRate == 25.000) {
-                                                // mm.FieldOrder = "LowerFieldFirst";
-                                        }
-                                }
-		        }
-                }
-		mediaEnum.moveNext();
-	}
 
 	var templateRE = /HQ 1920x1080-50i, /;
 	var extRE = /.MP4/;
@@ -75,7 +48,44 @@ try {
                 var evnts = new Enumerator(Track(trks.item()).Events);
                 while (!evnts.atEnd()) {
                         if (TrackEvent(evnts.item()).IsVideo()) {
-                                if (VideoEvent(evnts.item()).ResampleMode != "Force") {
+                                var envl_num = 0;
+                                if (null != TrackEvent(evnts.item()).ActiveTake) {
+                                        if (null != TrackEvent(evnts.item()).ActiveTake.MediaPath) {
+                                                var media3 = Vegas.Project.MediaPool[TrackEvent(evnts.item()).ActiveTake.MediaPath];
+                                                if (null != media3) {
+                                                        if (media3.IsOffline()) {
+                                                        } else {
+                                                                if (media3.HasVideo()) {
+                                                                        var mm3 = new media3.Streams();
+                                                                        if (mm3.Width == 1920 && mm3.Height == 1080) {
+                                                                                if (mm3.FrameRate == 25.000 && mm3.Format == "MPEG-2") {
+                                                                                        mm3.FieldOrder = "UpperFieldFirst";
+                                                                                //} else if (mm3.Format == "Фото - JPEG" && mm3.FrameRate == 25.000) {
+                                                                                        //mm3.FieldOrder = "UpperFieldFirst";
+                                                                                //}  else if (mm3.Format == "Sony Motion JPEG" && mm3.FrameRate == 25.000) {
+                                                                                        //mm3.FieldOrder = "UpperFieldFirst";
+                                                                                }
+                                                                        }
+                                                                        if (mm3.FieldOrder != "ProgressiveScan") {
+                                                                                envl_num = 999;
+                                                                        }
+                                                                }
+                                                        }
+                                                }
+                                        }
+                                }
+                                if (envl_num == 0) {
+                                        var envlps = new Enumerator(VideoEvent(evnts.item()).Envelopes);
+                                        while (!envlps.atEnd()) {
+                                                envl_num = envl_num + 1;
+                                                envlps.moveNext();
+                                        }
+                                }
+                                if (VideoEvent(evnts.item()).ResampleMode == "Force") {
+                                        // don't change resample mode
+                                } else if (TrackEvent(evnts.item()).PlaybackRate < 1 || envl_num > 0) {
+                                        VideoEvent(evnts.item()).ResampleMode = "Smart";
+                                } else {
                                         VideoEvent(evnts.item()).ResampleMode = "Disable";
                                 }
                         } else if (bFirstAudioEvent == 0) {
@@ -125,8 +135,9 @@ try {
                 }
                 if (numregions > 0) {
                         throw "ok1";
+                        // exit from here after batch render of narrator stuff
                 }
-                //////////////////////////////////////////////////////////////////////
+
 		var trackEnum = new Enumerator(Vegas.Project.Tracks);
 		while (!trackEnum.atEnd()) {
 			var track : Track = Track(trackEnum.item());
