@@ -25,18 +25,6 @@ try {
 	Vegas.Project.Ruler.Format = "TimeAndFrames";
 	Vegas.Project.Ruler.BeatsPerMinute = 60;
 	Vegas.Project.Ruler.BeatsPerMeasure = 4;
-	
-	var mediaEnum = new Enumerator(Vegas.Project.MediaPool);
-
-	while (!mediaEnum.atEnd()) {
-		var media = mediaEnum.item();
-		// video only
-		if (media.HasVideo()) {
-			var mm = new media.Streams();
-		//	mm.FieldOrder = "LowerFieldFirst";
-		}
-		mediaEnum.moveNext();
-	}
 
 	var templateRE = /360_admin/;
 	var extRE = /.wmv/;
@@ -50,6 +38,45 @@ try {
 	
         if (null == renderTemplate)
                 throw "failed to find render template";
+
+        var trks = new Enumerator(Vegas.Project.Tracks);
+        while (!trks.atEnd()) {
+                var evnts = new Enumerator(Track(trks.item()).Events);
+                while (!evnts.atEnd()) {
+                        if (TrackEvent(evnts.item()).IsVideo()) {
+                                var envl_num = 0;
+                                if (null != TrackEvent(evnts.item()).ActiveTake) {
+                                        if (null != TrackEvent(evnts.item()).ActiveTake.MediaPath) {
+                                                var media3 = Vegas.Project.MediaPool[TrackEvent(evnts.item()).ActiveTake.MediaPath];
+                                                if (null != media3) {
+                                                        if (media3.IsOffline()) {
+                                                        } else {
+                                                                if (media3.HasVideo()) {
+                                                                        var mm3 = new media3.Streams();
+                                                                        if (mm3.Width == 1920 && mm3.Height == 1080) {
+                                                                                if (mm3.FrameRate == 25.000 && mm3.Format == "MPEG-2") {
+                                                                                        mm3.FieldOrder = "UpperFieldFirst";
+                                                                                //} else if (mm3.Format == "Фото - JPEG" && mm3.FrameRate == 25.000) {
+                                                                                        //mm3.FieldOrder = "UpperFieldFirst";
+                                                                                //}  else if (mm3.Format == "Sony Motion JPEG" && mm3.FrameRate == 25.000) {
+                                                                                        //mm3.FieldOrder = "UpperFieldFirst";
+                                                                                }
+                                                                        }
+                                                                }
+                                                        }
+                                                }
+                                        }
+                                }
+                                if (VideoEvent(evnts.item()).ResampleMode == "Force") {
+                                        // don't change resample mode
+                                } else {
+                                        VideoEvent(evnts.item()).ResampleMode = "Disable";
+                                }
+                        }
+                        evnts.moveNext();
+                }
+                trks.moveNext();
+        }
 		
 	var projPath = Vegas.Project.FilePath;
 	var titl = Path.GetFileNameWithoutExtension(projPath);
