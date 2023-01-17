@@ -49,21 +49,12 @@ Name: "{autopf64}\Sony\Vegas 7.0\Script Menu"; Components: vid_scripts1
 Name: "{userdocs}\OFX Presets\com.sonycreativesoftware_titlesandtext\Generator"; Components: vid_scripts1
 Name: "{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64"; Components: videoeditor1
 Name: "{userdesktop}\Сеть TV"; Components: networktv
-Name: "{userdesktop}\Сеть TV\_ГЛАВРЕД"; Components: networktv
-Name: "{userdesktop}\Сеть TV\_СЕРВЕР"; Components: networktv
-
 
 [Icons]
-Name: "{userdesktop}\Сеть TV\_ГЛАВРЕД\Общее"; Filename: "\\Glavred\Общее"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_ГЛАВРЕД\Киноплёнка"; Filename: "\\Glavred\КИНОПЛЕНКА"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\1_СОГЛАСОВАНИЕ"; Filename: "\\Glavred\Общее\1 СОГЛАСОВАНИЕ"; WorkingDir: ""; Components: networktv
+Name: "{userdesktop}\Сеть TV\_ГЛАВРЕД"; Filename: "\\Glavred\Общее\Teleport"; WorkingDir: ""; Components: networktv
+Name: "{userdesktop}\Сеть TV\_CЕРВЕР"; Filename: "\\server\Захват (e)\_ОФОРМЛЕНИЕ\_TELEPORT"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\_CЮЖЕТЫ"; Filename: "\\server\Захват (e)\_СЮЖЕТЫ"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_СЕРВЕР\Захват_E"; Filename: "\\server\Захват (e)"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_СЕРВЕР\Видео_F"; Filename: "\\Server\Видео-F"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_СЕРВЕР\Архив_Н"; Filename: "\\Server\Архив-Н"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_СЕРВЕР\Архив_J"; Filename: "\\Server\Архив-J"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_СЕРВЕР\Архив_I"; Filename: "\\Server\Архив-I"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_СЕРВЕР\Архив_D"; Filename: "\\Server\АРХИВ_Д"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\МОДЕРАТОР"; Filename: "\\METELKINA\Share"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\XРЕБТОВА"; Filename: "\\xrebtova\Монтаж звука"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\МИХЕЕВ"; Filename: "\\Mikheev\захват"; WorkingDir: ""; Components: networktv
@@ -158,6 +149,7 @@ begin
         if (WizardIsComponentSelected('networktv')) then begin
             wr_str:='[.ShellClassInfo]' + #13#10 + ExpandConstant('IconResource={sys}\shell32.dll,18');
             SaveStringToFile(ExpandConstant('{tmp}\desktop.ini'), wr_str, False);
+            Result := True;
         end;
         // videoeditor section
         if (WizardIsComponentSelected('videoeditor1')) then begin
