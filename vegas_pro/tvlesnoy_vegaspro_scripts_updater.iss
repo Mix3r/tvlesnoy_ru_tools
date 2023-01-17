@@ -53,7 +53,7 @@ Name: "{userdesktop}\Сеть TV"; Components: networktv
 [Icons]
 Name: "{userdesktop}\Сеть TV\1_СОГЛАСОВАНИЕ"; Filename: "\\Glavred\Общее\1 СОГЛАСОВАНИЕ"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\_ГЛАВРЕД"; Filename: "\\Glavred\Общее\Teleport"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_CЕРВЕР"; Filename: "\\server\Захват (e)\_ОФОРМЛЕНИЕ\_TELEPORT"; WorkingDir: ""; Components: networktv
+Name: "{userdesktop}\Сеть TV\_CЕРВЕР"; Filename: "\\server\Захват (e)\Teleport"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\_CЮЖЕТЫ"; Filename: "\\server\Захват (e)\_СЮЖЕТЫ"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\МОДЕРАТОР"; Filename: "\\METELKINA\Share"; WorkingDir: ""; Components: networktv
 Name: "{userdesktop}\Сеть TV\XРЕБТОВА"; Filename: "\\xrebtova\Монтаж звука"; WorkingDir: ""; Components: networktv
