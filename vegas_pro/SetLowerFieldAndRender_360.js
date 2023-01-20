@@ -1,5 +1,5 @@
 /**
-* Render  ---- batch render --- NARRATOR 2.0 feature
+* Render  - batch render --- NARRATOR 2.0 feature
 * make regions with full paths to batch render
 **/
 import System;
@@ -26,10 +26,12 @@ try {
 	Vegas.Project.Ruler.Format = "TimeAndFrames";
 	Vegas.Project.Ruler.BeatsPerMinute = 60;
 	Vegas.Project.Ruler.BeatsPerMeasure = 4;
+        Vegas.Project.Ruler.StartTime = Timecode.FromMilliseconds(0);
 
 	var templateRE = /HQ 1920x1080-50i, /;
 	var extRE = /.MP4/;
 	var bFirstAudioEvent = 0;
+        var nMTSOffset = 40;
 	
 	var renderer : Renderer = FindRenderer(templateRE);
 	
@@ -88,15 +90,44 @@ try {
                                 } else {
                                         VideoEvent(evnts.item()).ResampleMode = "Disable";
                                 }
-                        } else if (bFirstAudioEvent == 0) {
-                                bFirstAudioEvent = 1;
-                                if (Track(trks.item()).Name == null) {
+                        } else {
+                                if (bFirstAudioEvent == 0) {
+                                        bFirstAudioEvent = 1;
+                                        var sLocalname = "";
 					if (Vegas.Project.FilePath != null) {
-                                                Track(trks.item()).Name = Path.GetDirectoryName(Vegas.Project.FilePath);
+                                                sLocalname = Path.GetDirectoryName(Vegas.Project.FilePath);
 					} else {
                                                 if (TrackEvent(evnts.item()).ActiveTake != null) {
-                                                        var mediaPath = TrackEvent(evnts.item()).ActiveTake.MediaPath;
-                                                        Track(trks.item()).Name = Path.GetDirectoryName(mediaPath);
+                                                        if (TrackEvent(evnts.item()).ActiveTake.MediaPath != null) {
+                                                                sLocalname = Path.GetDirectoryName(TrackEvent(evnts.item()).ActiveTake.MediaPath);
+                                                        }
+                                                }
+                                        }
+                                        var cmdenum = new Enumerator(Vegas.Project.CommandMarkers);
+                                        var mCMText = new MarkerCommandType("TEXT");
+                                        while (!cmdenum.atEnd()) {
+                                                var cmdent : CommandMarker = CommandMarker(cmdenum.item());
+                                                if (cmdent.Position == Timecode.FromMilliseconds(0)) {
+                                                        bFirstAudioEvent = 2;
+                                                        cmdent.SetCommand(mCMText,sLocalname);
+                                                        break;
+                                                }
+                                                cmdenum.moveNext();
+                                        }
+                                        if (bFirstAudioEvent != 2) {
+                                                var First_ID = new CommandMarker(Timecode.FromMilliseconds(0),mCMText,sLocalname);
+                                                Vegas.Project.CommandMarkers.Add(First_ID);
+                                        }
+                                }
+                                if (null != TrackEvent(evnts.item()).ActiveTake) {
+                                        if (null != TrackEvent(evnts.item()).ActiveTake.MediaPath) {
+                                                var media3a = Path.GetExtension(TrackEvent(evnts.item()).ActiveTake.MediaPath);
+                                                if (null != media3a) {
+                                                        media3a = media3a.toUpperCase();
+                                                        if (media3a == ".MTS") {
+                                                                Vegas.Project.Ruler.StartTime = Timecode.FromMilliseconds(nMTSOffset);
+                                                                TrackEvent(evnts.item()).Start = TrackEvent(evnts.item()).Start + Vegas.Project.Ruler.StartTime;
+                                                        }
                                                 }
                                         }
                                 }
@@ -106,8 +137,10 @@ try {
                 trks.moveNext();
         }
 
+        Vegas.UpdateUI();
+
 	if (Vegas.Project.Summary.Title == "narrator") {
-                //////////////////////////////////////////////////////////////////////
+                ////
                 var numregions = 0;
                 var regionEnum = new Enumerator(Vegas.Project.Regions);
                 while (!regionEnum.atEnd()) {
@@ -119,12 +152,24 @@ try {
 			                var evntEnum = new Enumerator(track2.Events);
 			                while (!evntEnum.atEnd()) {
 				                var evnt2 : TrackEvent = TrackEvent(evntEnum.item());
-				                if (evnt2.Start == rgn.Position) {
-					                /////
+                                                var bMTSMoved = Timecode.FromMilliseconds(0);
+
+                                                if (Vegas.Project.Ruler.StartTime != bMTSMoved && null != evnt2.ActiveTake) { //something moved
+                                                        if (null != evnt2.ActiveTake.MediaPath) {
+                                                                var eMPath_0 = Path.GetExtension(evnt2.ActiveTake.MediaPath);
+                                                                if (null != eMPath_0) {
+                                                                        eMPath_0 = eMPath_0.toUpperCase();
+                                                                        if (eMPath_0 == ".MTS") {
+                                                                                bMTSMoved = Vegas.Project.Ruler.StartTime;
+                                                                        }
+                                                                }
+                                                        }
+                                                }
+
+				                if (evnt2.Start - bMTSMoved == rgn.Position) {
                                                         numregions = numregions+1;
                                                         rgn.Label = Vegas.Project.Summary.Copyright+evnt2.ActiveTake.Name+" (OK)";
                                                         var renderStatus = Vegas.Render(rgn.Label + "." + String(extRE).substring(2,String(extRE).length-1), renderTemplate,rgn.Position,rgn.Length);
-                                                        /////
 				                }
 			 	                evntEnum.moveNext();
 			                }
@@ -157,7 +202,7 @@ try {
 	titl = Vegas.Project.Summary.Copyright+titl;
         var ex_t = String(extRE).substring(1,String(extRE).length-1);
 
-        ////////////////////
+        ////
         var regionEnum2 = new Enumerator(Vegas.Project.Regions);
         var numregions2 = 0;
         while (!regionEnum2.atEnd()) {
@@ -178,7 +223,6 @@ try {
         if (numregions2 > 0) {
                 throw "ok1";
         }
-        ////////////////////
 
 	var ofn = ShowSaveFileDialog("Видео (*"+ex_t+")|*"+ex_t, ex_t+" для эфира - "+renderer.FileTypeName, titl);
 
@@ -191,25 +235,40 @@ try {
 	}
 
         var renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.SelectionStart,Vegas.SelectionLength);
+
+        throw "ok1";
 }
 
 catch (e) {
-        if (e != "ok1") {
+        if (Vegas.Project.Ruler.StartTime != Timecode.FromMilliseconds(0)) {
+             var tr2enum = new Enumerator(Vegas.Project.Tracks);
+             while (!tr2enum.atEnd()) {
+                  if (Track(tr2enum.item()).IsAudio()) {
+                          var evts2enum = new Enumerator(Track(tr2enum.item()).Events);
+                          while (!evts2enum.atEnd()) {
+                                  if (TrackEvent(evts2enum.item()).IsAudio()) {
+                                          if (null != TrackEvent(evts2enum.item()).ActiveTake) {
+                                                  if (null != TrackEvent(evts2enum.item()).ActiveTake.MediaPath) {
+                                                          var media2back = Path.GetExtension(TrackEvent(evts2enum.item()).ActiveTake.MediaPath);
+                                                          if (null != media2back) {
+                                                                  media2back = media2back.toUpperCase();
+                                                                  if (media2back == ".MTS") {
+                                                                          TrackEvent(evts2enum.item()).Start = TrackEvent(evts2enum.item()).Start - Vegas.Project.Ruler.StartTime;
+                                                                  }
+                                                          }
+                                                  }
+                                          }
+                                  }
+                                  evts2enum.moveNext();
+                          }
+                  }
+                  tr2enum.moveNext();
+             }
+             Vegas.Project.Ruler.StartTime = Timecode.FromMilliseconds(0);
+        }
+        if (e != "ok1" && e != "Error: Object required") {
 	        MessageBox.Show(e);
         }
-}
-
-function FindTrack(WhichTrack) : Track {
-  var trackEnum = new Enumerator(Vegas.Project.Tracks);
-  var PrevTrack : Track = Track(trackEnum.item());
-  while (!trackEnum.atEnd()) {
-	var track : Track = Track(trackEnum.item());
-	if (track.Name == WhichTrack) {
-		return track;
-	}
-	trackEnum.moveNext();
-  }
-  return null;
 }
 
 function FindRenderer(rendererRegExp : RegExp) : Renderer {
