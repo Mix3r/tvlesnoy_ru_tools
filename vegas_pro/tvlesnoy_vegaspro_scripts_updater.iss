@@ -443,8 +443,10 @@ begin
                 end;
             finally
                 DownloadPage.Hide;
-                if Exec('reg.exe',ExpandConstant('IMPORT "{tmp}\git\video_editor1_setup.reg"'), '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then begin
-                end else begin
+                if (WizardIsComponentSelected('vid_scripts1/reset')) then begin
+                    if Exec('reg.exe',ExpandConstant('IMPORT "{tmp}\git\video_editor1_setup.reg"'), '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then begin
+                    end else begin
+                    end;
                 end;
             end;
         end;
