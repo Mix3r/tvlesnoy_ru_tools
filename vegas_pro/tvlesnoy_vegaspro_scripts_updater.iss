@@ -45,6 +45,7 @@ Name: "{commonappdata}\Vegas Pro\13.0"; Components: vid_scripts1
 Name: "{userappdata}\Vegas Pro\13.0"; Components: vid_scripts1
 Name: "{userappdata}\Sony\Render Templates\wmv11"; Components: vid_scripts1
 Name: "{userappdata}\Sony\Render Templates\mpeg2-mc"; Components: vid_scripts1
+Name: "{userappdata}\Sony\Render Templates\xdcam ex"; Components: vid_scripts1
 Name: "{autopf64}\Sony\Vegas 7.0\Script Menu"; Components: vid_scripts1
 Name: "{userdocs}\OFX Presets\com.sonycreativesoftware_titlesandtext\Generator"; Components: vid_scripts1
 Name: "{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64"; Components: videoeditor1
@@ -74,6 +75,7 @@ Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{app}"" ""playlist_
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{commonappdata}\Vegas Pro\13.0"" ""keyboard.ini"""; Flags: runhidden runascurrentuser; 
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{userappdata}\Vegas Pro\13.0"" ""keyboard.ini"" /MOV"; Flags: runhidden runascurrentuser;
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{userappdata}\Sony\Render Templates\wmv11"" ""360_admin.*"" /MOV"; Flags: runhidden runascurrentuser;
+Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{userappdata}\Sony\Render Templates\xdcam ex"" ""YOUTUBE30P.*"" /MOV"; Flags: runhidden runascurrentuser;
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{userappdata}\Sony\Render Templates\mpeg2-mc"" ""*PAL Widescreen.sft2"" /MOV"; Flags: runhidden runascurrentuser; 
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{autopf64}\Sony\Vegas 7.0\Script Menu"" ""ctc-sample.png"" /MOV"; Flags: runhidden runascurrentuser;
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{autopf64}\Sony\Vegas 7.0\Script Menu"" ""smai75x75_alpha75_hd.png"" /MOV"; Flags: runhidden runascurrentuser; 
@@ -409,7 +411,8 @@ begin
             GitDown('WindowsMediaVideo.js.png');
             GitDown('Титры_спектрмаи.psd');
             GitDown('keyboard.ini');
-            GitDown('360_admin.sft2');    
+            GitDown('360_admin.sft2');
+            GitDown('YOUTUBE30P.sft2'); 
             GitDown('ОТЧЁТ_DVD Architect PAL Widescreen.sft2');
             GitDown('video_editor1_setup.reg');
             GitDown('tvlesnoy_moveleft.js');
