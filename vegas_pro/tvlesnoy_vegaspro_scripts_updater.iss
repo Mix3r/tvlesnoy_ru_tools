@@ -22,6 +22,7 @@ Name: "russian"; MessagesFile: "compiler:Languages\Russian.isl";
 
 [Components]
 Name: "vid_scripts1"; Description: "Cкрипты для видеоредактора"; Types: custom;
+Name: "vid_scripts1/reset"; Description: "Сбросить настройки видеоредактора"; Types: custom;
 Name: "videoeditor1"; Description: "Видеоредактор версии 13"; Types: custom;
 Name: "videoeditor1/en"; Description: "EN"; Types: custom; Flags: exclusive
 Name: "videoeditor1/ru"; Description: "RU"; Types: custom; Flags: exclusive
