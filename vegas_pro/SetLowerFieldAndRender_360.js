@@ -29,11 +29,13 @@ try {
         Vegas.Project.Ruler.StartTime = Timecode.FromMilliseconds(0);
 
 	var templateRE = /HQ 1920x1080-50i, /;
+	var templateYT = /YOUTUBE30/;
 	var extRE = /.MP4/;
-	var bFirstAudioEvent = 0;
+	var bFirstMediaEvent = 0;
         var nMTSOffset = 40;
+        var nTmpLogoTrk = 0;
 	
-	var renderer : Renderer = FindRenderer(templateRE);
+	var renderer : Renderer = FindRenderer();
 	
         if (null == renderer)
                 throw "failed to find renderer";
@@ -43,13 +45,59 @@ try {
         if (null == renderTemplate)
                 throw "failed to find render template";
 
+        var renderTemplateYT :RenderTemplate = FindRenderTemplate(renderer, templateYT);
+
 	var titl = Path.GetFileNameWithoutExtension(Vegas.Project.FilePath);
+        var nEventStart = Vegas.Transport.LoopRegionStart;
 	
         var trks = new Enumerator(Vegas.Project.Tracks);
         while (!trks.atEnd()) {
                 var evnts = new Enumerator(Track(trks.item()).Events);
                 while (!evnts.atEnd()) {
+                        if (bFirstMediaEvent == 0) {
+                                var sLocalname = "";
+				if (Vegas.Project.FilePath != null) {
+                                        sLocalname = Path.GetDirectoryName(Vegas.Project.FilePath);
+                                        bFirstMediaEvent = 1;
+				} else {
+                                        if (TrackEvent(evnts.item()).ActiveTake != null) {
+                                                if (TrackEvent(evnts.item()).ActiveTake.MediaPath != null) {
+                                                        sLocalname = Path.GetDirectoryName(TrackEvent(evnts.item()).ActiveTake.MediaPath);
+                                                        var sMpPart = sLocalname.substring(1,2);
+                                                        if (sMpPart == ":" || sMpPart == "\\") {
+                                                                bFirstMediaEvent = 1;
+                                                        }
+                                                }
+                                        }
+                                }
+                                if (bFirstMediaEvent != 0) {
+                                        var cmdenum = new Enumerator(Vegas.Project.CommandMarkers);
+                                        var mCMText = new MarkerCommandType("TEXT");
+                                        while (!cmdenum.atEnd()) {
+                                                var cmdent : CommandMarker = CommandMarker(cmdenum.item());
+                                                if (cmdent.Position == Timecode.FromMilliseconds(0)) {
+                                                        bFirstMediaEvent = 2;
+                                                        cmdent.SetCommand(mCMText,sLocalname);
+                                                        break;
+                                                }
+                                                cmdenum.moveNext();
+                                        }
+                                        if (bFirstMediaEvent != 2) {
+                                                var First_ID = new CommandMarker(Timecode.FromMilliseconds(0),mCMText,sLocalname);
+                                                Vegas.Project.CommandMarkers.Add(First_ID);
+                                        }
+                                }
+                        }
+                        if (TrackEvent(evnts.item()).Start+TrackEvent(evnts.item()).Length > Vegas.Transport.LoopRegionStart && TrackEvent(evnts.item()).Start < Vegas.Transport.LoopRegionStart+Vegas.Transport.LoopRegionLength)
                         if (TrackEvent(evnts.item()).IsVideo()) {
+                                var nEventDelta = TrackEvent(evnts.item()).Start - nEventStart;
+                                nEventDelta = nEventDelta.ToMilliseconds();
+                                if (nEventDelta > 0 && nEventDelta <= 200) {
+                                        Vegas.Transport.CursorPosition = nEventStart;
+                                        Vegas.UpdateUI();
+                                        MessageBox.Show("Чёрная дыра на "+nEventStart.ToString(RulerFormat.TimeAndFrames));
+                                }
+                                nEventStart = TrackEvent(evnts.item()).Start + TrackEvent(evnts.item()).Length;
                                 var envl_num = 0;
                                 if (null != TrackEvent(evnts.item()).ActiveTake) {
                                         if (null != TrackEvent(evnts.item()).ActiveTake.MediaPath) {
@@ -91,34 +139,6 @@ try {
                                         VideoEvent(evnts.item()).ResampleMode = "Disable";
                                 }
                         } else {
-                                if (bFirstAudioEvent == 0) {
-                                        bFirstAudioEvent = 1;
-                                        var sLocalname = "";
-					if (Vegas.Project.FilePath != null) {
-                                                sLocalname = Path.GetDirectoryName(Vegas.Project.FilePath);
-					} else {
-                                                if (TrackEvent(evnts.item()).ActiveTake != null) {
-                                                        if (TrackEvent(evnts.item()).ActiveTake.MediaPath != null) {
-                                                                sLocalname = Path.GetDirectoryName(TrackEvent(evnts.item()).ActiveTake.MediaPath);
-                                                        }
-                                                }
-                                        }
-                                        var cmdenum = new Enumerator(Vegas.Project.CommandMarkers);
-                                        var mCMText = new MarkerCommandType("TEXT");
-                                        while (!cmdenum.atEnd()) {
-                                                var cmdent : CommandMarker = CommandMarker(cmdenum.item());
-                                                if (cmdent.Position == Timecode.FromMilliseconds(0)) {
-                                                        bFirstAudioEvent = 2;
-                                                        cmdent.SetCommand(mCMText,sLocalname);
-                                                        break;
-                                                }
-                                                cmdenum.moveNext();
-                                        }
-                                        if (bFirstAudioEvent != 2) {
-                                                var First_ID = new CommandMarker(Timecode.FromMilliseconds(0),mCMText,sLocalname);
-                                                Vegas.Project.CommandMarkers.Add(First_ID);
-                                        }
-                                }
                                 if (null != TrackEvent(evnts.item()).ActiveTake) {
                                         if (null != TrackEvent(evnts.item()).ActiveTake.MediaPath) {
                                                 var media3a = Path.GetExtension(TrackEvent(evnts.item()).ActiveTake.MediaPath);
@@ -208,7 +228,7 @@ try {
         while (!regionEnum2.atEnd()) {
 	        var rgn2 : Region = Region(regionEnum2.item());
                 var rgn2_st = rgn2.Label.substring(1,2);
-                if ((rgn2_st == ":" || rgn2_st == "\\") & Vegas.Transport.LoopRegionStart <= rgn2.Position & Vegas.Transport.LoopRegionStart+Vegas.Transport.LoopRegionLength >= rgn2.Position+rgn2.Length) {
+                if ((rgn2_st == ":" || rgn2_st == "\\") && Vegas.Transport.LoopRegionStart <= rgn2.Position && Vegas.Transport.LoopRegionStart+Vegas.Transport.LoopRegionLength >= rgn2.Position+rgn2.Length) {
                         numregions2 = numregions2+1;
                         if (rgn2.Label.length < 5) {
 		                rgn2.Label = rgn2.Label + ex_t;
@@ -216,7 +236,12 @@ try {
 	                if (rgn2.Label.substring(rgn2.Label.length-4).toUpperCase() != ex_t.toUpperCase()) {
 		                rgn2.Label = rgn2.Label + ex_t;
 	                }
+                        Prepare4air();
                         var renderStatus = Vegas.Render(rgn2.Label, renderTemplate,rgn2.Position,rgn2.Length);
+                        if (null == renderTemplateYT) throw "failed to find YouTube template";
+                        renderStatus = rgn2.Label.substring(0,rgn2.Label.length-4) + "_YouTube" + ex_t;
+                        Prepare4YT();
+                        renderStatus = Vegas.Render(renderStatus, renderTemplateYT,rgn2.Position,rgn2.Length);
                 }
 	        regionEnum2.moveNext();
         }
@@ -233,19 +258,24 @@ try {
 	if (titl.toUpperCase() != ex_t.toUpperCase()) {
 		ofn = ofn + ex_t;
 	}
-
-        var renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.SelectionStart,Vegas.SelectionLength);
+        Prepare4air();
+        var renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.Transport.LoopRegionStart,Vegas.Transport.LoopRegionLength);
+        if (null == renderTemplateYT) throw "failed to find YouTube template";
+        renderStatus = ofn.substring(0,ofn.length-4) + "_YouTube" + ex_t;
+        Prepare4YT();
+        renderStatus = Vegas.Render(renderStatus, renderTemplateYT,Vegas.Transport.LoopRegionStart,Vegas.Transport.LoopRegionLength);
 
         throw "ok1";
 }
 
 catch (e) {
+        var tr2enum = new Enumerator(Vegas.Project.Tracks);
         if (Vegas.Project.Ruler.StartTime != Timecode.FromMilliseconds(0)) {
-             var tr2enum = new Enumerator(Vegas.Project.Tracks);
              while (!tr2enum.atEnd()) {
                   if (Track(tr2enum.item()).IsAudio()) {
                           var evts2enum = new Enumerator(Track(tr2enum.item()).Events);
                           while (!evts2enum.atEnd()) {
+                                  if (TrackEvent(evts2enum.item()).Start+TrackEvent(evts2enum.item()).Length > Vegas.Transport.LoopRegionStart && TrackEvent(evts2enum.item()).Start < Vegas.Transport.LoopRegionStart+Vegas.Transport.LoopRegionLength)
                                   if (TrackEvent(evts2enum.item()).IsAudio()) {
                                           if (null != TrackEvent(evts2enum.item()).ActiveTake) {
                                                   if (null != TrackEvent(evts2enum.item()).ActiveTake.MediaPath) {
@@ -266,18 +296,68 @@ catch (e) {
              }
              Vegas.Project.Ruler.StartTime = Timecode.FromMilliseconds(0);
         }
+        Prepare4air();
         if (e != "ok1" && e != "Error: Object required") {
 	        MessageBox.Show(e);
         }
 }
 
-function FindRenderer(rendererRegExp : RegExp) : Renderer {
+function Prepare4air() {
+        var tmplogotrack = null;
+        var tr3enum = new Enumerator(Vegas.Project.Tracks);
+        while (!tr3enum.atEnd()) {
+                if (Track(tr3enum.item()).Name == "_tmplogo") {
+                        tmplogotrack = Track(tr3enum.item());
+                        break;
+                }
+                tr3enum.moveNext();
+        }
+        if (null != tmplogotrack) {
+                Vegas.Project.Tracks.Remove(tmplogotrack);
+                Vegas.UpdateUI();
+        }
+}
+
+function Prepare4YT() {
+        var trks = new Enumerator(Vegas.Project.Tracks);
+        while (!trks.atEnd()) {
+                if (Track(trks.item()).Name == "_tmplogo") {
+                        return;
+                }
+                trks.moveNext();
+        }
+
+        var tmptrack = new VideoTrack(0, "_tmplogo");
+        Vegas.Project.Tracks.Add(tmptrack);
+        var media = new Media("C:/Program Files/Sony/Vegas 7.0/Script Menu/smai75x75_alpha75_hd.png");
+        var stream = media.Streams[0]; //The "video" stream
+        var newEvent = new VideoEvent(Vegas.Transport.LoopRegionStart,Vegas.Transport.LoopRegionLength);
+        tmptrack.Events.Add(newEvent);
+        var take = new Take(stream);
+	newEvent.Takes.Add(take);
+        newEvent.VideoMotion.ScaleToFill = 1;
+        var key_frame = newEvent.VideoMotion.Keyframes[0];
+        var d_width = key_frame.TopRight.X   - key_frame.TopLeft.X;
+        var d_height = key_frame.BottomLeft.Y - key_frame.TopLeft.Y;
+        if (d_width < 0) {
+                d_width = d_width * -1;
+        }
+        if (d_height < 0) {
+                d_height = d_height * -1;
+        }
+        var moveby1 = new VideoMotionVertex(Vegas.Project.Video.Width/d_width,Vegas.Project.Video.Height/d_height);
+        key_frame.ScaleBy(moveby1);
+        var moveby2 = new VideoMotionVertex(-1*(key_frame.Center.X+Vegas.Project.Video.Width*0.5-d_width*2.4),-1*(key_frame.Center.Y-Vegas.Project.Video.Height*0.5+d_height*0.96+1));
+        key_frame.MoveBy(moveby2);
+        Vegas.UpdateUI();
+}
+
+function FindRenderer() : Renderer {
         var rendererEnum : Enumerator = new Enumerator(Vegas.Renderers);
         while (!rendererEnum.atEnd()) {
-                var renderer : Renderer = Renderer(rendererEnum.item());
-                if (null != renderer.FileExtension.match(extRE)) {
-			if (null != FindRenderTemplate(renderer, templateRE)) {
-				return renderer;
+                if (null != Renderer(rendererEnum.item()).FileExtension.match(extRE)) {
+			if (null != FindRenderTemplate(Renderer(rendererEnum.item()), templateRE)) {
+				return Renderer(rendererEnum.item());
 			}
                 }
                 rendererEnum.moveNext();
@@ -288,9 +368,8 @@ function FindRenderer(rendererRegExp : RegExp) : Renderer {
 function FindRenderTemplate(renderer : Renderer, templateRegExp : RegExp) : RenderTemplate {
         var templateEnum : Enumerator = new Enumerator(renderer.Templates);
         while (!templateEnum.atEnd()) {
-                var renderTemplate : RenderTemplate = RenderTemplate(templateEnum.item());
-                if (renderTemplate.Name.match(templateRegExp)) {
-                        return renderTemplate;
+                if (RenderTemplate(templateEnum.item()).Name.match(templateRegExp)) {
+                        return RenderTemplate(templateEnum.item());
                 }
                 templateEnum.moveNext();
         }
