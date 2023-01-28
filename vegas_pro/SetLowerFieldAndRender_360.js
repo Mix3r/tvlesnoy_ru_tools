@@ -28,12 +28,13 @@ try {
 	Vegas.Project.Ruler.BeatsPerMeasure = 4;
         Vegas.Project.Ruler.StartTime = Timecode.FromMilliseconds(0);
 
+        const YTFolder = "CЮЖЕТЫ ЮТУБ";
+
 	var templateRE = /HQ 1920x1080-50i, /;
 	var templateYT = /YOUTUBE30/;
 	var extRE = /.MP4/;
 	var bFirstMediaEvent = 0;
         var nMTSOffset = 40;
-        var nTmpLogoTrk = 0;
 	
 	var renderer : Renderer = FindRenderer();
 	
@@ -238,14 +239,29 @@ try {
 	                }
                         Prepare4air();
                         var renderStatus = Vegas.Render(rgn2.Label, renderTemplate,rgn2.Position,rgn2.Length);
-                        if (null == renderTemplateYT) throw "failed to find YouTube template";
-                        renderStatus = rgn2.Label.substring(0,rgn2.Label.length-4) + "_YouTube" + ex_t;
-                        Prepare4YT();
-                        renderStatus = Vegas.Render(renderStatus, renderTemplateYT,rgn2.Position,rgn2.Length);
                 }
 	        regionEnum2.moveNext();
         }
         if (numregions2 > 0) {
+                var regionEnumB = new Enumerator(Vegas.Project.Regions);
+                while (!regionEnumB.atEnd()) {
+                        var rgnB : Region = Region(regionEnumB.item());
+                        var rgnB_st = rgnB.Label.substring(1,2);
+                        if ((rgnB_st == ":" || rgnB_st == "\\") && Vegas.Transport.LoopRegionStart <= rgnB.Position && Vegas.Transport.LoopRegionStart+Vegas.Transport.LoopRegionLength >= rgnB.Position+rgnB.Length) {
+                                if (rgnB.Label.length < 5) {
+		                        rgnB.Label = rgnB.Label + ex_t;
+	                        }
+	                        if (rgnB.Label.substring(rgnB.Label.length-4).toUpperCase() != ex_t.toUpperCase()) {
+		                        rgnB.Label = rgnB.Label + ex_t;
+	                        }
+                                if (null == renderTemplateYT) throw "failed to find YouTube template";
+                                var renderStatus = rgnB.Label.lastIndexOf('\\');
+                                renderStatus = rgnB.Label.substring(0,renderStatus+1) + YTFolder + rgnB.Label.substring(renderStatus);
+                                Prepare4YT();
+                                renderStatus = Vegas.Render(renderStatus, renderTemplateYT,rgnB.Position,rgnB.Length);
+                        }
+                        regionEnumB.moveNext();
+                }
                 throw "ok1";
         }
 
@@ -261,7 +277,8 @@ try {
         Prepare4air();
         var renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.Transport.LoopRegionStart,Vegas.Transport.LoopRegionLength);
         if (null == renderTemplateYT) throw "failed to find YouTube template";
-        renderStatus = ofn.substring(0,ofn.length-4) + "_YouTube" + ex_t;
+        renderStatus = ofn.lastIndexOf('\\');
+        renderStatus = ofn.substring(0,renderStatus+1) + YTFolder + ofn.substring(renderStatus);
         Prepare4YT();
         renderStatus = Vegas.Render(renderStatus, renderTemplateYT,Vegas.Transport.LoopRegionStart,Vegas.Transport.LoopRegionLength);
 
