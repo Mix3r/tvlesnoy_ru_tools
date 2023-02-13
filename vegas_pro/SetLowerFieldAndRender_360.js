@@ -162,7 +162,7 @@ try {
         Vegas.UpdateUI();
 
 	if (Vegas.Project.Summary.Title == "narrator") {
-                ////
+                bFirstMediaEvent = 3;
                 var numregions = 0;
                 var regionEnum = new Enumerator(Vegas.Project.Regions);
                 while (!regionEnum.atEnd()) {
@@ -277,6 +277,10 @@ try {
 	}
         Prepare4air();
         var renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.Transport.LoopRegionStart,Vegas.Transport.LoopRegionLength);
+        if (bFirstMediaEvent == 3) {
+                // skip narrator for youtube
+                throw "ok1";
+        }
         if (null == renderTemplateYT) throw "failed to find YouTube template";
         renderStatus = ofn.lastIndexOf('\\');
         renderStatus = ofn.substring(0,renderStatus+1) + YTFolder + ofn.substring(renderStatus);
