@@ -139,6 +139,7 @@ try {
                                 } else {
                                         VideoEvent(evnts.item()).ResampleMode = "Disable";
                                 }
+                                VideoEvent(evnts.item()).ReduceInterlace = null;
                         } else {
                                 if (null != TrackEvent(evnts.item()).ActiveTake) {
                                         if (null != TrackEvent(evnts.item()).ActiveTake.MediaPath) {
