@@ -357,6 +357,7 @@ function Prepare4YT() {
         tmptrack.Events.Add(newEvent);
         var take = new Take(stream);
 	newEvent.Takes.Add(take);
+	take.Offset = Timecode.FromMilliseconds(2250);
         newEvent.VideoMotion.ScaleToFill = 1;
         newEvent.MaintainAspectRatio = null;
         TrackEvent(newEvent).Loop = null;
