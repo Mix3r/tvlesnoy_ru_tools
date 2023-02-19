@@ -116,13 +116,22 @@ try {
         if (null == Titlestrack) {
                 Titlestrack = new VideoTrack(0, "LOGOTYPE");
 		Vegas.Project.Tracks.Add(Titlestrack);
-                var media = new Media("C:/Program Files/Sony/Vegas 7.0/Script Menu/smai75x75_alpha75_hd.png");
+                var media = new Media("C:/Program Files/VEGAS/tvlesnoy_banners.veg");
                 var stream = media.Streams[0]; //The "video" stream
                 var newEvent = new VideoEvent(Vegas.SelectionStart, Vegas.SelectionLength);
                 Titlestrack.Events.Add(newEvent);
                 var take = new Take(stream);
 	        newEvent.Takes.Add(take);
+                take.Offset = Timecode.FromMilliseconds(3250);
                 newEvent.VideoMotion.ScaleToFill = 1;
+                newEvent.MaintainAspectRatio = null;
+                TrackEvent(newEvent).Loop = null;
+                newEvent.ResampleMode = "Disable";
+                ///////
+                var vlc = new Envelope(EnvelopeType.Velocity);
+                newEvent.Envelopes.Add(vlc);
+                vlc.Points[0].Y = 0.0;
+                ////////
                 var key_frame = newEvent.VideoMotion.Keyframes[0];
                 var d_width = key_frame.TopRight.X   - key_frame.TopLeft.X;
                 var d_height = key_frame.BottomLeft.Y - key_frame.TopLeft.Y;
@@ -132,10 +141,8 @@ try {
                 if (d_height < 0) {
                      d_height = d_height * -1;
                 }
-                var moveby1 = new VideoMotionVertex(Vegas.Project.Video.Width/d_width,Vegas.Project.Video.Height/d_height);
+                var moveby1 = new VideoMotionVertex(640/d_width,480/d_height);
                 key_frame.ScaleBy(moveby1);
-                var moveby2 = new VideoMotionVertex(-1*(key_frame.Center.X+Vegas.Project.Video.Width*0.5-d_width*2.4),-1*(key_frame.Center.Y-Vegas.Project.Video.Height*0.5+d_height*0.96+1));
-                key_frame.MoveBy(moveby2);
 	}
 
 	var renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.SelectionStart,Vegas.SelectionLength);
