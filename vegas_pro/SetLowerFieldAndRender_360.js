@@ -376,8 +376,8 @@ function Prepare4YT() {
         }
         var moveby1 = new VideoMotionVertex(Vegas.Project.Video.Width/d_width,Vegas.Project.Video.Height/d_height);
         key_frame.ScaleBy(moveby1);
-        var moveby2 = new VideoMotionVertex(-1*(key_frame.Center.X+Vegas.Project.Video.Width*0.5-d_width*2.4),-1*(key_frame.Center.Y-Vegas.Project.Video.Height*0.5+d_height*0.96+1));
-        key_frame.MoveBy(moveby2);
+        //var moveby2 = new VideoMotionVertex(-1*(key_frame.Center.X+Vegas.Project.Video.Width*0.5-d_width*2.4),-1*(key_frame.Center.Y-Vegas.Project.Video.Height*0.5+d_height*0.96+1));
+        //key_frame.MoveBy(moveby2);
         Vegas.UpdateUI();
 }
 
