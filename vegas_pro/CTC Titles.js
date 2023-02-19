@@ -1,5 +1,5 @@
 /** 
-old school
+0
  **/ 
 
 import System;
@@ -17,6 +17,9 @@ try
 	var Titlestrack = FindTrack("Titles_A");
 	var Titlebgtrack = FindTrack("Titles_BG");
         var repflag = 0;
+
+        var lowerthird_name = "tvlesnoy_lowerthird";
+        const tntc = "t&t";
 	
 	if (null == Titlebgtrack) {
 		Titlebgtrack = new VideoTrack(0, "Titles_BG");
@@ -27,193 +30,194 @@ try
 		Vegas.Project.Tracks.Add(Titlestrack);
 	}
 
-
         var evntEnum = new Enumerator(Titlestrack.Events);
         while (!evntEnum.atEnd()) {
                 var evnt : VideoEvent = VideoEvent(evntEnum.item());
-                if (evnt.Start <= Vegas.Transport.CursorPosition & evnt.End >= Vegas.Transport.CursorPosition) {
-
-                        var key_frame = evnt.VideoMotion.Keyframes[0];
-                        if (key_frame.TopLeft.X == 0) {
-                                repflag = 1;
-                                var med_txt = CreateGeneratedMedia("0FE8789D-0C47-442A-AFB0-0DAF97669317","GG_END");
-                        } else if (evnt.FadeOut.Length == Timecode.FromMilliseconds(0)) {
-                                var med_txt = CreateGeneratedMedia("0FE8789D-0C47-442A-AFB0-0DAF97669317","GG_APXuB");
-                                repflag = 3;
-                                var TitlesArctrack = FindTrack("Titles_Arch");
-                                if (null == TitlesArctrack) {
-		                        TitlesArctrack = new VideoTrack(0, "Titles_Arch");
-		                        Vegas.Project.Tracks.Add(TitlesArctrack);
-	                        }
-                        } else if (evnt.FadeOut.Length == Timecode.FromMilliseconds(360)) {
-                                var med_txt = CreateGeneratedMedia("0FE8789D-0C47-442A-AFB0-0DAF97669317","GG_OPERA");
-                                repflag = 4;
-                        } else {
-                                repflag = 2;
-                                var med_txt = CreateGeneratedMedia("0FE8789D-0C47-442A-AFB0-0DAF97669317","GG");
-                        }
+                if (evnt.Start <= Vegas.Transport.CursorPosition && evnt.End >= Vegas.Transport.CursorPosition) {
                         Vegas.Transport.CursorPosition = evnt.Start;
-                        Titlestrack.Events.Remove(evnt);
-                        var stm_txt = med_txt.Streams[0];
-                        var evt_txt = new VideoEvent(Vegas.Transport.CursorPosition, ttxt_length);
-	                Titlestrack.Events.Add(evt_txt);
-                        var txt_take = new Take(stm_txt);
-	                evt_txt.Takes.Add(txt_take);
-
-                        var key_frame = evt_txt.VideoMotion.Keyframes[0];
-                        var d_width = key_frame.TopRight.X - key_frame.TopLeft.X;
-                        var d_height = key_frame.BottomLeft.Y - key_frame.TopLeft.Y;
-                        if (d_width < 0) {
-                                d_width = -d_width;
-                        }
-                        if (d_height < 0) {
-                                d_height = -d_height;
-                        }
-                        //var moveby2 = new VideoMotionVertex(-key_frame.TopLeft.X,-key_frame.TopLeft.Y);
-                        //key_frame.MoveBy(moveby2);
-
-
-                        if (repflag == 1) {
-                                var moveby2 = new VideoMotionVertex(d_width*0.094947916,-d_height*0.782685185);
-                                //////////////
-                                var bottomEnum = new Enumerator(Titlebgtrack.Events);
-                                while (!bottomEnum.atEnd()) {
-                                        var botom : VideoEvent = VideoEvent(bottomEnum.item());
-                                        if (botom.Start <= Vegas.Transport.CursorPosition & botom.End >= Vegas.Transport.CursorPosition) {
-                                                botom.FadeOut.Length = Timecode.FromMilliseconds(0);
-                                                botom.Length = evt_txt.End - botom.Start;
-                                        }
-                                        bottomEnum.moveNext();
-                                }
-                                ////////////////
-                        } else if (repflag == 3) {
-                                var moveby2 = new VideoMotionVertex(-d_width*(175.4/1920),-d_height*(80.4/1080));
-                                evt_txt.FadeOut.Length = Timecode.FromMilliseconds(360);
-                                ///////////////
-                                var bottomEnum = new Enumerator(Titlebgtrack.Events);
-                                while (!bottomEnum.atEnd()) {
-                                        var botom3 : VideoEvent = VideoEvent(bottomEnum.item());
-                                        if (botom3.Start <= Vegas.Transport.CursorPosition & botom3.End >= Vegas.Transport.CursorPosition) {
-                                                botom3.FadeOut.Length = Timecode.FromMilliseconds(0);
-                                                botom3.Length = evt_txt.End - botom3.Start + evt_txt.FadeOut.Length;
-                                                var key_frame3 = botom3.VideoMotion.Keyframes[0];
-                                                var d_width = key_frame3.TopRight.X   - key_frame3.TopLeft.X;
-                                                var d_height = key_frame3.BottomLeft.Y - key_frame3.TopLeft.Y;
-                                                if (d_width < 0) {
-                                                        d_width = -d_width;
-                                                }
-                                                if (d_height < 0) {
-                                                        d_height = -d_height;
-                                                }
-                                                var moveby1 = new VideoMotionVertex(-key_frame3.TopLeft.X,-key_frame3.TopLeft.Y);
-                                                key_frame3.MoveBy(moveby1);
-                                                var moveby1 = new VideoMotionVertex(0,d_height*(800/1080));
-                                                key_frame3.MoveBy(moveby1);
-                                        }
-                                        bottomEnum.moveNext();
-                                }
-                                ////////////////
-                        } else if (repflag == 4) {
-                                var moveby2 = new VideoMotionVertex(-d_width*(175.4/1920),-d_height*(80.4/1080));
-                                evt_txt.FadeOut.Length = Timecode.FromMilliseconds(400);
+                        if (evnt.FadeOut.Length > Timecode.FromMilliseconds(0)) {
+                                repflag = 1;
                         } else {
-                                var moveby2 = new VideoMotionVertex(0,-d_height*(836.6/1080));
-                                evt_txt.FadeOut.Length = Timecode.FromMilliseconds(400);
-                                ///////////////
-                                var bottomEnum = new Enumerator(Titlebgtrack.Events);
-                                while (!bottomEnum.atEnd()) {
-                                        var botom2 : VideoEvent = VideoEvent(bottomEnum.item());
-                                        if (botom2.Start <= Vegas.Transport.CursorPosition & botom2.End >= Vegas.Transport.CursorPosition) {
-                                                botom2.FadeOut.Length = Timecode.FromMilliseconds(560);
-                                                botom2.Length = evt_txt.End - botom2.Start + evt_txt.FadeOut.Length;
-                                                var key_frame2 = botom2.VideoMotion.Keyframes[0];
-                                                var d_width = key_frame2.TopRight.X   - key_frame2.TopLeft.X;
-                                                var d_height = key_frame2.BottomLeft.Y - key_frame2.TopLeft.Y;
-                                                if (d_width < 0) {
-                                                        d_width = -d_width;
-                                                }
-                                                if (d_height < 0) {
-                                                        d_height = -d_height;
-                                                }
-                                                var moveby1 = new VideoMotionVertex(-key_frame2.TopLeft.X,-key_frame2.TopLeft.Y);
-                                                key_frame2.MoveBy(moveby1);
-                                                var moveby1 = new VideoMotionVertex(0,-d_height*(800/1080));
-                                                key_frame2.MoveBy(moveby1);
-                                                if (null != Vegas.Project.Groups) {
-		                                        var TtlGroup2 = new TrackEventGroup();
-		                                        Vegas.Project.Groups.Add(TtlGroup2);
-		                                        TtlGroup2.Add(botom2);
-		                                        TtlGroup2.Add(evt_txt);
-	                                        }
-                                        }
-                                        bottomEnum.moveNext();
+                                if (evnt.FadeIn.Length > Timecode.FromMilliseconds(0)) {
+                                        repflag = 2;
+                                        var Titlesarctrack = FindTrack("Titles_Arch");
+	                                if (null == Titlesarctrack) {
+		                                Titlesarctrack = new VideoTrack(0, "Titles_Arch");
+		                                Vegas.Project.Tracks.Add(Titlesarctrack);
+	                                }
+                                } else {
+                                        repflag = 0;
                                 }
-                                ////////////////
                         }
-                        key_frame.MoveBy(moveby2);
-
-                        evt_txt.FadeIn.Length = Timecode.FromMilliseconds(400);
-	                Vegas.Transport.CursorPosition = (evt_txt.Start + evt_txt.FadeIn.Length);
+                        Titlestrack.Events.Remove(evnt);
+                        var FooterEnum = new Enumerator(Titlebgtrack.Events);
+                        while (!FooterEnum.atEnd()) {
+                                var footr : VideoEvent = VideoEvent(FooterEnum.item());
+                                if (footr.Start <= Vegas.Transport.CursorPosition && footr.End >= Vegas.Transport.CursorPosition) {
+                                        Vegas.Transport.CursorPosition = footr.Start;
+                                        Titlebgtrack.Events.Remove(footr);
+                                        break;
+                                }
+                                FooterEnum.moveNext();
+                        }
+                        break;
                 }
                 evntEnum.moveNext();
         }
-        if (repflag == 0) {
+
+        if (repflag < 999) {
 	//var media = new Media(Vegas.InstallationDirectory + "/Script Menu/ctc-sample.png");
-	var media = new Media("C:/Program Files/Sony/Vegas 7.0/Script Menu/ctc-sample.png");
+        var mediaEnum = new Enumerator(Vegas.Project.MediaPool);
+        var media = null;
+        var med_txt = null;
+        if (repflag == 2) {
+                lowerthird_name = "tvlesnoy_YT";
+        }
+
+        while (!mediaEnum.atEnd()) {
+                if (mediaEnum.item().IsSubclip()) {
+                        if (mediaEnum.item().FilePath == lowerthird_name) {
+                                media = mediaEnum.item();
+                        }
+                } else if (mediaEnum.item().UseCount == 0) {
+                        if (mediaEnum.item().IsValid()) {
+                                if (mediaEnum.item().Comment == tntc) {
+                                        med_txt = mediaEnum.item();
+                                }
+                        }
+                }
+                if (med_txt != null && media != null) {
+                        break;
+                }
+                mediaEnum.moveNext();
+        }
+
+        if (media == null) {
+            if (repflag == 2) {
+                media = new Subclip(Vegas.Project,"C:/Program Files/VEGAS/tvlesnoy_banners.veg",Timecode.FromMilliseconds(1030),Timecode.FromMilliseconds(1040),0,lowerthird_name);
+            } else {
+                media = new Subclip(Vegas.Project,"C:/Program Files/VEGAS/tvlesnoy_banners.veg",Timecode.FromMilliseconds(0),Timecode.FromMilliseconds(40),0,lowerthird_name);
+            }
+        }
 	var stream = media.Streams[0]; //The "video" stream
 	var newEvent = new VideoEvent(Vegas.Transport.CursorPosition, ttl_length);
 	Titlebgtrack.Events.Add(newEvent);
 	var take = new Take(stream); 
 	newEvent.Takes.Add(take);
 
-        var key_frame = newEvent.VideoMotion.Keyframes[0];
-        var d_width = key_frame.TopRight.X   - key_frame.TopLeft.X;
-        var d_height = key_frame.BottomLeft.Y - key_frame.TopLeft.Y;
-        if (d_width < 0) {
-                d_width = -d_width;
-        }
-        if (d_height < 0) {
-                d_height = -d_height;
-        }
-        var moveby1 = new VideoMotionVertex(Vegas.Project.Video.Width/d_width,Vegas.Project.Video.Height/d_height);
-        //key_frame.ScaleBy(moveby1);
-        var moveby2 = new VideoMotionVertex(0,-d_height*(800/1080));
-        key_frame.MoveBy(moveby2);
-
 	newEvent.FadeIn.Length = Timecode.FromMilliseconds(560);
-	newEvent.FadeOut.Length = Timecode.FromMilliseconds(560);
+        if (repflag == 1) {
+                newEvent.FadeOut.Length = Timecode.FromMilliseconds(0);
+        } else {
+	        newEvent.FadeOut.Length = Timecode.FromMilliseconds(560);
+        }
 	newEvent.FadeIn.Transition = CreateTransitionEffect(/Linear Wipe/);
 	newEvent.FadeIn.Transition.Preset = "rlse";
 	newEvent.FadeOut.Transition = CreateTransitionEffect(/Linear Wipe/);
 	newEvent.FadeOut.Transition.Preset = "rlse";
 	newEvent.MaintainAspectRatio = null;
+        TrackEvent(newEvent).Loop = null;
+        newEvent.ResampleMode = "Disable";
 
-        var med_txt = CreateGeneratedMedia("0FE8789D-0C47-442A-AFB0-0DAF97669317","GG");
+        if (med_txt == null) {
+                var generator = null;
+                generator = Vegas.Generators.FindChildByUniqueID("{Svfx:com.sonycreativesoftware:titlesandtext}");
+                if (generator == null) {
+                        generator = Vegas.Generators.FindChildByUniqueID("{Svfx:com.vegascreativesoftware:titlesandtext}");
+                }
+                if (generator != null) {
+                        med_txt = new Media(generator,null);
+                        med_txt.Length = Timecode.FromFrames(1);
+                }
+        }
+
 	var stm_txt = med_txt.Streams[0];
 	Vegas.Transport.CursorPosition = (Vegas.Transport.CursorPosition + Timecode.FromMilliseconds(320));
 	var evt_txt = new VideoEvent(Vegas.Transport.CursorPosition, ttxt_length);
 	Titlestrack.Events.Add(evt_txt);
+        evt_txt.MaintainAspectRatio = null;
+        TrackEvent(evt_txt).Loop = null;
+        evt_txt.ResampleMode = "Disable";
+
 	var txt_take = new Take(stm_txt);
 	evt_txt.Takes.Add(txt_take);
+        evt_txt.ReduceInterlace = null;
 
-        var key_frame = evt_txt.VideoMotion.Keyframes[0];
-        var d_width = key_frame.TopRight.X   - key_frame.TopLeft.X;
-        var d_height = key_frame.BottomLeft.Y - key_frame.TopLeft.Y;
-        if (d_width < 0) {
-                d_width = -d_width;
+        med_txt.Comment = tntc;
+
+        var ofx_string = "{\\rtf1\\ansi\\ansicpg1252\\deff0{\\fonttbl{\\f0\\fnil\\fcharset204{\\*\\fname Arial;}Arial CYR;}{\\f1\\fnil\\fcharset0 Arial;}}\n{\\colortbl ;\\red0\\green0\\blue0;}\n\\viewkind4\\uc1\\pard\\qc\\cf1\\lang1049\\b\\f0\\fs32\\\'d1\\\'e5\\\'f0\\\'e3\\\'e5\\\'e9\\lang1033\\f1  \\lang1049\\f0\\\'d7\\\'c5\\\'d0\\\'c5\\\'cf\\\'c0\\\'cd\\\'ce\\\'c2\\par\n\\b0\\fs30\\\'e3\\\'eb\\\'e0\\\'e2\\\'e0 \\\'c3\\\'ce \\f1\\\'ab\\f0\\\'c3\\\'ee\\\'f0\\\'ee\\\'e4 \\\'cb\\\'e5\\\'f1\\\'ed\\\'ee\\\'e9\\f1\\\'bb\\f0\\par\n}\n";
+        if (repflag == 1) {
+                ofx_string = "{\\rtf1\\ansi\\ansicpg1252\\deff0{\\fonttbl{\\f0\\fnil\\fcharset204{\\*\\fname Arial;}Arial CYR;}}{\\colortbl ;\\red0\\green0\\blue0;}\\viewkind4\\uc1\\pard\\qr\\cf1\\lang1049\\f0\\fs26\\\'d0.\\\'d0\\\'c5\\\'c4\\\'c0\\\'ca\\\'d2\\\'ce\\\'d0\\par\\\'ce.\\\'ce\\\'cf\\\'c5\\\'d0\\\'c0\\\'d2\\\'ce\\\'d0\\par}";
         }
-        if (d_height < 0) {
-                d_height = -d_height;
+        if (repflag == 2) {
+                ofx_string = "{\\rtf1\\ansi\\ansicpg1252\\deff0{\\fonttbl{\\f0\\fnil\\fcharset204{\\*\\fname Arial;}Arial CYR;}}{\\colortbl ;\\red0\\green0\\blue0;}\\viewkind4\\uc1\\pard\\cf1\\lang1049\\f0\\fs26\\\'c0\\\'f0\\\'f5\\\'e8\\\'e2\\par}";
         }
-        var moveby1 = new VideoMotionVertex(Vegas.Project.Video.Width/d_width,Vegas.Project.Video.Height/d_height);
-        // key_frame.ScaleBy(moveby1);
-        var moveby2 = new VideoMotionVertex(0,-d_height*(836.6/1080));
-        key_frame.MoveBy(moveby2);
+        OFXStringParameter(med_txt.Generator.OFXEffect.FindParameterByName("Text")).Value = ofx_string;
+
+        var ofx_val : double;
+        ofx_val =  0.532236;
+        OFXDoubleParameter(med_txt.Generator.OFXEffect.FindParameterByName("Scale")).Value = ofx_val;
+        ofx_val = 1.190476;
+        if (repflag == 1) {
+                ofx_val = 1.142857;
+        }
+        if (repflag == 2) {
+                ofx_val = 0.950;
+        }
+        OFXDoubleParameter(med_txt.Generator.OFXEffect.FindParameterByName("LineSpacing")).Value = ofx_val;
+
+        var ofx_val2d : OFXDouble2D;
+        ofx_val2d.X = 0.500509;
+        ofx_val2d.Y = 0.227848;
+        if (repflag == 1) {
+                ofx_val2d.X = 0.906516;
+                ofx_val2d.Y = 0.218121;
+        }
+        if (repflag == 2) {
+                ofx_val2d.X = 0.092937;
+                ofx_val2d.Y = 0.922314;
+        }
+        OFXDouble2DParameter(med_txt.Generator.OFXEffect.FindParameterByName("Location")).Value = ofx_val2d;
+
+        var ofx_choice : OFXChoice;
+        if (repflag == 1) {
+                ofx_choice = OFXChoiceParameter(med_txt.Generator.OFXEffect.FindParameterByName("Alignment")).Choices[2];
+        } else if (repflag == 2) {
+                ofx_choice = OFXChoiceParameter(med_txt.Generator.OFXEffect.FindParameterByName("Alignment")).Choices[0];
+        } else {
+                ofx_choice = OFXChoiceParameter(med_txt.Generator.OFXEffect.FindParameterByName("Alignment")).Choices[1];
+        }
+        OFXChoiceParameter(med_txt.Generator.OFXEffect.FindParameterByName("Alignment")).Value = ofx_choice;
+
+        var ofx_colRGBA : OFXColor;
+        ofx_colRGBA.R = 0.0;
+        ofx_colRGBA.G = 0.0;
+        ofx_colRGBA.B = 0.0;
+        ofx_colRGBA.A = 1.0;
+        if (repflag == 2) {
+                ofx_colRGBA.R = 1.0;
+                ofx_colRGBA.G = 1.0;
+                ofx_colRGBA.B = 1.0;
+        }
+        OFXRGBAParameter(med_txt.Generator.OFXEffect.FindParameterByName("TextColor")).Value = ofx_colRGBA;
+
+        OFXStringParameter(med_txt.Generator.OFXEffect.FindParameterByName("Text")).ParameterChanged();
 
 	evt_txt.FadeIn.Length = Timecode.FromMilliseconds(400);
-	evt_txt.FadeOut.Length = Timecode.FromMilliseconds(400);
+        if (repflag == 1) {
+	        evt_txt.FadeOut.Length = Timecode.FromMilliseconds(0);
+                newEvent.Length = evt_txt.Length + (evt_txt.Start-newEvent.Start);
+        } else if (repflag == 2) {
+	        evt_txt.FadeOut.Length = Timecode.FromMilliseconds(0);
+                evt_txt.FadeIn.Length = evt_txt.FadeOut.Length;
+                newEvent.FadeOut.Length = Timecode.FromMilliseconds(0);
+                newEvent.FadeIn.Length = newEvent.FadeOut.Length;
+                newEvent.Length = evt_txt.Length + (evt_txt.Start-newEvent.Start);
+        } else {
+	        evt_txt.FadeOut.Length = Timecode.FromMilliseconds(400);
+        }
 	Vegas.Transport.CursorPosition = (evt_txt.Start + evt_txt.FadeIn.Length);
-	if (null != Vegas.Project.Groups) {
+	if (null != Vegas.Project.Groups && repflag != 2) {
 		var TtlGroup = new TrackEventGroup();
 		Vegas.Project.Groups.Add(TtlGroup);
 		TtlGroup.Add(newEvent);
@@ -245,34 +249,3 @@ function CreateTransitionEffect(nameRegExp : RegExp) : Effect {
         throw "failed to find plug-in";
     return new Effect(trns);
 }
-
-function CreateGeneratedMedia(generatorName, presetName) {
-        var generator = Vegas.Generators.GetChildByClassID(new Guid(generatorName));
-        //var src_height = Vegas.Project.Video.Height * 1;
-        //Vegas.Project.Video.Height = int(src_height*(160/1080));
-        ////////////////////
-        var mediaEnum = new Enumerator(Vegas.Project.MediaPool);
-        while (!mediaEnum.atEnd()) {
-                var sirota = mediaEnum.item();
-                if (sirota.UseCount == 0) {
-                        if (sirota.IsValid()) {
-                                if (sirota.TapeName == presetName) {
-                                        return sirota;
-                                }
-                        }
-                }
-                mediaEnum.moveNext();
-        }
-        /////////////////////
-        var media = new Media(generator, presetName);
-        //Vegas.Project.Video.Height = src_height;
-
-        if (!media.IsValid()) {
-                throw "failed to create media; " + generatorName + " (" + presetName + ")";
-        } else {
-                if (presetName != "GG") {
-                        media.TapeName = presetName;
-                }
-        }
-        return media;
-} 
