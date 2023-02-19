@@ -351,13 +351,19 @@ function Prepare4YT() {
 
         var tmptrack = new VideoTrack(0, "_tmplogo");
         Vegas.Project.Tracks.Add(tmptrack);
-        var media = new Media("C:/Program Files/Sony/Vegas 7.0/Script Menu/smai75x75_alpha75_hd.png");
+        var media = new Media("C:/Program Files/VEGAS/tvlesnoy_banners.veg");
         var stream = media.Streams[0]; //The "video" stream
         var newEvent = new VideoEvent(Vegas.Transport.LoopRegionStart,Vegas.Transport.LoopRegionLength);
         tmptrack.Events.Add(newEvent);
         var take = new Take(stream);
 	newEvent.Takes.Add(take);
         newEvent.VideoMotion.ScaleToFill = 1;
+        newEvent.MaintainAspectRatio = null;
+        TrackEvent(newEvent).Loop = null;
+        newEvent.ResampleMode = "Disable";
+        var vlc = new Envelope(EnvelopeType.Velocity);
+        newEvent.Envelopes.Add(vlc);
+        vlc.Points[0].Y = 0.0;
         var key_frame = newEvent.VideoMotion.Keyframes[0];
         var d_width = key_frame.TopRight.X   - key_frame.TopLeft.X;
         var d_height = key_frame.BottomLeft.Y - key_frame.TopLeft.Y;
