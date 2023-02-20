@@ -80,6 +80,7 @@ Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{userappdata}\Sony\
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{userappdata}\Sony\Render Templates\mpeg2-mc"" ""*PAL Widescreen.sft2"" /MOV"; Flags: runhidden runascurrentuser; 
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{autopf64}\Sony\Vegas 7.0\Script Menu"" ""ctc-sample.png"" /MOV"; Flags: runhidden runascurrentuser;
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{autopf64}\Sony\Vegas 7.0\Script Menu"" ""smai75x75_alpha75_hd.png"" /MOV"; Flags: runhidden runascurrentuser; 
+Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{app}\.."" ""tvlesnoy_banners.veg"" /MOV"; Flags: runhidden runascurrentuser; 
 Filename: "{tmp}\tmp\audio_plugin_update.exe"; Parameters: "-y -o""{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64"" /q"; Components: videoeditor1; Flags: runhidden runascurrentuser; 
 
 [Code]
@@ -396,6 +397,7 @@ begin
             GitDown('Norm_Arbitrary.js');
             GitDown('Norm_Arbitrary.js.png');
             GitDown('playlist_settime.exe');
+            GitDown('tvlesnoy_banners.veg');
             GitDown('Remove Letterboxing.cs');
             GitDown('Remove Letterboxing.cs.png');
             GitDown('Remove_Doubles.js');
