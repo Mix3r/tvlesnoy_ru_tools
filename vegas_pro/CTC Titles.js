@@ -94,9 +94,9 @@ try
 
         if (media == null) {
             if (repflag == 2) {
-                media = new Subclip(Vegas.Project,"C:/Program Files/VEGAS/tvlesnoy_banners.veg",Timecode.FromMilliseconds(1030),Timecode.FromMilliseconds(1040),0,lowerthird_name);
+                media = new Subclip(Vegas.Project,"C:\\Program Files\\VEGAS\\tvlesnoy_banners.veg",Timecode.FromMilliseconds(1030),Timecode.FromMilliseconds(1040),0,lowerthird_name);
             } else {
-                media = new Subclip(Vegas.Project,"C:/Program Files/VEGAS/tvlesnoy_banners.veg",Timecode.FromMilliseconds(0),Timecode.FromMilliseconds(40),0,lowerthird_name);
+                media = new Subclip(Vegas.Project,"C:\\Program Files\\VEGAS\\tvlesnoy_banners.veg",Timecode.FromMilliseconds(0),Timecode.FromMilliseconds(40),0,lowerthird_name);
             }
         }
 	var stream = media.Streams[0]; //The "video" stream

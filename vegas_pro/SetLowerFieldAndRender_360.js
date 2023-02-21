@@ -259,7 +259,9 @@ try {
                                 var renderStatus = rgnB.Label.lastIndexOf('\\');
                                 renderStatus = rgnB.Label.substring(0,renderStatus+1) + YTFolder + rgnB.Label.substring(renderStatus);
                                 Prepare4YT();
+                                Vegas.Project.Video.DeinterlaceMethod = "None";
                                 renderStatus = Vegas.Render(renderStatus, renderTemplateYT,rgnB.Position,rgnB.Length);
+                                Vegas.Project.Video.DeinterlaceMethod = "InterpolateFields";
                         }
                         regionEnumB.moveNext();
                 }
@@ -285,8 +287,9 @@ try {
         renderStatus = ofn.lastIndexOf('\\');
         renderStatus = ofn.substring(0,renderStatus+1) + YTFolder + ofn.substring(renderStatus);
         Prepare4YT();
+        Vegas.Project.Video.DeinterlaceMethod = "None";
         renderStatus = Vegas.Render(renderStatus, renderTemplateYT,Vegas.Transport.LoopRegionStart,Vegas.Transport.LoopRegionLength);
-
+        Vegas.Project.Video.DeinterlaceMethod = "InterpolateFields";
         throw "ok1";
 }
 
@@ -351,7 +354,7 @@ function Prepare4YT() {
 
         var tmptrack = new VideoTrack(0, "_tmplogo");
         Vegas.Project.Tracks.Add(tmptrack);
-        var media = new Media("C:/Program Files/VEGAS/tvlesnoy_banners.veg");
+        var media = new Media("C:\\Program Files\\VEGAS\\tvlesnoy_banners.veg");
         var stream = media.Streams[0]; //The "video" stream
         var newEvent = new VideoEvent(Vegas.Transport.LoopRegionStart,Vegas.Transport.LoopRegionLength);
         tmptrack.Events.Add(newEvent);

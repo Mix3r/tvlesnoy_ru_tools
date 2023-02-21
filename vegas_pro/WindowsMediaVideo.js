@@ -12,7 +12,7 @@ try {
 	//Vegas.Project.Video.Width = 720;
 	//Vegas.Project.Video.Height = 576;
 	Vegas.Project.Video.FrameRate = 25;
-	//Vegas.Project.Video.FieldOrder = "LowerFieldFirst";
+	//Vegas.Project.Video.FieldOrder = "ProgressiveScan";
 	//Vegas.Project.Video.PixelAspectRatio = 1.4568;       // 1.0926;
 	Vegas.Project.Video.MotionBlurType = "Gaussian";
 	Vegas.Project.Video.DeinterlaceMethod = "InterpolateFields";
@@ -44,7 +44,6 @@ try {
                 var evnts = new Enumerator(Track(trks.item()).Events);
                 while (!evnts.atEnd()) {
                         if (TrackEvent(evnts.item()).IsVideo()) {
-                                var envl_num = 0;
                                 if (null != TrackEvent(evnts.item()).ActiveTake) {
                                         if (null != TrackEvent(evnts.item()).ActiveTake.MediaPath) {
                                                 var media3 = Vegas.Project.MediaPool[TrackEvent(evnts.item()).ActiveTake.MediaPath];
@@ -116,7 +115,7 @@ try {
         if (null == Titlestrack) {
                 Titlestrack = new VideoTrack(0, "LOGOTYPE");
 		Vegas.Project.Tracks.Add(Titlestrack);
-                var media = new Media("C:/Program Files/VEGAS/tvlesnoy_banners.veg");
+                var media = new Media("C:\\Program Files\\VEGAS\\tvlesnoy_banners.veg");
                 var stream = media.Streams[0]; //The "video" stream
                 var newEvent = new VideoEvent(Vegas.SelectionStart, Vegas.SelectionLength);
                 Titlestrack.Events.Add(newEvent);
@@ -144,15 +143,16 @@ try {
                 var moveby1 = new VideoMotionVertex(640/d_width,480/d_height);
                 key_frame.ScaleBy(moveby1);
 	}
-
 	var renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.SelectionStart,Vegas.SelectionLength);
+
         var TitlestrackKeep = FindTrack("keeplogo");
         if (null == TitlestrackKeep) {
                 Vegas.Project.Tracks.Remove(Titlestrack);
         }
         } else {
-        var renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.SelectionStart,Vegas.SelectionLength);
+                var renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.SelectionStart,Vegas.SelectionLength);
         }
+
 }
 
 catch (e) {
