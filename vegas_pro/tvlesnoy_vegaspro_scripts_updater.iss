@@ -26,7 +26,7 @@ Name: "vid_scripts1/reset"; Description: "Сбросить настройки в
 Name: "videoeditor1"; Description: "Видеоредактор версии 13"; Types: custom;
 Name: "videoeditor1/en"; Description: "EN"; Types: custom; Flags: exclusive
 Name: "videoeditor1/ru"; Description: "RU"; Types: custom; Flags: exclusive
-Name: "videoeditor2"; Description: "Видеоредактор версии 19"; Types: custom;
+Name: "videoeditor2"; Description: "Видеоредактор версии 20"; Types: custom;
 Name: "videoeditor2/en"; Description: "EN"; Types: custom; Flags: exclusive
 Name: "soundeditor"; Description: "Звукорежиссёр"; Types: custom;
 Name: "soundeditor/en"; Description: "EN"; Types: custom; Flags: exclusive
@@ -223,11 +223,6 @@ begin
             GitDownTmp('ve19p.7z.009');
             GitDownTmp('ve19p.7z.010');
             GitDownTmp('ve19p.7z.011');
-            GitDownTmp('ve19p.7z.012');
-            GitDownTmp('ve19p.7z.013');
-            GitDownTmp('ve19p.7z.014');
-            GitDownTmp('ve19p.7z.015');
-            GitDownTmp('ve19p.7z.016');
             GitDownTmp('ve19p.exe'); 
             DownloadPage.Show;
             try
