@@ -41,12 +41,15 @@ Name: "networktv"; Description: "Сеть TV (папка рабочих мест
 ; Source: "{tmp}\git\*"; DestDir: "{app}\Script Menu"; Components: vid_scripts1; Flags: external recursesubdirs
 Source: "{tmp}\desktop.ini"; DestDir: "{userdesktop}\Сеть TV"; Components: networktv; Attribs: hidden; Flags: external
 
+
 [Dirs]
 Name: "{commonappdata}\Vegas Pro\13.0"; Components: vid_scripts1
 Name: "{userappdata}\Vegas Pro\13.0"; Components: vid_scripts1
 Name: "{userappdata}\Sony\Render Templates\wmv11"; Components: vid_scripts1
 Name: "{userappdata}\Sony\Render Templates\mpeg2-mc"; Components: vid_scripts1
 Name: "{userappdata}\Sony\Render Templates\xdcam ex"; Components: vid_scripts1
+Name: "{userappdata}\Sony\Render Templates\voukoder"; Components: videoeditor1
+Name: "{userappdata}\VEGAS\Render Templates\voukoder"; Components: videoeditor2
 Name: "{autopf64}\Sony\Vegas 7.0\Script Menu"; Components: vid_scripts1
 Name: "{userdocs}\OFX Presets\com.sonycreativesoftware_titlesandtext\Generator"; Components: vid_scripts1
 Name: "{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64"; Components: videoeditor1
@@ -77,6 +80,8 @@ Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{commonappdata}\Veg
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{userappdata}\Vegas Pro\13.0"" ""keyboard.ini"" /MOV"; Flags: runhidden runascurrentuser;
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{userappdata}\Sony\Render Templates\wmv11"" ""360_admin.*"" /MOV"; Flags: runhidden runascurrentuser;
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{userappdata}\Sony\Render Templates\xdcam ex"" ""YOUTUBE30P.*"" /MOV"; Flags: runhidden runascurrentuser;
+Filename: robocopy.exe; Parameters: """{tmp}\tmp"" ""{userappdata}\Sony\Render Templates\voukoder"" ""VBR*.sft2"" /R:1 /W:1"; Flags: runhidden runascurrentuser;
+Filename: robocopy.exe; Parameters: """{tmp}\tmp"" ""{userappdata}\VEGAS\Render Templates\voukoder"" ""VBR*.sft2"" /R:1 /W:1"; Flags: runhidden runascurrentuser;
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{userappdata}\Sony\Render Templates\mpeg2-mc"" ""*PAL Widescreen.sft2"" /MOV"; Flags: runhidden runascurrentuser; 
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{autopf64}\Sony\Vegas 7.0\Script Menu"" ""ctc-sample.png"" /MOV"; Flags: runhidden runascurrentuser;
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{autopf64}\Sony\Vegas 7.0\Script Menu"" ""smai75x75_alpha75_hd.png"" /MOV"; Flags: runhidden runascurrentuser; 
@@ -165,6 +170,8 @@ begin
             GitDownTmp('video_editor1.7z.005'); 
             GitDownTmp('video_editor1.7z.006'); 
             GitDownTmp('video_editor1.7z.007');
+            GitDownTmp('VBR46888UHD.sft2');
+            GitDownTmp('VBR23444HD.sft2');
             GitDownTmp('audio_plugin_update.exe');
             GitDownTmp('video_editor1.exe'); 
             DownloadPage.Show;
@@ -223,6 +230,8 @@ begin
             GitDownTmp('ve19p.7z.009');
             GitDownTmp('ve19p.7z.010');
             GitDownTmp('ve19p.7z.011');
+            GitDownTmp('VBR46888UHD.sft2');
+            GitDownTmp('VBR23444HD.sft2');
             GitDownTmp('ve19p.exe'); 
             DownloadPage.Show;
             try
