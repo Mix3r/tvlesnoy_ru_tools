@@ -3,7 +3,7 @@
 [Setup]
 AppName=Vegas Pro Scripts TVLesnoy
 AppPublisher=Mix3r_Durachok
-AppVersion=230127
+AppVersion=230323
 Compression=lzma
 DefaultDirName={autopf64}\VEGAS\VEGAS Pro 13.0
 DefaultGroupName=My Program
@@ -26,6 +26,7 @@ Name: "vid_scripts1/reset"; Description: "Сбросить настройки в
 Name: "videoeditor1"; Description: "Видеоредактор версии 13"; Types: custom;
 Name: "videoeditor1/en"; Description: "EN"; Types: custom; Flags: exclusive
 Name: "videoeditor1/ru"; Description: "RU"; Types: custom; Flags: exclusive
+Name: "vouk"; Description: "Видеокодек Voukoder (аппаратное кодирование) для 13 и 20"; Types: custom;
 Name: "videoeditor2"; Description: "Видеоредактор версии 20"; Types: custom;
 Name: "videoeditor2/en"; Description: "EN"; Types: custom; Flags: exclusive
 Name: "soundeditor"; Description: "Звукорежиссёр"; Types: custom;
@@ -51,6 +52,7 @@ Name: "{userappdata}\Sony\Render Templates\xdcam ex"; Components: vid_scripts1
 Name: "{userappdata}\Sony\Render Templates\voukoder"; Components: videoeditor1
 Name: "{userappdata}\VEGAS\Render Templates\voukoder"; Components: videoeditor2
 Name: "{autopf64}\Sony\Vegas 7.0\Script Menu"; Components: vid_scripts1
+Name: "{autopf64}\VEGAS"; Components: vouk
 Name: "{userdocs}\OFX Presets\com.sonycreativesoftware_titlesandtext\Generator"; Components: vid_scripts1
 Name: "{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64"; Components: videoeditor1
 Name: "{userdesktop}\Сеть TV"; Components: networktv
@@ -87,6 +89,8 @@ Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{autopf64}\Sony\Veg
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{autopf64}\Sony\Vegas 7.0\Script Menu"" ""smai75x75_alpha75_hd.png"" /MOV"; Flags: runhidden runascurrentuser; 
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{app}\.."" ""tvlesnoy_banners.veg"" /MOV"; Flags: runhidden runascurrentuser; 
 Filename: "{tmp}\tmp\audio_plugin_update.exe"; Parameters: "-y -o""{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64"" /q"; Components: videoeditor1; Flags: runhidden runascurrentuser; 
+Filename: "{tmp}\tmp\voukdr.exe"; Parameters: "-y -o""{autopf64}\VEGAS"" /q"; Components: vouk; Flags: runhidden runascurrentuser;
+Filename: regsvr32.exe; Parameters: "{autopf64}\VEGAS\voukoder.dll"; Components: vouk; Flags: runhidden runascurrentuser;
 
 [Code]
 var
@@ -217,6 +221,43 @@ begin
             end;
         end;
         // videoeditor section ends here
+        // voukoder section
+        if (WizardIsComponentSelected('vouk')) then begin
+            DownloadPage.Clear;
+            GitDownTmp('voukdr.exe');
+            if FileExists(ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\vegas130.exe')) then begin
+                    GitDownTmp('voukoderplug13.zip');
+            end;
+            if FileExists(ExpandConstant('{autopf64}\VEGAS\Vegas Pro 20\vegas200.exe')) then begin
+                    GitDownTmp('voukoderplug.zip');
+            end;
+            DownloadPage.Show;
+            try
+                try
+                    DownloadPage.Download; // This downloads the files to {tmp}
+                    Result := True;
+                except
+                    if DownloadPage.AbortedByUser then begin
+                        Log('Aborted by user.')
+                    end else begin
+                        SuppressibleMsgBox(AddPeriod(GetExceptionMessage), mbCriticalError, MB_OK, IDOK);
+                    end;
+                    {Result := False;}
+                end;
+            finally
+                ForceDirectories(ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\FileIO Plug-Ins\voukoderplug'));
+                if Exec('powershell.exe',ExpandConstant('-command "Expand-Archive -Force ''{tmp}\tmp\voukoderplug13.zip'' ''{autopf64}\VEGAS\VEGAS Pro 13.0\FileIO Plug-Ins\voukoderplug'''), '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+                end else begin
+                end;
+                
+                ForceDirectories(ExpandConstant('{autopf64}\VEGAS\Vegas Pro 20\FileIO Plug-Ins\voukoderplug'));
+                if Exec('powershell.exe',ExpandConstant('-command "Expand-Archive -Force ''{tmp}\tmp\voukoderplug.zip'' ''{autopf64}\VEGAS\Vegas Pro 20\FileIO Plug-Ins\voukoderplug'''), '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+                end else begin
+                end;
+                DownloadPage.Hide;
+            end;
+        end;
+        // voukoder section ends here
         if (WizardIsComponentSelected('videoeditor2')) then begin
             DownloadPage.Clear;
             GitDownTmp('ve19p.7z.001');
