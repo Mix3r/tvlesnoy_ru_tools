@@ -221,52 +221,6 @@ begin
             end;
         end;
         // videoeditor section ends here
-        // voukoder section
-        if (WizardIsComponentSelected('vouk')) then begin
-            DownloadPage.Clear;
-            GitDownTmp('voukdr.exe');
-            if FileExists(ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\vegas130.exe')) then begin
-                    GitDownTmp('voukoderplug13.zip');
-            end;
-            if FileExists(ExpandConstant('{autopf64}\VEGAS\Vegas Pro 20\vegas200.exe')) then begin
-                    GitDownTmp('voukoderplug.zip');
-            end;
-            DownloadPage.Show;
-            try
-                try
-                    DownloadPage.Download; // This downloads the files to {tmp}
-                    Result := True;
-                except
-                    if DownloadPage.AbortedByUser then begin
-                        Log('Aborted by user.')
-                    end else begin
-                        SuppressibleMsgBox(AddPeriod(GetExceptionMessage), mbCriticalError, MB_OK, IDOK);
-                    end;
-                    {Result := False;}
-                end;
-            finally
-                // connect 13 voukoder
-                if FileExists(ExpandConstant('{tmp}\tmp\voukoderplug13.zip')) then begin
-                ForceDirectories(ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\FileIO Plug-Ins\voukoderplug'));
-                if Exec('powershell.exe',ExpandConstant('-command "Expand-Archive -Force ''{tmp}\tmp\voukoderplug13.zip'' ''{autopf64}\VEGAS\VEGAS Pro 13.0\FileIO Plug-Ins\voukoderplug'''), '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
-                        RenameFile(ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\FileIO Plug-Ins\voukoderplug13.dll'), ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\FileIO Plug-Ins\voukoderplug.dll'));
-                        SaveStringToFile(ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\Voukoder-x64.fio2007-config'), '[FileIO Plug-Ins]' + #13#10 + 'voukoderplug=FileIO Plug-Ins\voukoderplug\voukoderplug.dll', False);
-                end else begin
-                end;
-                end;
-                
-                // connect 20 voukoder
-                if FileExists(ExpandConstant('{tmp}\tmp\voukoderplug.zip')) then begin
-                ForceDirectories(ExpandConstant('{autopf64}\VEGAS\Vegas Pro 20\FileIO Plug-Ins\voukoderplug'));
-                if Exec('powershell.exe',ExpandConstant('-command "Expand-Archive -Force ''{tmp}\tmp\voukoderplug.zip'' ''{autopf64}\VEGAS\Vegas Pro 20\FileIO Plug-Ins\voukoderplug'''), '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
-                        SaveStringToFile(ExpandConstant('{autopf64}\VEGAS\Vegas Pro 20\Voukoder-x64.fio2007-config'), '[FileIO Plug-Ins]' + #13#10 + 'voukoderplug=FileIO Plug-Ins\voukoderplug\voukoderplug.dll', False);
-                end else begin
-                end;
-                end;
-                DownloadPage.Hide;
-            end;
-        end;
-        // voukoder section ends here
         if (WizardIsComponentSelected('videoeditor2')) then begin
             DownloadPage.Clear;
             GitDownTmp('ve19p.7z.001');
@@ -313,6 +267,52 @@ begin
             end;
         end;
         // videoeditor section ends here
+        // voukoder section
+        if (WizardIsComponentSelected('vouk')) then begin
+            DownloadPage.Clear;
+            GitDownTmp('voukdr.exe');
+            if FileExists(ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\vegas130.exe')) then begin
+                    GitDownTmp('voukoderplug13.zip');
+            end;
+            if FileExists(ExpandConstant('{autopf64}\VEGAS\Vegas Pro 20\vegas200.exe')) then begin
+                    GitDownTmp('voukoderplug.zip');
+            end;
+            DownloadPage.Show;
+            try
+                try
+                    DownloadPage.Download; // This downloads the files to {tmp}
+                    Result := True;
+                except
+                    if DownloadPage.AbortedByUser then begin
+                        Log('Aborted by user.')
+                    end else begin
+                        SuppressibleMsgBox(AddPeriod(GetExceptionMessage), mbCriticalError, MB_OK, IDOK);
+                    end;
+                    {Result := False;}
+                end;
+            finally
+                // connect 13 voukoder
+                if FileExists(ExpandConstant('{tmp}\tmp\voukoderplug13.zip')) then begin
+                ForceDirectories(ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\FileIO Plug-Ins\voukoderplug'));
+                if Exec('powershell.exe',ExpandConstant('-command "Expand-Archive -Force ''{tmp}\tmp\voukoderplug13.zip'' ''{autopf64}\VEGAS\VEGAS Pro 13.0\FileIO Plug-Ins\voukoderplug'''), '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+                        RenameFile(ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\FileIO Plug-Ins\voukoderplug13.dll'), ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\FileIO Plug-Ins\voukoderplug.dll'));
+                        SaveStringToFile(ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\Voukoder-x64.fio2007-config'), '[FileIO Plug-Ins]' + #13#10 + 'voukoderplug=FileIO Plug-Ins\voukoderplug\voukoderplug.dll', False);
+                end else begin
+                end;
+                end;
+                
+                // connect 20 voukoder
+                if FileExists(ExpandConstant('{tmp}\tmp\voukoderplug.zip')) then begin
+                ForceDirectories(ExpandConstant('{autopf64}\VEGAS\Vegas Pro 20\FileIO Plug-Ins\voukoderplug'));
+                if Exec('powershell.exe',ExpandConstant('-command "Expand-Archive -Force ''{tmp}\tmp\voukoderplug.zip'' ''{autopf64}\VEGAS\Vegas Pro 20\FileIO Plug-Ins\voukoderplug'''), '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+                        SaveStringToFile(ExpandConstant('{autopf64}\VEGAS\Vegas Pro 20\Voukoder-x64.fio2007-config'), '[FileIO Plug-Ins]' + #13#10 + 'voukoderplug=FileIO Plug-Ins\voukoderplug\voukoderplug.dll', False);
+                end else begin
+                end;
+                end;
+                DownloadPage.Hide;
+            end;
+        end;
+        // voukoder section ends here
         // soundeditor section
         if (WizardIsComponentSelected('soundeditor')) then begin
             DownloadPage.Clear;
