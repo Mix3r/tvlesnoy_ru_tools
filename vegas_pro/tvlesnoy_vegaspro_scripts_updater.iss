@@ -295,8 +295,7 @@ begin
                 if FileExists(ExpandConstant('{tmp}\tmp\voukoderplug13.zip')) then begin
                 ForceDirectories(ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\FileIO Plug-Ins\voukoderplug'));
                 if Exec('powershell.exe',ExpandConstant('-command "Expand-Archive -Force ''{tmp}\tmp\voukoderplug13.zip'' ''{autopf64}\VEGAS\VEGAS Pro 13.0\FileIO Plug-Ins\voukoderplug'''), '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
-                        RenameFile(ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\FileIO Plug-Ins\voukoderplug13.dll'), ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\FileIO Plug-Ins\voukoderplug.dll'));
-                        SaveStringToFile(ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\Voukoder-x64.fio2007-config'), '[FileIO Plug-Ins]' + #13#10 + 'voukoderplug=FileIO Plug-Ins\voukoderplug\voukoderplug.dll', False);
+                        SaveStringToFile(ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\Voukoder-x64.fio2007-config'), '[FileIO Plug-Ins]' + #13#10 + 'voukoderplug=FileIO Plug-Ins\voukoderplug\voukoderplug13.dll', False);
                 end else begin
                 end;
                 end;
