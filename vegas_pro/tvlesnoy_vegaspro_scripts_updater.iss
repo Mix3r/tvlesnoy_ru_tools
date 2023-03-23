@@ -90,7 +90,7 @@ Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{autopf64}\Sony\Veg
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{app}\.."" ""tvlesnoy_banners.veg"" /MOV"; Flags: runhidden runascurrentuser; 
 Filename: "{tmp}\tmp\audio_plugin_update.exe"; Parameters: "-y -o""{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64"" /q"; Components: videoeditor1; Flags: runhidden runascurrentuser; 
 Filename: "{tmp}\tmp\voukdr.exe"; Parameters: "-y -o""{autopf64}\VEGAS"" /q"; Components: vouk; Flags: runhidden runascurrentuser;
-Filename: regsvr32.exe; Parameters: "{autopf64}\VEGAS\voukoder.dll"; Components: vouk; Flags: runhidden runascurrentuser;
+Filename: regsvr32.exe; Parameters: "/s ""{autopf64}\VEGAS\voukoder.dll"""; Components: vouk; Flags: runhidden runascurrentuser;
 
 [Code]
 var
@@ -247,11 +247,14 @@ begin
             finally
                 ForceDirectories(ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\FileIO Plug-Ins\voukoderplug'));
                 if Exec('powershell.exe',ExpandConstant('-command "Expand-Archive -Force ''{tmp}\tmp\voukoderplug13.zip'' ''{autopf64}\VEGAS\VEGAS Pro 13.0\FileIO Plug-Ins\voukoderplug'''), '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+                        RenameFile(ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\FileIO Plug-Ins\voukoderplug13.dll'), ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\FileIO Plug-Ins\voukoderplug.dll'));
+                        SaveStringToFile(ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\Voukoder-x64.fio2007-config'), '[FileIO Plug-Ins]' + #13#10 + 'voukoderplug=FileIO Plug-Ins\voukoderplug\voukoderplug.dll', False);
                 end else begin
                 end;
                 
                 ForceDirectories(ExpandConstant('{autopf64}\VEGAS\Vegas Pro 20\FileIO Plug-Ins\voukoderplug'));
                 if Exec('powershell.exe',ExpandConstant('-command "Expand-Archive -Force ''{tmp}\tmp\voukoderplug.zip'' ''{autopf64}\VEGAS\Vegas Pro 20\FileIO Plug-Ins\voukoderplug'''), '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+                        SaveStringToFile(ExpandConstant('{autopf64}\VEGAS\Vegas Pro 20\Voukoder-x64.fio2007-config'), '[FileIO Plug-Ins]' + #13#10 + 'voukoderplug=FileIO Plug-Ins\voukoderplug\voukoderplug.dll', False);
                 end else begin
                 end;
                 DownloadPage.Hide;
