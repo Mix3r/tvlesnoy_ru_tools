@@ -35,6 +35,34 @@ try {
 	var extRE = /.MP4/;
 	var bFirstMediaEvent = 0;
         var nMTSOffset = 40;
+
+        //
+        var buses = new Enumerator(Vegas.Project.BusTracks);
+        var nBusnum = 0;
+        while (!buses.atEnd()) {
+                nBusnum = nBusnum + 1;
+                buses.moveNext();
+        }
+        if (nBusnum <= 2) {
+                var busA = new AudioBusTrack(Vegas.Project);
+                Vegas.Project.BusTracks.Add(busA);
+                var afx = PlugInNode(Vegas.AudioFX.FindChildByUniqueID("{8010C341-6D4C-4390-B828-E4D246C3DDB2}"));
+                //MessageBox.Show(afx.UniqueID);
+                busA.Effects.AddEffect(afx);
+                busA.Effects[0].Preset = "TV_ГОЛОС_TV";
+                var busB = new AudioBusTrack(Vegas.Project);
+                Vegas.Project.BusTracks.Add(busB);
+                busB.Effects.AddEffect(afx);
+                busB.Effects[0].Preset = "TV_ИНТЕРШУМ_TV";
+                var busC = new AudioBusTrack(Vegas.Project);
+                Vegas.Project.BusTracks.Add(busC);
+                var mfx = PlugInNode(Vegas.AudioFX.FindChildByUniqueID("{A6A78627-D619-48BF-AD26-0C6B44B5C7D8}"));
+                busC.Effects.AddEffect(mfx);
+                busC.Effects.AddEffect(afx);
+                busC.Effects[0].Preset = "TV_MUFFLE";
+                busC.Effects[1].Preset = "TV_ИНТЕРШУМ_TV";
+        }
+        //
 	
 	var renderer : Renderer = FindRenderer();
 	
@@ -111,10 +139,6 @@ try {
                                                                         if (mm3.Width == 1920 && mm3.Height == 1080) {
                                                                                 if (mm3.FrameRate == 25.000 && mm3.Format == "MPEG-2") {
                                                                                         mm3.FieldOrder = "UpperFieldFirst";
-                                                                                //} else if (mm3.Format == "Фото - JPEG" && mm3.FrameRate == 25.000) {
-                                                                                        //mm3.FieldOrder = "UpperFieldFirst";
-                                                                                //}  else if (mm3.Format == "Sony Motion JPEG" && mm3.FrameRate == 25.000) {
-                                                                                        //mm3.FieldOrder = "UpperFieldFirst";
                                                                                 }
                                                                         }
                                                                         if (mm3.FieldOrder != "ProgressiveScan") {
