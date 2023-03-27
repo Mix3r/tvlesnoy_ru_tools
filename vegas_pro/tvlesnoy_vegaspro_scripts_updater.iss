@@ -471,6 +471,7 @@ begin
             GitDown('YOUTUBE30P.sft2'); 
             GitDown('ОТЧЁТ_DVD Architect PAL Widescreen.sft2');
             GitDown('video_editor1_setup.reg');
+            GitDown('wingeneric_ve1.reg');
             GitDown('tvlesnoy_moveleft.js');
             GitDown('tvlesnoy_moveright.js');
             GitDown('tvlesnoy_moveup.js');
@@ -498,6 +499,9 @@ begin
                 end;
             finally
                 DownloadPage.Hide;
+                if Exec('reg.exe',ExpandConstant('IMPORT "{tmp}\git\wingeneric_ve1.reg"'), '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then begin
+                end else begin
+                end;
                 if (WizardIsComponentSelected('vid_scripts1/reset')) then begin
                     if Exec('reg.exe',ExpandConstant('IMPORT "{tmp}\git\video_editor1_setup.reg"'), '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then begin
                     end else begin
