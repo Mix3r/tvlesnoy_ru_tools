@@ -284,7 +284,7 @@ try {
                                 renderStatus = rgnB.Label.substring(0,renderStatus+1) + YTFolder + rgnB.Label.substring(renderStatus);
                                 Prepare4YT();
                                 Vegas.Project.Video.DeinterlaceMethod = "None";
-                                renderStatus = Vegas.Render(renderStatus, renderTemplateYT,rgnB.Position,rgnB.Length);
+                                // renderStatus = Vegas.Render(renderStatus, renderTemplateYT,rgnB.Position,rgnB.Length);
                                 Vegas.Project.Video.DeinterlaceMethod = "InterpolateFields";
                         }
                         regionEnumB.moveNext();
@@ -312,7 +312,7 @@ try {
         renderStatus = ofn.substring(0,renderStatus+1) + YTFolder + ofn.substring(renderStatus);
         Prepare4YT();
         Vegas.Project.Video.DeinterlaceMethod = "None";
-        renderStatus = Vegas.Render(renderStatus, renderTemplateYT,Vegas.Transport.LoopRegionStart,Vegas.Transport.LoopRegionLength);
+        // renderStatus = Vegas.Render(renderStatus, renderTemplateYT,Vegas.Transport.LoopRegionStart,Vegas.Transport.LoopRegionLength);
         Vegas.Project.Video.DeinterlaceMethod = "InterpolateFields";
         throw "ok1";
 }
@@ -346,6 +346,7 @@ catch (e) {
              Vegas.Project.Ruler.StartTime = Timecode.FromMilliseconds(0);
         }
         Prepare4air();
+        Vegas.Project.Video.DeinterlaceMethod = "InterpolateFields";
         if (e != "ok1" && e != "Error: Object required") {
 	        MessageBox.Show(e);
         }
