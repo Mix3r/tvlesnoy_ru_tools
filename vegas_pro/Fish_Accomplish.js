@@ -24,6 +24,7 @@ try
 	} else {
 		var prevlength = Timecode.FromMilliseconds(0);
 		var trackEnum = new Enumerator(Vegas.Project.Tracks);
+                var FishGroup = null;
 		while (!trackEnum.atEnd()) {
 			var track : Track = Track(trackEnum.item());
 			var evntEnum = new Enumerator(track.Events);
@@ -48,7 +49,11 @@ try
 							var newEvent = new VideoEvent(FishRegion.Position, Vegas.Transport.LoopRegionLength);
 						}
 						track.Events.Add(newEvent);
-
+                                                if (null == FishGroup && null != Vegas.Project.Groups) {
+                                                        FishGroup = new TrackEventGroup();
+                                                        Vegas.Project.Groups.Add(FishGroup);
+                                                }
+                                                FishGroup.Add(newEvent);
                                                 var streamcount = 0;
                                                 if (null != evnt.ActiveTake) {
 						        if (null != evnt.ActiveTake.MediaPath) {
