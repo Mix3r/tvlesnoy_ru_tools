@@ -153,6 +153,10 @@ try {
                                         var envlps = new Enumerator(VideoEvent(evnts.item()).Envelopes);
                                         while (!envlps.atEnd()) {
                                                 envl_num = envl_num + 1;
+                                                if (Envelope(envlps.item()).Points[0].Y == 0.0) {
+                                                        envl_num = 0;
+                                                        break;
+                                                }
                                                 envlps.moveNext();
                                         }
                                 }
