@@ -8,7 +8,7 @@ import ScriptPortal.Vegas;
 
 try {
 
-	var templateRE = /Internet 1920x1080-30/;
+	var templateRE = /VBR23444/;     //VBR23444   ///Internet 1920x1080-30
 	var extRE = /.mp4/;
 	
 	var renderer : Renderer = FindRenderer(templateRE);
@@ -73,14 +73,36 @@ try {
         }
 		
         var regionEnum = new Enumerator(Vegas.Project.Regions);
+        var regioncount = 0;
 
         while (!regionEnum.atEnd()) {
 	        var rgn : Region = Region(regionEnum.item());
                 var rlbl = rgn.Label.substring(1,2);
                 if ((rlbl == ":" || rlbl == "\\") & Vegas.Transport.LoopRegionStart <= rgn.Position & Vegas.Transport.LoopRegionStart+Vegas.Transport.LoopRegionLength >= rgn.Position+rgn.Length) {
+                        regioncount = regioncount + 1;
 	                var renderStatus = Vegas.Render(rgn.Label + "." + String(extRE).substring(2,String(extRE).length-1), renderTemplate,rgn.Position,rgn.Length);
                 }
 	        regionEnum.moveNext();
+        }
+        if (regioncount <= 0) {
+                MessageBox.Show("Регионов нет. Будет просчитана первая видеодорожка.\nПуть к просчитанным файлам соответствует пути\nкаждого видео на дорожке (_ВЫХ)");
+                var trkenum = new Enumerator(Vegas.Project.Tracks);
+                while (!trkenum.atEnd()) {
+                        var evntEnum = new Enumerator(Track(trkenum.item()).Events);
+                        while (!evntEnum.atEnd()) {
+                                if (TrackEvent(evntEnum.item()).IsVideo()) {
+                                    if (null != TrackEvent(evntEnum.item()).ActiveTake) {
+                                        if (null != TrackEvent(evntEnum.item()).ActiveTake.MediaPath) {
+                                            var media4 = TrackEvent(evntEnum.item()).ActiveTake.MediaPath;
+                                            //MessageBox.Show(media4.substring(0,media4.length-4) + "_OUT." + String(extRE).substring(2,String(extRE).length-1));
+                                            var renderStatus = Vegas.Render(media4.substring(0,media4.length-4) + "_OUT." + String(extRE).substring(2,String(extRE).length-1), renderTemplate,TrackEvent(evntEnum.item()).Start,TrackEvent(evntEnum.item()).Length);
+                                        }
+                                    }
+                                }
+                                evntEnum.moveNext();
+                        }
+                        trkenum.moveNext();
+                }
         }
 }
 
