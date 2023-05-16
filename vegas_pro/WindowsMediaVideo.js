@@ -41,6 +41,29 @@ try {
 
         var trks = new Enumerator(Vegas.Project.Tracks);
         while (!trks.atEnd()) {
+                // duplicates hunt procedure
+                if (Track(trks.item()).IsAudio()) {
+                var bDups_present = 1;
+                while(bDups_present == 1) {
+                    bDups_present = 0;
+                    var dups = new Enumerator(Track(trks.item()).Events);
+                    var lasteventstart = Timecode.FromMilliseconds(0);
+		    var lasteventlength = Timecode.FromMilliseconds(0);
+                    var prev_item = null;
+                    while (!dups.atEnd()) {
+                        if (null != prev_item && TrackEvent(dups.item()).Start == lasteventstart && TrackEvent(dups.item()).Length == lasteventlength) {
+                            Track(trks.item()).Events.Remove(TrackEvent(prev_item));
+                            bDups_present = 1;
+                            break;
+                        }
+                        lasteventstart = TrackEvent(dups.item()).Start;
+			lasteventlength = TrackEvent(dups.item()).Length;
+                        prev_item = dups.item();
+                        dups.moveNext();
+                    }
+                }
+                }
+                //
                 var evnts = new Enumerator(Track(trks.item()).Events);
                 while (!evnts.atEnd()) {
                         if (TrackEvent(evnts.item()).IsVideo()) {
@@ -55,10 +78,6 @@ try {
                                                                         if (mm3.Width == 1920 && mm3.Height == 1080) {
                                                                                 if (mm3.FrameRate == 25.000 && mm3.Format == "MPEG-2") {
                                                                                         mm3.FieldOrder = "UpperFieldFirst";
-                                                                                //} else if (mm3.Format == "Фото - JPEG" && mm3.FrameRate == 25.000) {
-                                                                                        //mm3.FieldOrder = "UpperFieldFirst";
-                                                                                //}  else if (mm3.Format == "Sony Motion JPEG" && mm3.FrameRate == 25.000) {
-                                                                                        //mm3.FieldOrder = "UpperFieldFirst";
                                                                                 }
                                                                         }
                                                                 }

@@ -1,5 +1,5 @@
 /**
-* Render  - batch render --- NARRATOR 2.0 feature
+* Render - batch render --- NARRATOR & dup hunt
 * make regions with full paths to batch render
 **/
 import System;
@@ -63,14 +63,14 @@ try {
                 busC.Effects[1].Preset = "TV_ИНТЕРШУМ_TV";
         }
         //
-	
+
 	var renderer : Renderer = FindRenderer();
-	
+
         if (null == renderer)
                 throw "failed to find renderer";
-		
+
         var renderTemplate :RenderTemplate = FindRenderTemplate(renderer, templateRE);
-	
+
         if (null == renderTemplate)
                 throw "failed to find render template";
 
@@ -78,9 +78,32 @@ try {
 
 	var titl = Path.GetFileNameWithoutExtension(Vegas.Project.FilePath);
         var nEventStart = Vegas.Transport.LoopRegionStart;
-	
+
         var trks = new Enumerator(Vegas.Project.Tracks);
         while (!trks.atEnd()) {
+                // duplicates hunt procedure
+                if (Track(trks.item()).IsAudio()) {
+                var bDups_present = 1;
+                while(bDups_present == 1) {
+                    bDups_present = 0;
+                    var dups = new Enumerator(Track(trks.item()).Events);
+                    var lasteventstart = Timecode.FromMilliseconds(0);
+		    var lasteventlength = Timecode.FromMilliseconds(0);
+                    var prev_item = null;
+                    while (!dups.atEnd()) {
+                        if (null != prev_item && TrackEvent(dups.item()).Start == lasteventstart && TrackEvent(dups.item()).Length == lasteventlength) {
+                            Track(trks.item()).Events.Remove(TrackEvent(prev_item));
+                            bDups_present = 1;
+                            break;
+                        }
+                        lasteventstart = TrackEvent(dups.item()).Start;
+			lasteventlength = TrackEvent(dups.item()).Length;
+                        prev_item = dups.item();
+                        dups.moveNext();
+                    }
+                }
+                }
+                //
                 var evnts = new Enumerator(Track(trks.item()).Events);
                 while (!evnts.atEnd()) {
                         if (bFirstMediaEvent == 0) {
