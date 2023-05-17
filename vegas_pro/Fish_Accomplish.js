@@ -63,12 +63,16 @@ try
                                                                                 var streamsEnum = new Enumerator(media.Streams);
                                                                                 while (!streamsEnum.atEnd()) {
                                                                                         streamcount = streamcount + 1;
+                                                                                        if (media.Streams[streamcount-1].MediaType == MediaType.Audio) {
+                                                                                            break;
+                                                                                        }
                                                                                         streamsEnum.moveNext();
                                                                                 }
                                                                         }
                                                                 }
                                                         }
                                                 }
+
                                                 if (streamcount > 0) {
                                                         if (evnt.IsAudio()) {
                                                                 var take = new Take(media.Streams[streamcount-1]);
