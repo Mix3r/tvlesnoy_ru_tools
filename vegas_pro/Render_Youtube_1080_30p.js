@@ -31,10 +31,13 @@ try {
         const YTFolder = "CЮЖЕТЫ ЮТУБ";
 
 	var templateRE = /HQ 1920x1080-50i, /;
-	var templateYT = /YOUTUBE30/;
+	var templateWAV = /48 000 Hz; 16 Bit; Stereo, P/;
 	var extRE = /.MP4/;
+        var extREWAV = /.wav/;
 	var bFirstMediaEvent = 0;
         var nMTSOffset = 40;
+        var nWAVTrackCount = 0;
+        var tcSafePos = Timecode.FromMilliseconds(0);
 
 	var renderer : Renderer = FindRenderer();
 
@@ -46,13 +49,47 @@ try {
         if (null == renderTemplate)
                 throw "failed to find render template";
 
-        var renderTemplateYT :RenderTemplate = FindRenderTemplate(renderer, templateYT);
+        //var renderTemplateYT :RenderTemplate = FindRenderTemplate(renderer, templateYT);
+        var renderTemplateYT = null;
+        var rendererEnum2 : Enumerator = new Enumerator(Vegas.Renderers);
+        while (!rendererEnum2.atEnd()) {
+                if (null != Renderer(rendererEnum2.item()).FileExtension.match(extREWAV)) {
+			renderTemplateYT = FindRenderTemplate(Renderer(rendererEnum2.item()), templateWAV);
+			if (null != renderTemplateYT) {
+                                break;
+                        }
+                }
+                rendererEnum2.moveNext();
+        }
 
 	var titl = Path.GetFileNameWithoutExtension(Vegas.Project.FilePath);
         var nEventStart = Vegas.Transport.LoopRegionStart;
 
         var trks = new Enumerator(Vegas.Project.Tracks);
         while (!trks.atEnd()) {
+                // duplicates hunt procedure
+                if (Track(trks.item()).IsAudio()) {
+                var bDups_present = 1;
+                while(bDups_present == 1) {
+                    bDups_present = 0;
+                    var dups = new Enumerator(Track(trks.item()).Events);
+                    var lasteventstart = Timecode.FromMilliseconds(0);
+		    var lasteventlength = Timecode.FromMilliseconds(0);
+                    var prev_item = null;
+                    while (!dups.atEnd()) {
+                        if (null != prev_item && TrackEvent(dups.item()).Start == lasteventstart && TrackEvent(dups.item()).Length == lasteventlength) {
+                            Track(trks.item()).Events.Remove(TrackEvent(prev_item));
+                            bDups_present = 1;
+                            break;
+                        }
+                        lasteventstart = TrackEvent(dups.item()).Start;
+			lasteventlength = TrackEvent(dups.item()).Length;
+                        prev_item = dups.item();
+                        dups.moveNext();
+                    }
+                }
+                }
+                //
                 var evnts = new Enumerator(Track(trks.item()).Events);
                 while (!evnts.atEnd()) {
                         if (bFirstMediaEvent == 0) {
@@ -258,6 +295,78 @@ try {
 	}
         Prepare4OTV();
         var renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.Transport.LoopRegionStart,Vegas.Transport.LoopRegionLength);
+        /////////////////////////
+        if (null == renderTemplateYT) {
+            throw "failed to find render template YT";
+        } else {
+            var ex_tWAV = String(extREWAV).substring(1,String(extREWAV).length-1);
+            titl = ofn.substring(0,ofn.length-ex_t.length);
+            //////////////
+            var trackEnumSND = new Enumerator(Vegas.Project.Tracks);
+            while (!trackEnumSND.atEnd()) {
+                if (Track(trackEnumSND.item()).IsAudio()) {
+                    //if (null == Track(trackEnumSND.item()).Mute) {
+                    //    var evts2enum = new Enumerator(Track(tr2enum.item()).Events);
+                    //}
+                    var evts2safe = new Enumerator(Track(trackEnumSND.item()).Events);
+                    while (!evts2safe.atEnd()) {
+                        if (TrackEvent(evts2safe.item()).Start+TrackEvent(evts2safe.item()).Length > tcSafePos) {
+                            tcSafePos = TrackEvent(evts2safe.item()).Start+TrackEvent(evts2safe.item()).Length;
+                        }
+                        evts2safe.moveNext();
+                    }
+                }
+                trackEnumSND.moveNext();
+            }
+            // retreat to quiet place behind all sound events:
+            tcSafePos = tcSafePos + Timecode.FromMilliseconds(1000);
+            Vegas.Transport.LoopRegionStart = Vegas.Transport.LoopRegionStart + tcSafePos;
+            //////////////
+
+            var trackEnumSND2 = new Enumerator(Vegas.Project.Tracks);
+            while (!trackEnumSND2.atEnd()) {
+                if (Track(trackEnumSND2.item()).IsAudio()) {
+                    if (Track(trackEnumSND2.item()).Mute == 1) {
+                    } else {
+                        var evts2move = new Enumerator(Track(trackEnumSND2.item()).Events);
+                        var trkevcount = 0;
+                        while (!evts2move.atEnd()) {
+                            trkevcount = trkevcount + 1;
+                            //TrackEvent(evts2move.item()).Start = TrackEvent(evts2move.item()).Start + tcSafePos;
+                            //Vegas.UpdateUI();
+                            evts2move.moveNext();
+                        }
+                        /////////////// events are present
+                        if (trkevcount > 0) {
+                            ////////
+                            while (trkevcount > 0) {
+                                Track(trackEnumSND2.item()).Events[trkevcount-1].Start = Track(trackEnumSND2.item()).Events[trkevcount-1].Start + tcSafePos;
+                                trkevcount = trkevcount - 1;
+                            }
+                            ////////
+                            nWAVTrackCount = nWAVTrackCount + 1;
+                            ofn = titl + "_звук_" + nWAVTrackCount.ToString() + "_дорожка" + ex_tWAV;
+                            renderStatus = Vegas.Render(ofn, renderTemplateYT,Vegas.Transport.LoopRegionStart,Vegas.Transport.LoopRegionLength);
+                            Vegas.UpdateUI();
+                            // move items back
+                            var evts2back = new Enumerator(Track(trackEnumSND2.item()).Events);
+                            while (!evts2back.atEnd()) {
+                                TrackEvent(evts2back.item()).Start = TrackEvent(evts2back.item()).Start - tcSafePos;
+                                Vegas.UpdateUI();
+                                evts2back.moveNext();
+                            }
+                            //////////////////
+                        }
+                    }
+                }
+                trackEnumSND2.moveNext();
+            }
+            //////
+            Vegas.Transport.LoopRegionStart = Vegas.Transport.LoopRegionStart - tcSafePos;
+            Vegas.UpdateUI();
+            //////
+        }
+        /////////////////////////
         throw "ok1";
 }
 
