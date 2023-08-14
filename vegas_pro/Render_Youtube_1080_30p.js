@@ -33,6 +33,7 @@ try {
 
 	var templateRE = /HQ 1920x1080-50i, /;
 	var templateWAV = /48 000 Hz; 16 Bit; Stereo, P/;
+        var templateWAVRU = /48 000 Гц; 16 Бит; Стерео, P/;
 	var extRE = /.MP4/;
         var extREWAV = /.wav/;
 	var bFirstMediaEvent = 0;
@@ -58,6 +59,11 @@ try {
 			renderTemplateYT = FindRenderTemplate(Renderer(rendererEnum2.item()), templateWAV);
 			if (null != renderTemplateYT) {
                                 break;
+                        } else {
+                                renderTemplateYT = FindRenderTemplate(Renderer(rendererEnum2.item()), templateWAVRU);
+                                if (null != renderTemplateYT) {
+                                    break;
+                                }
                         }
                 }
                 rendererEnum2.moveNext();
@@ -385,7 +391,11 @@ try {
             var prog1 = new System.Diagnostics.Process();
 	    var prog1_nfo = new System.Diagnostics.ProcessStartInfo();
 	    prog1_nfo.FileName = "powershell.exe";
-            prog1_nfo.Arguments = "\"" + titl + "_Упаковать_для_ОТВ.ps1"+"\"";
+            prog1_nfo.Arguments = "Set-ExecutionPolicy -ExecutionPolicy Unrestricted";
+            prog1.StartInfo = prog1_nfo;
+            prog1.Start();
+            prog1.WaitForExit();
+            prog1_nfo.Arguments = "-File \"" + titl + "_Упаковать_для_ОТВ.ps1"+"\"";
             prog1.StartInfo = prog1_nfo;
             prog1.Start();
             /////
