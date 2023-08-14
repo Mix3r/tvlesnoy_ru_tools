@@ -8,6 +8,7 @@ import System.IO;
 import System.Windows.Forms;
 import Sony.Vegas;
 import ScriptPortal.Vegas;
+var writer : StreamWriter = null;
 
 try {
 	Vegas.Project.Video.Width = 1920;
@@ -295,9 +296,10 @@ try {
 	}
         Prepare4OTV();
         var renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.Transport.LoopRegionStart,Vegas.Transport.LoopRegionLength);
+        var vwpath = "\""+ofn+"\"";
         /////////////////////////
-        if (null == renderTemplateYT) {
-            throw "failed to find render template YT";
+        if (null == renderTemplateYT || renderStatus != "Complete") {
+            throw "failed to find render template WAV";
         } else {
             var ex_tWAV = String(extREWAV).substring(1,String(extREWAV).length-1);
             titl = ofn.substring(0,ofn.length-ex_t.length);
@@ -305,9 +307,6 @@ try {
             var trackEnumSND = new Enumerator(Vegas.Project.Tracks);
             while (!trackEnumSND.atEnd()) {
                 if (Track(trackEnumSND.item()).IsAudio()) {
-                    //if (null == Track(trackEnumSND.item()).Mute) {
-                    //    var evts2enum = new Enumerator(Track(tr2enum.item()).Events);
-                    //}
                     var evts2safe = new Enumerator(Track(trackEnumSND.item()).Events);
                     while (!evts2safe.atEnd()) {
                         if (TrackEvent(evts2safe.item()).Start+TrackEvent(evts2safe.item()).Length > tcSafePos) {
@@ -332,21 +331,21 @@ try {
                         var trkevcount = 0;
                         while (!evts2move.atEnd()) {
                             trkevcount = trkevcount + 1;
-                            //TrackEvent(evts2move.item()).Start = TrackEvent(evts2move.item()).Start + tcSafePos;
-                            //Vegas.UpdateUI();
                             evts2move.moveNext();
                         }
                         /////////////// events are present
                         if (trkevcount > 0) {
-                            ////////
+                            //////// move track items to safe pos
                             while (trkevcount > 0) {
                                 Track(trackEnumSND2.item()).Events[trkevcount-1].Start = Track(trackEnumSND2.item()).Events[trkevcount-1].Start + tcSafePos;
+                                Vegas.UpdateUI();
                                 trkevcount = trkevcount - 1;
                             }
                             ////////
                             nWAVTrackCount = nWAVTrackCount + 1;
                             ofn = titl + "_звук_" + nWAVTrackCount.ToString() + "_дорожка" + ex_tWAV;
                             renderStatus = Vegas.Render(ofn, renderTemplateYT,Vegas.Transport.LoopRegionStart,Vegas.Transport.LoopRegionLength);
+                            var vwpath = vwpath + ", \""+ofn+"\"";
                             Vegas.UpdateUI();
                             // move items back
                             var evts2back = new Enumerator(Track(trackEnumSND2.item()).Events);
@@ -355,7 +354,9 @@ try {
                                 Vegas.UpdateUI();
                                 evts2back.moveNext();
                             }
-                            //////////////////
+                            if (renderStatus != "Complete") {
+                                throw "He OK.";
+                            }
                         }
                     }
                 }
@@ -364,8 +365,32 @@ try {
             //////
             Vegas.Transport.LoopRegionStart = Vegas.Transport.LoopRegionStart - tcSafePos;
             Vegas.UpdateUI();
-            //////
+            ////// write script
+            writer = new StreamWriter(titl + "_Упаковать_для_ОТВ.ps1", false, System.Text.Encoding.Unicode);
+            writer.WriteLine("$compress = @{");
+            writer.WriteLine("CompressionLevel = \"NoCompression\"");
+            writer.WriteLine("DestinationPath = \""+titl+"_комплект.zip\"");
+            writer.WriteLine("Path = "+vwpath);
+            writer.WriteLine("}");
+            writer.WriteLine("$disposeofit = @{");
+            ///
+            var vwpath = vwpath + ", \""+titl+ex_t+".sf*"+"\""; //sfk sfl remover
+            ///
+            writer.WriteLine("Path = "+vwpath);
+            writer.WriteLine("}");
+            writer.WriteLine("Compress-Archive @compress -Force");
+            writer.WriteLine("Remove-Item @disposeofit -Force");
+            writer.WriteLine("Remove-Item $MyInvocation.MyCommand.Path -Force");
+            writer.Close();
+            var prog1 = new System.Diagnostics.Process();
+	    var prog1_nfo = new System.Diagnostics.ProcessStartInfo();
+	    prog1_nfo.FileName = "powershell.exe";
+            prog1_nfo.Arguments = "\"" + titl + "_Упаковать_для_ОТВ.ps1"+"\"";
+            prog1.StartInfo = prog1_nfo;
+            prog1.Start();
+            /////
         }
+
         /////////////////////////
         throw "ok1";
 }
