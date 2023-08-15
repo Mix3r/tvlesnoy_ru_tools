@@ -98,6 +98,7 @@ try {
                 }
                 //
                 var evnts = new Enumerator(Track(trks.item()).Events);
+                var sTrkName = Track(trks.item()).Name;
                 while (!evnts.atEnd()) {
                         if (bFirstMediaEvent == 0) {
                                 var sLocalname = "";
@@ -153,6 +154,13 @@ try {
                                                                 if (media3.HasVideo()) {
                                                                         var mm3 = new media3.Streams();
                                                                         if (mm3.Width == 1920 && mm3.Height == 1080) {
+                                                                                if (sTrkName == "Titles_Arch" || sTrkName == "Titles_A" || sTrkName == "Titles_BG") {
+                                                                                    if (mm3.FrameRate >= 25.000) {
+                                                                                        Vegas.Transport.CursorPosition = nEventStart;
+                                                                                        Vegas.UpdateUI();
+                                                                                        throw "Видеоналожение на дорожке для титров на "+nEventStart.ToString(RulerFormat.TimeAndFrames);
+                                                                                    }
+                                                                                }
                                                                                 if (mm3.FrameRate == 25.000 && mm3.Format == "MPEG-2") {
                                                                                         mm3.FieldOrder = "UpperFieldFirst";
                                                                                 //} else if (mm3.Format == "Фото - JPEG" && mm3.FrameRate == 25.000) {
@@ -161,9 +169,9 @@ try {
                                                                                         //mm3.FieldOrder = "UpperFieldFirst";
                                                                                 }
                                                                         }
-                                                                        if (mm3.FieldOrder != "ProgressiveScan") {
-                                                                                envl_num = 999;
-                                                                        }
+                                                                        //if (mm3.FieldOrder != "ProgressiveScan") {
+                                                                        //        envl_num = 999;
+                                                                        //}
                                                                 }
                                                         }
                                                 }
@@ -344,12 +352,12 @@ try {
                             //////// move track items to safe pos
                             while (trkevcount > 0) {
                                 Track(trackEnumSND2.item()).Events[trkevcount-1].Start = Track(trackEnumSND2.item()).Events[trkevcount-1].Start + tcSafePos;
-                                Vegas.UpdateUI();
                                 trkevcount = trkevcount - 1;
                             }
                             ////////
                             nWAVTrackCount = nWAVTrackCount + 1;
                             ofn = titl + "_звук_" + nWAVTrackCount.ToString() + "_дорожка" + ex_tWAV;
+                            Vegas.UpdateUI();
                             renderStatus = Vegas.Render(ofn, renderTemplateYT,Vegas.Transport.LoopRegionStart,Vegas.Transport.LoopRegionLength);
                             var vwpath = vwpath + ", \""+ofn+"\"";
                             Vegas.UpdateUI();
@@ -357,9 +365,9 @@ try {
                             var evts2back = new Enumerator(Track(trackEnumSND2.item()).Events);
                             while (!evts2back.atEnd()) {
                                 TrackEvent(evts2back.item()).Start = TrackEvent(evts2back.item()).Start - tcSafePos;
-                                Vegas.UpdateUI();
                                 evts2back.moveNext();
                             }
+                            Vegas.UpdateUI();
                             if (renderStatus != "Complete") {
                                 throw "He OK.";
                             }

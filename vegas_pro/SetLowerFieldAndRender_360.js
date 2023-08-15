@@ -164,9 +164,9 @@ try {
                                                                                         mm3.FieldOrder = "UpperFieldFirst";
                                                                                 }
                                                                         }
-                                                                        if (mm3.FieldOrder != "ProgressiveScan") {
-                                                                                envl_num = 999;
-                                                                        }
+                                                                        //if (mm3.FieldOrder != "ProgressiveScan") {
+                                                                        //        envl_num = 999;
+                                                                        //}
                                                                 }
                                                         }
                                                 }
