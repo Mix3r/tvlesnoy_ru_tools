@@ -57,10 +57,10 @@ try {
                 var busC = new AudioBusTrack(Vegas.Project);
                 Vegas.Project.BusTracks.Add(busC);
                 var mfx = PlugInNode(Vegas.AudioFX.FindChildByUniqueID("{A6A78627-D619-48BF-AD26-0C6B44B5C7D8}"));
-                busC.Effects.AddEffect(mfx);
                 busC.Effects.AddEffect(afx);
-                busC.Effects[0].Preset = "TV_MUFFLE";
-                busC.Effects[1].Preset = "TV_ИНТЕРШУМ_TV";
+                busC.Effects.AddEffect(mfx);
+                busC.Effects[0].Preset = "TV_ИНТЕРШУМ_TV";
+                busC.Effects[1].Preset = "TV_MUFFLE";
         }
         //
 
