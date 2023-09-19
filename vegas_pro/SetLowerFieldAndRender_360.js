@@ -12,8 +12,6 @@ import ScriptPortal.Vegas;
 try {
 	Vegas.Project.Video.Width = 1920;
 	Vegas.Project.Video.Height = 1080;
-	Vegas.Project.Video.FrameRate = 25;
-	Vegas.Project.Video.FieldOrder = "UpperFieldFirst";
 	Vegas.Project.Video.PixelAspectRatio = 1;
 	Vegas.Project.Video.MotionBlurType = "Gaussian";
 	Vegas.Project.Video.DeinterlaceMethod = "InterpolateFields";
@@ -78,6 +76,7 @@ try {
 
 	var titl = Path.GetFileNameWithoutExtension(Vegas.Project.FilePath);
         var nEventStart = Vegas.Transport.LoopRegionStart;
+        var bGoProgressive = 0;
 
         var trks = new Enumerator(Vegas.Project.Tracks);
         while (!trks.atEnd()) {
@@ -139,6 +138,12 @@ try {
                                                 Vegas.Project.CommandMarkers.Add(First_ID);
                                         }
                                 }
+                                if (Vegas.Transport.LoopRegionLength == Timecode.FromMilliseconds(0)) {
+                                    if (Vegas.Transport.LoopRegionStart == Vegas.Transport.LoopRegionLength) {
+                                        Vegas.Transport.LoopRegionStart = TrackEvent(evnts.item()).Start;
+                                        Vegas.Transport.LoopRegionLength = TrackEvent(evnts.item()).Length;
+                                    }
+                                }
                         }
                         if (TrackEvent(evnts.item()).Start+TrackEvent(evnts.item()).Length > Vegas.Transport.LoopRegionStart && TrackEvent(evnts.item()).Start < Vegas.Transport.LoopRegionStart+Vegas.Transport.LoopRegionLength)
                         if (TrackEvent(evnts.item()).IsVideo()) {
@@ -161,7 +166,9 @@ try {
                                                                         var mm3 = new media3.Streams();
                                                                         if (mm3.Width == 1920 && mm3.Height == 1080) {
                                                                                 if (mm3.FrameRate == 25.000 && mm3.Format == "MPEG-2") {
-                                                                                        mm3.FieldOrder = "UpperFieldFirst";
+                                                                                    mm3.FieldOrder = "UpperFieldFirst";
+                                                                                } else if (mm3.FrameRate == 50.000) {
+                                                                                    bGoProgressive = 1;
                                                                                 }
                                                                         }
                                                                         //if (mm3.FieldOrder != "ProgressiveScan") {
@@ -208,6 +215,14 @@ try {
                         evnts.moveNext();
                 }
                 trks.moveNext();
+        }
+
+        if (bGoProgressive > 0) {
+            Vegas.Project.Video.FrameRate = 50;
+	    Vegas.Project.Video.FieldOrder = "ProgressiveScan";
+        } else {
+            Vegas.Project.Video.FrameRate = 25;
+	    Vegas.Project.Video.FieldOrder = "UpperFieldFirst";
         }
 
         Vegas.UpdateUI();
