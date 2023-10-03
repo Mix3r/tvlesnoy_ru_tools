@@ -135,3 +135,21 @@ function FindRenderTemplate(renderer : Renderer, templateRegExp : RegExp) : Rend
         }
         return null;
 }
+
+function StillToAnim(new_len_frames) {
+	var trackEnum = new Enumerator(Vegas.Project.Tracks);
+	var first_event = Timecode.FromFrames(0);
+	while (!trackEnum.atEnd()) {
+		var evntEnum = new Enumerator(Track(trackEnum.item()).Events);
+		while (!evntEnum.atEnd()) {
+			if ((TrackEvent(evntEnum.item()).Selected) & (TrackEvent(evntEnum.item()).IsVideo())) {
+                                VideoEvent(evntEnum.item()).Length = Timecode.FromFrames(new_len_frames);
+                                VideoEvent(evntEnum.item()).Start = first_event;
+                                first_event = VideoEvent(evntEnum.item()).Start + VideoEvent(evntEnum.item()).Length;
+			}
+			evntEnum.moveNext();
+		}
+		trackEnum.moveNext();
+	}
+        return null;
+}
