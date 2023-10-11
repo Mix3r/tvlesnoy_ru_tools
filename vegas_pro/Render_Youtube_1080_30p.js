@@ -381,29 +381,30 @@ try {
             Vegas.UpdateUI();
             ////// write script
             writer = new StreamWriter(titl + "_Упаковать_для_ОТВ.ps1", false, System.Text.Encoding.Unicode);
-            writer.WriteLine("$compress = @{");
-            writer.WriteLine("CompressionLevel = \"NoCompression\"");
-            writer.WriteLine("DestinationPath = \""+titl+"_комплект.zip\"");
-            writer.WriteLine("Path = "+vwpath);
-            writer.WriteLine("}");
+            //writer.WriteLine("$compress = @{");
+            //writer.WriteLine("CompressionLevel = \"NoCompression\"");
+            //writer.WriteLine("DestinationPath = \""+titl+"_комплект.zip\"");
+            //writer.WriteLine("Path = "+vwpath);
+            //writer.WriteLine("}");
             writer.WriteLine("$disposeofit = @{");
             ///
-            var vwpath = vwpath + ", \""+titl+ex_t+".sf*"+"\""; //sfk sfl remover
+            //var vwpath = vwpath + ", \""+titl+ex_t+".sf*"+"\""; //sfk sfl remover w compression
+            var vwpath = "\""+titl+ex_t+".sf*"+"\""; //sfk sfl remover w/o compression
             ///
             writer.WriteLine("Path = "+vwpath);
             writer.WriteLine("}");
-            writer.WriteLine("Compress-Archive @compress -Force");
+            //writer.WriteLine("Compress-Archive @compress -Force");
             writer.WriteLine("Remove-Item @disposeofit -Force");
             writer.WriteLine("Remove-Item $MyInvocation.MyCommand.Path -Force");
             writer.Close();
             var prog1 = new System.Diagnostics.Process();
 	    var prog1_nfo = new System.Diagnostics.ProcessStartInfo();
 	    prog1_nfo.FileName = "powershell.exe";
-            prog1_nfo.Arguments = "Set-ExecutionPolicy -ExecutionPolicy Unrestricted";
-            prog1.StartInfo = prog1_nfo;
-            prog1.Start();
-            prog1.WaitForExit();
-            prog1_nfo.Arguments = "-File \"" + titl + "_Упаковать_для_ОТВ.ps1"+"\"";
+            //prog1_nfo.Arguments = "Set-ExecutionPolicy -ExecutionPolicy Unrestricted";
+            //prog1.StartInfo = prog1_nfo;
+            //prog1.Start();
+            //prog1.WaitForExit();
+            prog1_nfo.Arguments = "-ExecutionPolicy Bypass -File \"" + titl + "_Упаковать_для_ОТВ.ps1"+"\"";
             prog1.StartInfo = prog1_nfo;
             prog1.Start();
             /////
