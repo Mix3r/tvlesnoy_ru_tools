@@ -7,6 +7,7 @@ import System.Text;
 import System.IO;
 import System.Windows.Forms;
 import Sony.Vegas;
+import ScriptPortal.Vegas;
 
 try {
 	//Vegas.Project.Video.Width = 720;
@@ -98,6 +99,14 @@ try {
 		
 	var projPath = Vegas.Project.FilePath;
 	var titl = Path.GetFileNameWithoutExtension(projPath);
+        //////////////
+        var prog1 = new System.Diagnostics.Process();
+        prog1.StartInfo.FileName = "cmd.exe";
+        prog1.StartInfo.Arguments = "/c echo|set /p=^\\^\\Glavred^\\Общее^\\1 СОГЛАСОВАНИЕ^\\"+titl+"|clip";
+        prog1.StartInfo.UseShellExecute = false;
+        prog1.StartInfo.CreateNoWindow = true;
+        prog1.Start();
+        //////////////
 	extRE = Vegas.Project.Audio.RecordedFilesFolder.toUpperCase();
 	if (Vegas.Project.Summary.Title == "narrator") {
 		var trackEnum = new Enumerator(Vegas.Project.Tracks);
