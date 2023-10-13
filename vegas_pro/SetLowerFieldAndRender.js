@@ -71,64 +71,73 @@ try {
                   throw "Нет клипа на игле-курсоре на дорожке ДИКТОР_ВИДЕО.";
           }
 
-          RegionName = Vegas.InstallationDirectory+"";
-          RegionName = RegionName.replace(/:\\/g, ":::");
-          RegionName = RegionName.replace(/\\/g, "/");
-          RegionName = RegionName.replace(/:::/g, "\\\\:/");
-
-          writer2 = new StreamWriter(Vegas.InstallationDirectory + "\\vegas_bake_crawler.txt", false, System.Text.Encoding.Unicode);
-          writer2.WriteLine("\""+Vegas.InstallationDirectory+"\\..\\..\\Totalcmd_p\\FFMPEG\\ffmpeg.exe\" -f lavfi -i \"color=0x407c7d@0.5:size="+(dialog.RegionNameBox.Text.length*35+1920+1920).ToString()+"x74,format=rgba\" -vf drawtext=\"fontfile=C"+"\\"+"\\"+":/Windows/Fonts/arial.ttf:textfile="+ RegionName + "/vegas_bake_crawler.txt:y=h-line_h-4:x=-42:fontcolor=white:fontsize=65\" -frames:v 1 -c:v tiff -y \""+narmediaPath+"\"");
-          //writer2.WriteLine("pause");
-          writer2.Close();
-
           var this_media = Vegas.Project.MediaPool.Find(narmediaPath);
           if (null == this_media) {
           } else {
                   Vegas.Project.MediaPool.Remove(narmediaPath);
           }
 
-          var prog1 = new System.Diagnostics.Process();
-	  var prog1_nfo = new System.Diagnostics.ProcessStartInfo();
-
-          prog1_nfo.UseShellExecute = false;
-	  prog1_nfo.RedirectStandardOutput = false;
-          prog1_nfo.WorkingDirectory = "C:\\";
-          prog1_nfo.FileName = "cmd.exe";
-          prog1_nfo.Arguments = '/a /c type "'+Vegas.InstallationDirectory + '\\vegas_bake_crawler.txt">"'+Vegas.InstallationDirectory + '\\vegas_bake_crawler.cmd"';
-          prog1.StartInfo = prog1_nfo;
-	  prog1.Start();
-	  prog1.WaitForExit();
-
           RegionName = "";
           for (idx = 0; idx < 106; idx++) {
                   RegionName = RegionName + " ";
           }
 
-          writer = new StreamWriter(Vegas.InstallationDirectory + "\\vegas_bake_crawler.txt", false, System.Text.Encoding.UTF8);
-          writer.WriteLine(RegionName+dialog.RegionNameBox.Text);
-          writer.Close();
+          RegionName = RegionName + dialog.RegionNameBox.Text;
 
-          prog1_nfo.Arguments = '/a /c "'+Vegas.InstallationDirectory + '\\vegas_bake_crawler.cmd"';
-	  prog1.StartInfo = prog1_nfo;
-	  prog1.Start();
-	  prog1.WaitForExit();
+          RegionName = RegionName.replace(/`/g, "``");
+          RegionName = RegionName.replace(/\$/g, "`$");
+          RegionName = RegionName.replace(/\"/g, "`\"");
+          RegionName = RegionName.replace(/\“/g, "`\"");
+
+          var prog1 = new System.Diagnostics.Process();
+
+          prog1.StartInfo.UseShellExecute = false;
+          prog1.StartInfo.CreateNoWindow = true;
+          prog1.StartInfo.WorkingDirectory = Vegas.Project.Video.PrerenderedFilesFolder;
+
+          prog1.StartInfo.Arguments = "";
+          if (Vegas.Project.Video.PrerenderedFilesFolder.substr(Vegas.Project.Video.PrerenderedFilesFolder.length - 1) != "\\") {
+              prog1.StartInfo.Arguments = "\\";
+          }
+
+          writer = new StreamWriter(Vegas.Project.Video.PrerenderedFilesFolder+prog1.StartInfo.Arguments+"vegas_bake_crawler.ps1", false, System.Text.Encoding.UTF8);
+          writer.WriteLine(""); //utf-8 bom goes here
+          writer.WriteLine("Add-Type -AssemblyName System.Drawing");
+          writer.WriteLine("$filename = \""+narmediaPath+"\"");
+          writer.WriteLine("$bmp = new-object System.Drawing.Bitmap "+(dialog.RegionNameBox.Text.length*35+1920+1920).ToString()+",74");
+          writer.WriteLine("$font = new-object System.Drawing.Font Arial,44");
+          writer.WriteLine("$TickerBgColor = [System.Drawing.Color]::FromArgb(128, 64, 125, 128)");
+          writer.WriteLine("$TickerBgBrush = New-Object System.Drawing.SolidBrush($TickerBgColor)");
+          writer.WriteLine("$brushFg = [System.Drawing.Brushes]::White");
+          writer.WriteLine("$graphics = [System.Drawing.Graphics]::FromImage($bmp)");
+          writer.WriteLine("$graphics.FillRectangle($TickerBgBrush,0,0,$bmp.Width,$bmp.Height)");
+          writer.WriteLine("$graphics.DrawString(\""+RegionName+"\",$font,$brushFg,0,0)");
+          writer.WriteLine("$graphics.Dispose()");
+          writer.WriteLine("$bmp.Save($filename,[System.Drawing.Imaging.ImageFormat]::Tiff)");
+          writer.Close();
 
 	  if (null == Titlebgtrack) {
                   Titlebgtrack = new VideoTrack(0, "Ticker");
                   Vegas.Project.Tracks.Add(Titlebgtrack);
 	  }
 
-          //var mrk = new MarkerCommandType("URL");
-          //var newcmd = new CommandMarker(Vegas.Transport.CursorPosition,mrk,dialog.RegionNameBox.Text);
-          //Vegas.Project.CommandMarkers.Add(newcmd);
-          var media = new Media(narmediaPath);
-          var stream = media.Streams[0]; //The "video" stream
-          stream.AlphaChannel = "Straight";
           if (Vegas.Transport.CursorPosition == Vegas.Transport.LoopRegionStart + Vegas.Transport.LoopRegionLength) {
                   Vegas.Transport.CursorPosition = Vegas.Transport.LoopRegionStart;
           }
+
           var newEvent = new VideoEvent(Vegas.Transport.CursorPosition, Vegas.Transport.LoopRegionLength);
           Titlebgtrack.Events.Add(newEvent);
+          Vegas.UpdateUI();
+
+          prog1.StartInfo.FileName = "powershell.exe";
+          prog1.StartInfo.Arguments = "-ExecutionPolicy Bypass -File \""+Vegas.Project.Video.PrerenderedFilesFolder+prog1.StartInfo.Arguments+"vegas_bake_crawler.ps1\"";
+	  prog1.Start();
+	  prog1.WaitForExit();
+
+          var media = new Media(narmediaPath);
+          var stream = media.Streams[0]; //The "video" stream
+          stream.AlphaChannel = "Straight";
+
           var take = new Take(stream);
 	  newEvent.Takes.Add(take);
           newEvent.ResampleMode = "Disable";
@@ -150,9 +159,6 @@ try {
           var keyf = new VideoMotionKeyframe( Project.ActiveProject, newEvent.Length - Timecode.FromFrames(1)  );
           newEvent.VideoMotion.Keyframes.Add(keyf);
 
-          //prog1_nfo.Arguments = '/a /k "'+Vegas.InstallationDirectory+'\\..\\..\\Totalcmd_p\\FFMPEG\\ffmpeg.exe"';
-          //prog1.StartInfo = prog1_nfo;
-          //prog1.Start();
           //prog1.WaitForExit();
           //Vegas.UpdateUI();
           //throw "ok";
