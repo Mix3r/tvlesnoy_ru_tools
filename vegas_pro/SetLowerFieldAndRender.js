@@ -105,13 +105,13 @@ try {
           writer.WriteLine("Add-Type -AssemblyName System.Drawing");
           writer.WriteLine("$filename = \""+narmediaPath+"\"");
           writer.WriteLine("$bmp = new-object System.Drawing.Bitmap "+(dialog.RegionNameBox.Text.length*35+1920+1920).ToString()+",74");
-          writer.WriteLine("$font = new-object System.Drawing.Font Arial,44");
+          writer.WriteLine("$font = new-object System.Drawing.Font Arial,48");
           writer.WriteLine("$TickerBgColor = [System.Drawing.Color]::FromArgb(128, 64, 125, 128)");
           writer.WriteLine("$TickerBgBrush = New-Object System.Drawing.SolidBrush($TickerBgColor)");
           writer.WriteLine("$brushFg = [System.Drawing.Brushes]::White");
           writer.WriteLine("$graphics = [System.Drawing.Graphics]::FromImage($bmp)");
           writer.WriteLine("$graphics.FillRectangle($TickerBgBrush,0,0,$bmp.Width,$bmp.Height)");
-          writer.WriteLine("$graphics.DrawString(\""+RegionName+"\",$font,$brushFg,0,0)");
+          writer.WriteLine("$graphics.DrawString(\""+RegionName+"\",$font,$brushFg,0,-4)");
           writer.WriteLine("$graphics.Dispose()");
           writer.WriteLine("$bmp.Save($filename,[System.Drawing.Imaging.ImageFormat]::Tiff)");
           writer.Close();
