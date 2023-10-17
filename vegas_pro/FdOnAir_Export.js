@@ -18,6 +18,10 @@ try
 	var TopMostTrack = null;
 	var bExport_File = 0;
 	var empty_event = null;
+        var sTempCatPath = Vegas.Project.Video.PrerenderedFilesFolder+"";
+        if (sTempCatPath.substr(sTempCatPath.length - 1) != "\\") {
+            sTempCatPath = sTempCatPath + "\\";
+        }
 
 	var trackEnum = new Enumerator(Vegas.Project.Tracks);
 	while (!trackEnum.atEnd() && bExport_File == 0) {
@@ -118,12 +122,14 @@ try
                                               	       prog2_nfo.RedirectStandardOutput = false;
                                   		       prog2_nfo.WorkingDirectory = Vegas.InstallationDirectory + "";
                                       		       prog2_nfo.FileName = "playlist_settime.exe";
+                                                       prog2_nfo.Arguments = '"'+sTempCatPath+'"';
                                                        prog2.StartInfo = prog2_nfo;
                                      		       prog2.Start();
                                                        prog2.WaitForExit();
                                                        //var prog2_out = prog2.StandardOutput.ReadToEnd();
                                     		       //MessageBox.Show(prog2_out);
-                                                       var writer2 = new System.IO.StreamReader(Vegas.InstallationDirectory + "\\settime1.txt");
+                                                       ////////////////////////////////////
+                                                       var writer2 = new System.IO.StreamReader(sTempCatPath+"settime1.txt");
                                                        titl = "Autoload_" + writer2.ReadLine();
                                                        writer2.Close();
                                                        mnth = titl.substring(18,20)+":"+titl.substring(20,22)+":"+titl.substring(22,24)+",00";
@@ -142,7 +148,7 @@ try
 						bExport_File = 1;
 						writer = new StreamWriter(outputFilename, false, System.Text.Encoding.Unicode);
 						//writer_sync = new StreamWriter(Path.GetDirectoryName(outputFilename)+"\\"+Path.GetFileNameWithoutExtension(outputFilename)+".cmd", false, System.Text.Encoding.Unicode);
-						writer_sync = new StreamWriter(Vegas.InstallationDirectory + "\\_sync_tv_temp.txt", false, System.Text.Encoding.Unicode);
+						writer_sync = new StreamWriter(sTempCatPath+"_sync_tv_temp.txt", false, System.Text.Encoding.Unicode);
 						writer_sync.WriteLine("@echo off");
 						//writer_sync.WriteLine("chcp 1251");
 					} else {
@@ -291,26 +297,25 @@ try
 		var prog1_nfo = new System.Diagnostics.ProcessStartInfo();
 		prog1_nfo.UseShellExecute = false;
 		prog1_nfo.RedirectStandardOutput = false;
-		prog1_nfo.WorkingDirectory = "C:\\";
 		prog1_nfo.FileName = "cmd.exe";
 		
 		////////////////////////////////
 		if (MessageBox.Show("Скопировать видео из проекта расписания в пункт назначения?", "Синхронизация содержимого расписания с пунктом назначения", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) == DialogResult.Yes) {
 		/////////////////////////////////////////
 		
-		prog1_nfo.Arguments = '/a /c type "'+Vegas.InstallationDirectory + '\\_sync_tv_temp.txt">"'+Vegas.InstallationDirectory + '\\_sync_tv_temp.cmd"';
+		prog1_nfo.Arguments = '/a /c type "'+sTempCatPath+ '_sync_tv_temp.txt">"'+sTempCatPath+ '_sync_tv_temp.cmd"';
 		prog1.StartInfo = prog1_nfo;
 		prog1.Start();
 		// var prog1_out = prog1.StandardOutput.ReadToEnd();
 		// MessageBox.Show(prog1_out);
 		prog1.WaitForExit();
 
-		prog1_nfo.Arguments = '/a /c "'+Vegas.InstallationDirectory + '\\_sync_tv_temp.cmd"';
+		prog1_nfo.Arguments = '/a /c "'+sTempCatPath+'_sync_tv_temp.cmd"';
 		prog1.StartInfo = prog1_nfo;
 		prog1.Start();
 		prog1.WaitForExit();
 		
-		prog1_nfo.Arguments = '/a /c del "'+Vegas.InstallationDirectory + '\\_sync_tv_temp.cmd"';
+		prog1_nfo.Arguments = '/a /c del "'+sTempCatPath+'_sync_tv_temp.cmd"';
 		prog1.StartInfo = prog1_nfo;
 		prog1.Start();
 		prog1.WaitForExit();
@@ -318,7 +323,7 @@ try
 		}
 
 		prog1_nfo.RedirectStandardOutput = true;
-		prog1_nfo.Arguments = '/a /c del "'+Vegas.InstallationDirectory + '\\_sync_tv_temp.txt"';
+		prog1_nfo.Arguments = '/a /c del "'+sTempCatPath+'_sync_tv_temp.txt"';
 		prog1.StartInfo = prog1_nfo;
 		prog1.Start();
 		
