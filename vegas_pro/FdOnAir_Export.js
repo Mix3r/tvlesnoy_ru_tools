@@ -207,7 +207,9 @@ try
 					}
 					//MessageBox.Show(lookfor_index, lookforslash, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 					mediaPath = "E:" + mediaPath.substring(lookfor_index);
-				}
+				} else if (outputFilename.substring(1,2) == ":") {
+                                        mediaPath = outputFilename.substring(0,2) + mediaPath.substring(2);
+                                }
 				if (TrackEvent(evntEnum.item()).FadeOut.Length > Timecode.FromMilliseconds(40)) {
 					writer.WriteLine("movie <" + activeTake.Offset.ToString(RulerFormat.Time) + "> (" + TrackEvent(evntEnum.item()).Length.ToString(RulerFormat.Time) + ") [0] " + mediaPath);
 					writer.WriteLine("gpiwaitshout GPI {NRDTMF_Stop_Block} : Ждать выход из блока");
