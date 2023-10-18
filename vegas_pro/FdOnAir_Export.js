@@ -32,6 +32,10 @@ try
 		while (!evntEnum.atEnd() && bExport_File == 0) {
 			if (TrackEvent(evntEnum.item()).Start == Timecode.FromSeconds(86399)) {
 				bExport_File = 1;
+                                if (Vegas.Transport.CursorPosition >= TrackEvent(evntEnum.item()).Start) {
+                                    ConsolidatePlaylist();
+                                    throw "fuck";
+                                }
 			}
 			evntEnum.moveNext();
 		}
@@ -379,4 +383,112 @@ function ShowSaveFileDialog(filter, title, defaultFilename) {
     } else {
         return null;
     }
+}
+
+function ConsolidatePlaylist() {
+    var bConsolidated = 0;
+    var sLongString = ""
+    var sItem_less_ten = "";
+    var sButtonBar = "";
+    var sAllNewsReports = "&quot;"+Vegas.InstallationDirectory+"\\vegas130&quot"+" ";
+    var nItem_msec = 0;
+    var nItem_sec = 0;
+    var writer_log : StreamWriter = null;
+    var trks = new Enumerator(Vegas.Project.Tracks);
+    var trep = new Enumerator(Vegas.Project.Tracks);
+    while (!trep.atEnd()) {
+        if (Track(trep.item()).IsAudio()) {
+            var evep = new Enumerator(Track(trep.item()).Events);
+            while (!evep.atEnd()) {
+                if (TrackEvent(evep.item()).ActiveTake != null) {
+                    if (TrackEvent(evep.item()).ActiveTake.MediaPath.lastIndexOf('_СЮЖЕТЫ\\') > 0) {
+                        sAllNewsReports = sAllNewsReports + "&quot;"+TrackEvent(evep.item()).ActiveTake.MediaPath+"&quot; ";
+                    }
+                }
+                evep.moveNext();
+            }
+        }
+        trep.moveNext();
+    }
+    sAllNewsReports = sAllNewsReports.replace(/\\/g, "\\\\");
+    while (!trks.atEnd()) {
+        if (Track(trks.item()).IsAudio()) {
+            var evnts = new Enumerator(Track(trks.item()).Events);
+            while (!evnts.atEnd()) {
+                ///////
+                if (TrackEvent(evnts.item()).ActiveTake != null) {
+                    if (bConsolidated < 1) {
+                        sLongString = Vegas.Project.Video.PrerenderedFilesFolder+"";
+                        if (sLongString.substr(sLongString.length - 1) != "\\") {
+                            sLongString = sLongString + "\\";
+                        }
+                        writer_log = new StreamWriter(sLongString+"_fdonair_report.htm", false, System.Text.Encoding.Unicode);
+                        writer_log.WriteLine("<HTML>\n<HEAD>\n<TITLE></TITLE>\n<STYLE>");
+                        writer_log.WriteLine(".ctable { margin-left: auto; margin-right: auto; background-color: black; font-family: Arial }");
+                        writer_log.WriteLine(".reporter { background-color: #FF6600 }");
+                        writer_log.WriteLine(".advert { background-color: #00cc99 }");
+                        writer_log.WriteLine(".narrator { background-color: #6699ff }");
+                        writer_log.WriteLine(".others { background-color: white }");
+                        writer_log.WriteLine(".buttonA { background-color: #6699ff; margin-left: 10px; margin-right: 10px; margin-top: 5px; margin-bottom: 5px; text-align: center; font-family: Arial; color: white }");
+                        writer_log.WriteLine("body {background-color: #f1f3f4 }");
+                        writer_log.WriteLine("a {color: white; outline: none; text-decoration: none }");
+                        writer_log.WriteLine("a:visited {color: #f1f3f4; outline: none; text-decoration: none }");
+                        writer_log.WriteLine("a:active {color: white; outline: none; text-decoration: none }");
+                        writer_log.WriteLine("a:hover {color: white; outline: none }");
+                        writer_log.WriteLine("a:link {color: white; outline: none; text-decoration: none }");
+                        writer_log.WriteLine("div { margin-left: 10px; margin-right: 10px; margin-top: 5px; margin-bottom: 5px }");
+                        writer_log.WriteLine("</STYLE>\n</HEAD>\n<BODY>");
+                        writer_log.WriteLine("<TABLE class=\"ctable\">");
+                        sButtonBar = "<td rowspan=0><DIV Class=\"buttonA\"><a href=\"#\" onclick=\"navigator.clipboard.writeText('"+sAllNewsReports+"')\">"+"<br>&nbsp;&nbsp;Cкопировать&nbsp;сюжеты&nbsp;&nbsp;<br>в Буфер обмена<br>&nbsp;</a></DIV>";
+                        bConsolidated = 1;
+                    } else {
+                        sButtonBar = "";
+                    }
+                    nItem_msec = TrackEvent(evnts.item()).Length.ToMilliseconds();
+                    nItem_sec = Math.round(nItem_msec/1000);
+                    sLongString = "<td class=\"";
+                    if (TrackEvent(evnts.item()).ActiveTake.MediaPath.lastIndexOf('_СЮЖЕТЫ\\') > 0) {
+                        sLongString = sLongString + "reporter";
+                    } else if (TrackEvent(evnts.item()).ActiveTake.MediaPath.lastIndexOf('_РЕКЛАМА\\') > 0) {
+                        sLongString = sLongString + "advert";
+                    } else if (TrackEvent(evnts.item()).ActiveTake.MediaPath.lastIndexOf('_ДИКТОР\\') > 0) {
+                        sLongString = sLongString + "narrator";
+                    } else {
+                        sLongString = sLongString + "others";
+                    }
+                    ////////sLongString = sLongString +"\">&nbsp;&nbsp;&nbsp;&nbsp;</td>";
+                    sItem_less_ten = TrackEvent(evnts.item()).ActiveTake.MediaPath;
+                    sItem_less_ten = sItem_less_ten.replace(/\\/g, "\\\\");
+                    sLongString = sLongString +"\"><a href=\"#\" onclick=\"navigator.clipboard.writeText('&quot;"+sItem_less_ten+"&quot; ')\">&nbsp;&nbsp;&nbsp;&nbsp;</a></td>";
+                    if (nItem_sec%60 < 10) {
+                        sItem_less_ten = "0";
+                    } else {
+                        sItem_less_ten = "";
+                    }
+                    writer_log.WriteLine("<TR class=\"others\">"+sLongString+"<TD><div>"+TrackEvent(evnts.item()).ActiveTake.Name+"</div></TD><TD><div>"+Math.floor(nItem_sec/60).ToString()+":"+sItem_less_ten+(nItem_sec%60).ToString()+"</div></TD>"+sButtonBar+"</TR>");
+                }
+                ////////
+                evnts.moveNext();
+            }
+        }
+        trks.moveNext();
+    }
+    //////////////
+    //MessageBox.Show(sLongString, "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+    writer_log.WriteLine("</TABLE>");
+    writer_log.WriteLine("</BODY>");
+    writer_log.WriteLine("</HTML>");
+    writer_log.Close();
+    sLongString = Vegas.Project.Video.PrerenderedFilesFolder+"";
+    if (sLongString.substr(sLongString.length - 1) != "\\") {
+        sLongString = sLongString + "\\";
+    }
+    var prog1 = new System.Diagnostics.Process();
+    prog1.StartInfo.FileName = "explorer.exe";
+    prog1.StartInfo.Arguments = sLongString + "_fdonair_report.htm";
+    prog1.StartInfo.UseShellExecute = false;
+    prog1.StartInfo.CreateNoWindow = true;
+    prog1.Start();
+    //////////////
+    return null;
 }
