@@ -1,6 +1,7 @@
 /**
 * Render - batch render --- NARRATOR & dup hunt
 * make regions with full paths to batch render
+* wave hammer attack fix
 **/
 import System;
 import System.Text;
@@ -8,6 +9,8 @@ import System.IO;
 import System.Windows.Forms;
 import Sony.Vegas;
 import ScriptPortal.Vegas;
+
+var tSoundOffset1 = Timecode.FromMilliseconds(0);
 
 try {
 	Vegas.Project.Video.Width = 1920;
@@ -24,13 +27,16 @@ try {
 	Vegas.Project.Ruler.Format = "TimeAndFrames";
 	Vegas.Project.Ruler.BeatsPerMinute = 60;
 	Vegas.Project.Ruler.BeatsPerMeasure = 4;
-        Vegas.Project.Ruler.StartTime = Timecode.FromMilliseconds(0);
 
         const YTFolder = "CЮЖЕТЫ ЮТУБ";
 
 	var templateRE = /HQ 1920x1080-50i, /;
 	var templateYT = /YOUTUBE30/;
+        var templateWAV = /48 000 Hz; 16 Bit; Stereo, P/;
+        var templateWAVRU = /48 000 Гц; 16 Бит; Стерео, P/;
 	var extRE = /.MP4/;
+        var extREWAV = /.wav/;
+
 	var bFirstMediaEvent = 0;
         var nMTSOffset = 40;
 
@@ -73,6 +79,25 @@ try {
                 throw "failed to find render template";
 
         var renderTemplateYT :RenderTemplate = FindRenderTemplate(renderer, templateYT);
+
+        /////////////////////
+        var renderTemplateWAV = null;
+        var rendererEnum2 : Enumerator = new Enumerator(Vegas.Renderers);
+        while (!rendererEnum2.atEnd()) {
+                if (null != Renderer(rendererEnum2.item()).FileExtension.match(extREWAV)) {
+			renderTemplateWAV = FindRenderTemplate(Renderer(rendererEnum2.item()), templateWAV);
+			if (null != renderTemplateWAV) {
+                                break;
+                        } else {
+                                renderTemplateWAV = FindRenderTemplate(Renderer(rendererEnum2.item()), templateWAVRU);
+                                if (null != renderTemplateWAV) {
+                                    break;
+                                }
+                        }
+                }
+                rendererEnum2.moveNext();
+        }
+        /////////////////////
 
 	var titl = Path.GetFileNameWithoutExtension(Vegas.Project.FilePath);
         var nEventStart = Vegas.Transport.LoopRegionStart;
@@ -205,8 +230,8 @@ try {
                                                 if (null != media3a) {
                                                         media3a = media3a.toUpperCase();
                                                         if (media3a == ".MTS") {
-                                                                Vegas.Project.Ruler.StartTime = Timecode.FromMilliseconds(nMTSOffset);
-                                                                TrackEvent(evnts.item()).Start = TrackEvent(evnts.item()).Start + Vegas.Project.Ruler.StartTime;
+                                                                tSoundOffset1 = Timecode.FromMilliseconds(nMTSOffset);
+                                                                TrackEvent(evnts.item()).Start = TrackEvent(evnts.item()).Start + tSoundOffset1;
                                                         }
                                                 }
                                         }
@@ -242,13 +267,13 @@ try {
 				                var evnt2 : TrackEvent = TrackEvent(evntEnum.item());
                                                 var bMTSMoved = Timecode.FromMilliseconds(0);
 
-                                                if (Vegas.Project.Ruler.StartTime != bMTSMoved && null != evnt2.ActiveTake) { //something moved
+                                                if (tSoundOffset1 != bMTSMoved && null != evnt2.ActiveTake) { //something moved
                                                         if (null != evnt2.ActiveTake.MediaPath) {
                                                                 var eMPath_0 = Path.GetExtension(evnt2.ActiveTake.MediaPath);
                                                                 if (null != eMPath_0) {
                                                                         eMPath_0 = eMPath_0.toUpperCase();
                                                                         if (eMPath_0 == ".MTS") {
-                                                                                bMTSMoved = Vegas.Project.Ruler.StartTime;
+                                                                                bMTSMoved = tSoundOffset1;
                                                                         }
                                                                 }
                                                         }
@@ -257,7 +282,8 @@ try {
 				                if (evnt2.Start - bMTSMoved == rgn.Position) {
                                                         numregions = numregions+1;
                                                         rgn.Label = Vegas.Project.Summary.Copyright+evnt2.ActiveTake.Name+" (OK)";
-                                                        var renderStatus = Vegas.Render(rgn.Label + "." + String(extRE).substring(2,String(extRE).length-1), renderTemplate,rgn.Position,rgn.Length);
+                                                        var renderStatus = Vegas.Render(rgn.Label + "." + String(extRE).substring(2,String(extRE).length-1), renderTemplateWAV,rgn.Position,Timecode.FromMilliseconds(3000));
+                                                        renderStatus = Vegas.Render(rgn.Label + "." + String(extRE).substring(2,String(extRE).length-1), renderTemplate,rgn.Position,rgn.Length);
 				                }
 			 	                evntEnum.moveNext();
 			                }
@@ -305,7 +331,8 @@ try {
 		                rgn2.Label = rgn2.Label + ex_t;
 	                }
                         Prepare4air();
-                        var renderStatus = Vegas.Render(rgn2.Label, renderTemplate,rgn2.Position,rgn2.Length);
+                        var renderStatus = Vegas.Render(rgn2.Label, renderTemplateWAV,rgn2.Position,Timecode.FromMilliseconds(3000));
+                        renderStatus = Vegas.Render(rgn2.Label, renderTemplate,rgn2.Position,rgn2.Length);
                 }
 	        regionEnum2.moveNext();
         }
@@ -344,7 +371,8 @@ try {
 		ofn = ofn + ex_t;
 	}
         Prepare4air();
-        var renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.Transport.LoopRegionStart,Vegas.Transport.LoopRegionLength);
+        var renderStatus = Vegas.Render(ofn, renderTemplateWAV,Vegas.Transport.LoopRegionStart,Timecode.FromMilliseconds(3000));
+        renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.Transport.LoopRegionStart,Vegas.Transport.LoopRegionLength);
         if (bFirstMediaEvent == 3) {
                 // skip narrator for youtube
                 throw "ok1";
@@ -361,7 +389,7 @@ try {
 
 catch (e) {
         var tr2enum = new Enumerator(Vegas.Project.Tracks);
-        if (Vegas.Project.Ruler.StartTime != Timecode.FromMilliseconds(0)) {
+        if (tSoundOffset1 != Timecode.FromMilliseconds(0)) {
              while (!tr2enum.atEnd()) {
                   if (Track(tr2enum.item()).IsAudio()) {
                           var evts2enum = new Enumerator(Track(tr2enum.item()).Events);
@@ -374,7 +402,7 @@ catch (e) {
                                                           if (null != media2back) {
                                                                   media2back = media2back.toUpperCase();
                                                                   if (media2back == ".MTS") {
-                                                                          TrackEvent(evts2enum.item()).Start = TrackEvent(evts2enum.item()).Start - Vegas.Project.Ruler.StartTime;
+                                                                          TrackEvent(evts2enum.item()).Start = TrackEvent(evts2enum.item()).Start - tSoundOffset1;
                                                                   }
                                                           }
                                                   }
@@ -385,7 +413,7 @@ catch (e) {
                   }
                   tr2enum.moveNext();
              }
-             Vegas.Project.Ruler.StartTime = Timecode.FromMilliseconds(0);
+             tSoundOffset1 = Timecode.FromMilliseconds(0);
         }
         Prepare4air();
         Vegas.Project.Video.DeinterlaceMethod = "InterpolateFields";
