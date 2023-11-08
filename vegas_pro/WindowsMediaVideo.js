@@ -1,6 +1,6 @@
 /**
-* Upper to Lower field and render  ---------- NARRATOR 1.0 feature
-*
+* Admin preview render
+* wave hammer attack fixed
 **/
 import System;
 import System.Text;
@@ -29,6 +29,9 @@ try {
 
 	var templateRE = /360_admin/;
 	var extRE = /.wmv/;
+        var templateWAV = /48 000 Hz; 16 Bit; Stereo, P/;
+        var templateWAVRU = /48 000 Гц; 16 Бит; Стерео, P/;
+        var extREWAV = /.wav/;
 	
 	var renderer : Renderer = FindRenderer(templateRE);
 	
@@ -39,6 +42,25 @@ try {
 	
         if (null == renderTemplate)
                 throw "failed to find render template";
+
+        /////////////////////
+        var renderTemplateWAV = null;
+        var rendererEnum2 : Enumerator = new Enumerator(Vegas.Renderers);
+        while (!rendererEnum2.atEnd()) {
+                if (null != Renderer(rendererEnum2.item()).FileExtension.match(extREWAV)) {
+			renderTemplateWAV = FindRenderTemplate(Renderer(rendererEnum2.item()), templateWAV);
+			if (null != renderTemplateWAV) {
+                                break;
+                        } else {
+                                renderTemplateWAV = FindRenderTemplate(Renderer(rendererEnum2.item()), templateWAVRU);
+                                if (null != renderTemplateWAV) {
+                                    break;
+                                }
+                        }
+                }
+                rendererEnum2.moveNext();
+        }
+        /////////////////////
 
         var trks = new Enumerator(Vegas.Project.Tracks);
         while (!trks.atEnd()) {
@@ -171,14 +193,16 @@ try {
                 var moveby1 = new VideoMotionVertex(640/d_width,480/d_height);
                 key_frame.ScaleBy(moveby1);
 	}
-	var renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.SelectionStart,Vegas.SelectionLength);
+        var renderStatus = Vegas.Render(ofn, renderTemplateWAV,Vegas.SelectionStart,Timecode.FromMilliseconds(3000));
+	renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.SelectionStart,Vegas.SelectionLength);
 
         var TitlestrackKeep = FindTrack("keeplogo");
         if (null == TitlestrackKeep) {
                 Vegas.Project.Tracks.Remove(Titlestrack);
         }
         } else {
-                var renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.SelectionStart,Vegas.SelectionLength);
+                var renderStatus = Vegas.Render(ofn, renderTemplateWAV,Vegas.SelectionStart,Timecode.FromMilliseconds(3000));
+                renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.SelectionStart,Vegas.SelectionLength);
         }
 
 }
