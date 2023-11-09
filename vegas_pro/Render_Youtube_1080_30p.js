@@ -1,6 +1,6 @@
 /**
-* Render  - batch render --- NARRATOR 2.0 feature
-* make regions with full paths to batch render
+* Render  otv
+* wave hammer attack fixed
 **/
 import System;
 import System.Text;
@@ -243,7 +243,8 @@ try {
 				                if (evnt2.Start - bMTSMoved == rgn.Position) {
                                                         numregions = numregions+1;
                                                         rgn.Label = Vegas.Project.Summary.Copyright+evnt2.ActiveTake.Name+" (OK)";
-                                                        var renderStatus = Vegas.Render(rgn.Label + "." + String(extRE).substring(2,String(extRE).length-1), renderTemplate,rgn.Position,rgn.Length);
+                                                        var renderStatus = Vegas.Render(rgn.Label + "." + String(extRE).substring(2,String(extRE).length-1), renderTemplateYT,rgn.Position,Timecode.FromMilliseconds(3000));
+                                                        renderStatus = Vegas.Render(rgn.Label + "." + String(extRE).substring(2,String(extRE).length-1), renderTemplate,rgn.Position,rgn.Length);
 				                }
 			 	                evntEnum.moveNext();
 			                }
@@ -291,7 +292,8 @@ try {
 		                rgn2.Label = rgn2.Label + ex_t;
 	                }
                         Prepare4OTV();
-                        var renderStatus = Vegas.Render(rgn2.Label, renderTemplate,rgn2.Position,rgn2.Length);
+                        var renderStatus = Vegas.Render(rgn2.Label, renderTemplateYT,rgn2.Position,Timecode.FromMilliseconds(3000));
+                        renderStatus = Vegas.Render(rgn2.Label, renderTemplate,rgn2.Position,rgn2.Length);
                 }
 	        regionEnum2.moveNext();
         }
@@ -309,7 +311,8 @@ try {
 		ofn = ofn + ex_t;
 	}
         Prepare4OTV();
-        var renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.Transport.LoopRegionStart,Vegas.Transport.LoopRegionLength);
+        var renderStatus = Vegas.Render(ofn, renderTemplateYT,Vegas.Transport.LoopRegionStart,Timecode.FromMilliseconds(3000));
+        renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.Transport.LoopRegionStart,Vegas.Transport.LoopRegionLength);
         var vwpath = "\""+ofn+"\"";
         /////////////////////////
         if (null == renderTemplateYT || renderStatus != "Complete") {
