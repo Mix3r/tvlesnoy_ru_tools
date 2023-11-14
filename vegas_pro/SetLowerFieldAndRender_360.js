@@ -250,6 +250,8 @@ try {
 	    Vegas.Project.Video.FieldOrder = "UpperFieldFirst";
         }
 
+        VocSmoother();
+
         Vegas.UpdateUI();
 
 	if (Vegas.Project.Summary.Title == "narrator") {
@@ -477,6 +479,30 @@ function Prepare4YT() {
         //var moveby2 = new VideoMotionVertex(-1*(key_frame.Center.X+Vegas.Project.Video.Width*0.5-d_width*2.4),-1*(key_frame.Center.Y-Vegas.Project.Video.Height*0.5+d_height*0.96+1));
         //key_frame.MoveBy(moveby2);
         Vegas.UpdateUI();
+}
+
+function VocSmoother() {
+    const minimum_voc_in_fade = Timecode.FromMilliseconds(520);
+    var voc_t = new Enumerator(Vegas.Project.Tracks);
+    while (!voc_t.atEnd()) {
+        if (Track(voc_t.item()).IsAudio()) {
+            if (Track(voc_t.item()).BusTrack.Name == 'Bus A') {
+                var vocs = new Enumerator(Track(voc_t.item()).Events);
+                var prev_vocitem = null;
+                while (!vocs.atEnd()) {
+                    if (null != prev_vocitem && TrackEvent(vocs.item()).Start <= TrackEvent(prev_vocitem).Start + TrackEvent(prev_vocitem).Length + Timecode.FromFrames(1)) {
+                    } else if (TrackEvent(vocs.item()).FadeIn.Length < minimum_voc_in_fade) {
+                            TrackEvent(vocs.item()).FadeIn.Length = minimum_voc_in_fade;
+                            TrackEvent(vocs.item()).FadeIn.Curve = CurveType.Fast;
+                    }
+                    prev_vocitem = vocs.item();
+                    vocs.moveNext();
+                }
+            }
+        }
+        voc_t.moveNext();
+    }
+    return null;
 }
 
 function FindRenderer() : Renderer {
