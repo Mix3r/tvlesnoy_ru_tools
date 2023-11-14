@@ -219,7 +219,7 @@ function VocSmoother() {
     var voc_t = new Enumerator(Vegas.Project.Tracks);
     while (!voc_t.atEnd()) {
         if (Track(voc_t.item()).IsAudio()) {
-            if (Track(voc_t.item()).BusTrack.Name == 'Bus A') {
+            if (Track(voc_t.item()).BusTrack.Name == 'Bus A' || Track(voc_t.item()).BusTrack.Name == 'Шина A') {
                 var vocs = new Enumerator(Track(voc_t.item()).Events);
                 var prev_vocitem = null;
                 while (!vocs.atEnd()) {

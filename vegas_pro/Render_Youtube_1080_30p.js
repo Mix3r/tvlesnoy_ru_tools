@@ -211,6 +211,7 @@ try {
                 trks.moveNext();
         }
 
+        VocSmoother();
         Vegas.UpdateUI();
 
 	if (Vegas.Project.Summary.Title == "narrator") {
@@ -449,6 +450,30 @@ catch (e) {
         if (e != "ok1" && e != "Error: Object required") {
 	        MessageBox.Show(e);
         }
+}
+
+function VocSmoother() {
+    const minimum_voc_in_fade = Timecode.FromMilliseconds(520);
+    var voc_t = new Enumerator(Vegas.Project.Tracks);
+    while (!voc_t.atEnd()) {
+        if (Track(voc_t.item()).IsAudio()) {
+            if (Track(voc_t.item()).BusTrack.Name == 'Bus A' || Track(voc_t.item()).BusTrack.Name == 'Шина A') {
+                var vocs = new Enumerator(Track(voc_t.item()).Events);
+                var prev_vocitem = null;
+                while (!vocs.atEnd()) {
+                    if (null != prev_vocitem && TrackEvent(vocs.item()).Start <= TrackEvent(prev_vocitem).Start + TrackEvent(prev_vocitem).Length + Timecode.FromFrames(1)) {
+                    } else if (TrackEvent(vocs.item()).FadeIn.Length < minimum_voc_in_fade) {
+                            TrackEvent(vocs.item()).FadeIn.Length = minimum_voc_in_fade;
+                            TrackEvent(vocs.item()).FadeIn.Curve = CurveType.Fast;
+                    }
+                    prev_vocitem = vocs.item();
+                    vocs.moveNext();
+                }
+            }
+        }
+        voc_t.moveNext();
+    }
+    return null;
 }
 
 function Prepare4air() {
