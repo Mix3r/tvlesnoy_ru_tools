@@ -174,7 +174,7 @@ try {
                 Titlestrack.Events.Add(newEvent);
                 var take = new Take(stream);
 	        newEvent.Takes.Add(take);
-                take.Offset = Timecode.FromMilliseconds(3250);
+                take.Offset = Timecode.FromMilliseconds(4250);
                 newEvent.VideoMotion.ScaleToFill = 1;
                 newEvent.MaintainAspectRatio = null;
                 TrackEvent(newEvent).Loop = null;
