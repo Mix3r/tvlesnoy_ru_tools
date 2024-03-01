@@ -1,7 +1,7 @@
 /**
 * Render - batch render --- NARRATOR & dup hunt
 * make regions with full paths to batch render
-* wave hammer attack fix
+* wave hammer attack fix   + project-path-to-clipboard
 **/
 import System;
 import System.Text;
@@ -11,6 +11,7 @@ import Sony.Vegas;
 import ScriptPortal.Vegas;
 
 var tSoundOffset1 = Timecode.FromMilliseconds(0);
+var sLocalname = null;
 
 try {
 	Vegas.Project.Video.Width = 1920;
@@ -131,7 +132,6 @@ try {
                 var evnts = new Enumerator(Track(trks.item()).Events);
                 while (!evnts.atEnd()) {
                         if (bFirstMediaEvent == 0) {
-                                var sLocalname = "";
 				if (Vegas.Project.FilePath != null) {
                                         sLocalname = Path.GetDirectoryName(Vegas.Project.FilePath);
                                         bFirstMediaEvent = 1;
@@ -144,23 +144,6 @@ try {
                                                                 bFirstMediaEvent = 1;
                                                         }
                                                 }
-                                        }
-                                }
-                                if (bFirstMediaEvent != 0) {
-                                        var cmdenum = new Enumerator(Vegas.Project.CommandMarkers);
-                                        var mCMText = new MarkerCommandType("TEXT");
-                                        while (!cmdenum.atEnd()) {
-                                                var cmdent : CommandMarker = CommandMarker(cmdenum.item());
-                                                if (cmdent.Position == Timecode.FromMilliseconds(0)) {
-                                                        bFirstMediaEvent = 2;
-                                                        cmdent.SetCommand(mCMText,sLocalname);
-                                                        break;
-                                                }
-                                                cmdenum.moveNext();
-                                        }
-                                        if (bFirstMediaEvent != 2) {
-                                                var First_ID = new CommandMarker(Timecode.FromMilliseconds(0),mCMText,sLocalname);
-                                                Vegas.Project.CommandMarkers.Add(First_ID);
                                         }
                                 }
                                 if (Vegas.Transport.LoopRegionLength == Timecode.FromMilliseconds(0)) {
@@ -421,6 +404,14 @@ catch (e) {
         if (e != "ok1" && e != "Error: Object required") {
 	        MessageBox.Show(e);
         }
+        //////////////
+        var prog1 = new System.Diagnostics.Process();
+        prog1.StartInfo.FileName = "cmd.exe";
+        prog1.StartInfo.Arguments = "/c echo|set /p="+sLocalname+"|clip";
+        prog1.StartInfo.UseShellExecute = false;
+        prog1.StartInfo.CreateNoWindow = true;
+        prog1.Start();
+        //////////////
 }
 
 function Prepare4air() {

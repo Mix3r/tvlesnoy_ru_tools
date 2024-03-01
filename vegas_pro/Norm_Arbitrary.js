@@ -54,7 +54,7 @@ try
                                         }
                                         activeTake.Name = activeTake.Name + "*" + AudioEvent(evntEnum.item()).NormalizeGain.ToString();
 					AudioEvent(evntEnum.item()).FadeIn.Gain = 1;
-                                        AudioEvent(evntEnum.item()).FadeIn.Curve = "Slow";
+                                        //AudioEvent(evntEnum.item()).FadeIn.Curve = "Slow";
 			 } else {
                               var plugIn = PlugInNode(Vegas.VideoFX.FindChildByUniqueID("{Svfx:com.sonycreativesoftware:colorcurves}"));
                               var efectEnum = new Enumerator(VideoEvent(evntEnum.item()).Effects);
