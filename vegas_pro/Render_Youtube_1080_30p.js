@@ -285,6 +285,8 @@ try {
                 throw "ok1";
         }
 
+        var scenery1 = GetSceneryDialog();
+
 	var ofn = ShowSaveFileDialog("Видео (*"+ex_t+")|*"+ex_t, ex_t+" для ОТВ эфира - "+renderer.FileTypeName, titl);
 
 	if (ofn.length < 5) {
@@ -363,9 +365,10 @@ try {
                 }
                 trackEnumSND2.moveNext();
             }
-            //////
+
             Vegas.Transport.LoopRegionStart = Vegas.Transport.LoopRegionStart - tcSafePos;
             Vegas.UpdateUI();
+
             ////// write script
             writer = new StreamWriter(titl + "_Упаковать_для_ОТВ.ps1", false, System.Text.Encoding.Unicode);
             //writer.WriteLine("$compress = @{");
@@ -382,15 +385,16 @@ try {
             writer.WriteLine("}");
             //writer.WriteLine("Compress-Archive @compress -Force");
             writer.WriteLine("Remove-Item @disposeofit -Force");
+            // copy scenery
+            if (null != scenery1) {
+                vwpath = Path.GetDirectoryName(titl+ex_t);
+                writer.WriteLine("Copy-Item \""+scenery1+"\" -Destination \""+vwpath+"\"");
+            }
             writer.WriteLine("Remove-Item $MyInvocation.MyCommand.Path -Force");
             writer.Close();
             var prog1 = new System.Diagnostics.Process();
 	    var prog1_nfo = new System.Diagnostics.ProcessStartInfo();
 	    prog1_nfo.FileName = "powershell.exe";
-            //prog1_nfo.Arguments = "Set-ExecutionPolicy -ExecutionPolicy Unrestricted";
-            //prog1.StartInfo = prog1_nfo;
-            //prog1.Start();
-            //prog1.WaitForExit();
             prog1_nfo.Arguments = "-ExecutionPolicy Bypass -File \"" + titl + "_Упаковать_для_ОТВ.ps1"+"\"";
             prog1.StartInfo = prog1_nfo;
             prog1.Start();
@@ -543,6 +547,21 @@ function ShowSaveFileDialog(filter, title, defaultFilename) {
     }
     if (System.Windows.Forms.DialogResult.OK == saveFileDialog.ShowDialog()) {
         return Path.GetFullPath(saveFileDialog.FileName);
+    } else {
+        return null;
+    }
+}
+
+function GetSceneryDialog() {
+    var openFileDialog = new OpenFileDialog();
+    openFileDialog.Filter = "Любой сценарий (*.*)|*.*";
+        openFileDialog.Title = "Укажите файл Сценария";
+        var initialDir2 = Path.GetDirectoryName(Vegas.Project.FilePath);
+        if (Directory.Exists(initialDir2)) {
+            openFileDialog.InitialDirectory = initialDir2;
+        }
+    if (System.Windows.Forms.DialogResult.OK == openFileDialog.ShowDialog()) {
+        return Path.GetFullPath(openFileDialog.FileName);
     } else {
         return null;
     }
