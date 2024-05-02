@@ -388,7 +388,7 @@ try {
             // copy scenery
             if (null != scenery1) {
                 vwpath = Path.GetDirectoryName(titl+ex_t);
-                writer.WriteLine("Copy-Item \""+scenery1+"\" -Destination \""+vwpath+"\"");
+                writer.WriteLine("Copy-Item \""+scenery1+"\" -Destination \""+vwpath+"\" -Force");
             }
             writer.WriteLine("Remove-Item $MyInvocation.MyCommand.Path -Force");
             writer.Close();
