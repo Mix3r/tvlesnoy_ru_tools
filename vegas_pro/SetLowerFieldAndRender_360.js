@@ -158,9 +158,11 @@ try {
                                 var nEventDelta = TrackEvent(evnts.item()).Start - nEventStart;
                                 nEventDelta = nEventDelta.ToMilliseconds();
                                 if (nEventDelta > 0 && nEventDelta <= 200) {
-                                        Vegas.Transport.CursorPosition = nEventStart;
-                                        Vegas.UpdateUI();
-                                        MessageBox.Show("Чёрная дыра на "+nEventStart.ToString(RulerFormat.TimeAndFrames));
+                                    Vegas.Transport.CursorPosition = nEventStart;
+                                    Vegas.UpdateUI();
+                                    MessageBox.Show("Чёрная дыра на "+nEventStart.ToString(RulerFormat.TimeAndFrames));
+                                } else if (nEventDelta > 0 && nEventDelta <= Vegas.Transport.LoopRegionLength.ToMilliseconds()) {
+                                    CheckUnderLayers(nEventStart,TrackEvent(evnts.item()).Start,Track(trks.item()).Index);
                                 }
                                 nEventStart = TrackEvent(evnts.item()).Start + TrackEvent(evnts.item()).Length;
                                 var envl_num = 0;
@@ -414,19 +416,55 @@ catch (e) {
         //////////////
 }
 
+function CheckUnderLayers(tLoopST,tLoopEND,trkIndex) {
+    var under_trks = new Enumerator(Vegas.Project.Tracks);
+    var bWarnUser = 1;
+    while (!under_trks.atEnd()) {
+        if (Track(under_trks.item()).Index > trkIndex && Track(under_trks.item()).IsVideo()) {
+            var under_evts = new Enumerator(Track(under_trks.item()).Events);
+            var nCheckSpecPoint = tLoopST;
+            while (!under_evts.atEnd()) {
+                var under_specimen = TrackEvent(under_evts.item());
+                if (under_specimen.Start+under_specimen.Length > tLoopST && under_specimen.Start < tLoopEND) {
+                    var nSpecDelta = under_specimen.Start - nCheckSpecPoint;
+                    nSpecDelta = nSpecDelta.ToMilliseconds();
+                    if (nSpecDelta > 0) {
+                        break; // hole under hole
+                    }
+                    nCheckSpecPoint = under_specimen.Start+under_specimen.Length;
+                    if (nCheckSpecPoint >= tLoopEND) {
+                        bWarnUser = 0;
+                        break; // sealed hole
+                    }
+                }
+                under_evts.moveNext();
+            }
+            if (bWarnUser == 0) {
+                break;
+            }
+        }
+        under_trks.moveNext();
+    }
+    if (bWarnUser == 1) {
+        Vegas.Transport.CursorPosition = tLoopST;
+        Vegas.UpdateUI();
+        MessageBox.Show("Дыра без дна с "+tLoopST.ToString(RulerFormat.TimeAndFrames));
+    }
+}
+
 function Prepare4air() {
         var tmplogotrack = null;
         var tr3enum = new Enumerator(Vegas.Project.Tracks);
         while (!tr3enum.atEnd()) {
                 if (Track(tr3enum.item()).Name == "_tmplogo") {
-                        tmplogotrack = Track(tr3enum.item());
-                        break;
+                    tmplogotrack = Track(tr3enum.item());
+                    break;
                 }
                 tr3enum.moveNext();
         }
         if (null != tmplogotrack) {
-                Vegas.Project.Tracks.Remove(tmplogotrack);
-                Vegas.UpdateUI();
+            Vegas.Project.Tracks.Remove(tmplogotrack);
+            Vegas.UpdateUI();
         }
 }
 
@@ -538,14 +576,20 @@ function ShowSaveFileDialog(filter, title, defaultFilename) {
         filter = "All Files (*.*)|*.*";
     }
     saveFileDialog.Filter = filter;
-    if (null != title)
+    if (null != title) {
         saveFileDialog.Title = title;
+    }
     saveFileDialog.CheckPathExists = true;
     saveFileDialog.AddExtension = true;
     if (null != defaultFilename) {
-        var initialDir = Path.GetDirectoryName(defaultFilename);
+        var initialDir = System.Environment.GetFolderPath(System.Environment.SpecialFolder.DesktopDirectory)+"\\Сеть TV"; // Path.GetDirectoryName(defaultFilename);
         if (Directory.Exists(initialDir)) {
             saveFileDialog.InitialDirectory = initialDir;
+        } else {
+            initialDir = System.Environment.GetFolderPath(System.Environment.SpecialFolder.DesktopDirectory);
+            if (Directory.Exists(initialDir)) {
+                saveFileDialog.InitialDirectory = initialDir;
+            }
         }
         saveFileDialog.DefaultExt = Path.GetExtension(defaultFilename);
         saveFileDialog.FileName = Path.GetFileName(defaultFilename);
