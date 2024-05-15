@@ -29,80 +29,66 @@ try {
 	Vegas.Project.Ruler.BeatsPerMinute = 60;
 	Vegas.Project.Ruler.BeatsPerMeasure = 4;
 
-        const YTFolder = "CЮЖЕТЫ ЮТУБ";
+    const YTFolder = "CЮЖЕТЫ ЮТУБ";
 
 	var templateRE = /HQ 1920x1080-50i, /;
 	var templateYT = /YOUTUBE30/;
-        var templateWAV = /48 000 Hz; 16 Bit; Stereo, P/;
-        var templateWAVRU = /48 000 Гц; 16 Бит; Стерео, P/;
+    var templateWAV = /48 000 Hz; 16 Bit; Stereo, P/;
+    var templateWAVRU = /48 000 Гц; 16 Бит; Стерео, P/;
 	var extRE = /.MP4/;
-        var extREWAV = /.wav/;
+    var extREWAV = /.wav/;
 
 	var bFirstMediaEvent = 0;
-        var nMTSOffset = 40;
+    var nMTSOffset = 40;
 
-        //
-        var buses = new Enumerator(Vegas.Project.BusTracks);
-        var nBusnum = 0;
-        while (!buses.atEnd()) {
-                nBusnum = nBusnum + 1;
-                buses.moveNext();
-        }
-        if (nBusnum <= 2) {
-                var busA = new AudioBusTrack(Vegas.Project);
-                Vegas.Project.BusTracks.Add(busA);
-                var afx = PlugInNode(Vegas.AudioFX.FindChildByUniqueID("{8010C341-6D4C-4390-B828-E4D246C3DDB2}"));
-                //MessageBox.Show(afx.UniqueID);
-                busA.Effects.AddEffect(afx);
-                busA.Effects[0].Preset = "TV_ГОЛОС_TV";
-                var busB = new AudioBusTrack(Vegas.Project);
-                Vegas.Project.BusTracks.Add(busB);
-                busB.Effects.AddEffect(afx);
-                busB.Effects[0].Preset = "TV_ИНТЕРШУМ_TV";
-                var busC = new AudioBusTrack(Vegas.Project);
-                Vegas.Project.BusTracks.Add(busC);
-                var mfx = PlugInNode(Vegas.AudioFX.FindChildByUniqueID("{A6A78627-D619-48BF-AD26-0C6B44B5C7D8}"));
-                busC.Effects.AddEffect(afx);
-                busC.Effects.AddEffect(mfx);
-                busC.Effects[0].Preset = "TV_ИНТЕРШУМ_TV";
-                busC.Effects[1].Preset = "TV_MUFFLE";
-        }
-        //
+    if (Vegas.Project.BusTracks.Count < 3) {
+        var busA = new AudioBusTrack(Vegas.Project);
+        Vegas.Project.BusTracks.Add(busA);
+        var afx = PlugInNode(Vegas.AudioFX.FindChildByUniqueID("{8010C341-6D4C-4390-B828-E4D246C3DDB2}")); //afx.UniqueID
+        busA.Effects.AddEffect(afx);
+        busA.Effects[0].Preset = "TV_ГОЛОС_TV";
+        var busB = new AudioBusTrack(Vegas.Project);
+        Vegas.Project.BusTracks.Add(busB);
+        busB.Effects.AddEffect(afx);
+        busB.Effects[0].Preset = "TV_ИНТЕРШУМ_TV";
+        var busC = new AudioBusTrack(Vegas.Project);
+        Vegas.Project.BusTracks.Add(busC);
+        var mfx = PlugInNode(Vegas.AudioFX.FindChildByUniqueID("{A6A78627-D619-48BF-AD26-0C6B44B5C7D8}"));
+        busC.Effects.AddEffect(afx);
+        busC.Effects.AddEffect(mfx);
+        busC.Effects[0].Preset = "TV_ИНТЕРШУМ_TV";
+        busC.Effects[1].Preset = "TV_MUFFLE";
+    }
 
 	var renderer : Renderer = FindRenderer();
 
-        if (null == renderer)
-                throw "failed to find renderer";
+    if (null == renderer) throw "failed to find renderer";
 
-        var renderTemplate :RenderTemplate = FindRenderTemplate(renderer, templateRE);
+    var renderTemplate :RenderTemplate = FindRenderTemplate(renderer, templateRE);
 
-        if (null == renderTemplate)
-                throw "failed to find render template";
+    if (null == renderTemplate) throw "failed to find render template";
 
-        var renderTemplateYT :RenderTemplate = FindRenderTemplate(renderer, templateYT);
+    var renderTemplateYT :RenderTemplate = FindRenderTemplate(renderer, templateYT);
 
-        /////////////////////
-        var renderTemplateWAV = null;
-        var rendererEnum2 : Enumerator = new Enumerator(Vegas.Renderers);
-        while (!rendererEnum2.atEnd()) {
-                if (null != Renderer(rendererEnum2.item()).FileExtension.match(extREWAV)) {
-			renderTemplateWAV = FindRenderTemplate(Renderer(rendererEnum2.item()), templateWAV);
-			if (null != renderTemplateWAV) {
-                                break;
-                        } else {
-                                renderTemplateWAV = FindRenderTemplate(Renderer(rendererEnum2.item()), templateWAVRU);
-                                if (null != renderTemplateWAV) {
-                                    break;
-                                }
-                        }
+    var renderTemplateWAV = null;
+
+    for(var item in Vegas.Renderers) {
+        if (null != item.FileExtension.match(extREWAV)) {
+            renderTemplateWAV = FindRenderTemplate(item, templateWAV);
+            if (null != renderTemplateWAV) {
+                break;
+            } else {
+                renderTemplateWAV = FindRenderTemplate(item, templateWAVRU);
+                if (null != renderTemplateWAV) {
+                    break;
                 }
-                rendererEnum2.moveNext();
+            }
         }
-        /////////////////////
+    }
 
 	var titl = Path.GetFileNameWithoutExtension(Vegas.Project.FilePath);
-        var nEventStart = Vegas.Transport.LoopRegionStart;
-        var bGoProgressive = 0;
+    var nEventStart = Vegas.Transport.LoopRegionStart;
+    var bGoProgressive = 0;
 
         var trks = new Enumerator(Vegas.Project.Tracks);
         while (!trks.atEnd()) {
@@ -113,7 +99,7 @@ try {
                     bDups_present = 0;
                     var dups = new Enumerator(Track(trks.item()).Events);
                     var lasteventstart = Timecode.FromMilliseconds(0);
-		    var lasteventlength = Timecode.FromMilliseconds(0);
+		            var lasteventlength = Timecode.FromMilliseconds(0);
                     var prev_item = null;
                     while (!dups.atEnd()) {
                         if (null != prev_item && TrackEvent(dups.item()).Start == lasteventstart && TrackEvent(dups.item()).Length == lasteventlength) {
@@ -122,7 +108,7 @@ try {
                             break;
                         }
                         lasteventstart = TrackEvent(dups.item()).Start;
-			lasteventlength = TrackEvent(dups.item()).Length;
+			            lasteventlength = TrackEvent(dups.item()).Length;
                         prev_item = dups.item();
                         dups.moveNext();
                     }
@@ -161,8 +147,6 @@ try {
                                     Vegas.Transport.CursorPosition = nEventStart;
                                     Vegas.UpdateUI();
                                     MessageBox.Show("Чёрная дыра на "+nEventStart.ToString(RulerFormat.TimeAndFrames));
-                                } else if (nEventDelta > 0 && nEventDelta <= Vegas.Transport.LoopRegionLength.ToMilliseconds()) {
-                                    CheckUnderLayers(nEventStart,TrackEvent(evnts.item()).Start,Track(trks.item()).Index);
                                 }
                                 nEventStart = TrackEvent(evnts.item()).Start + TrackEvent(evnts.item()).Length;
                                 var envl_num = 0;
@@ -227,16 +211,16 @@ try {
                 trks.moveNext();
         }
 
-        if (bGoProgressive > 0) {
-            Vegas.Project.Video.FrameRate = 50;
+    if (bGoProgressive > 0) {
+        Vegas.Project.Video.FrameRate = 50;
 	    Vegas.Project.Video.FieldOrder = "ProgressiveScan";
-        } else {
-            Vegas.Project.Video.FrameRate = 25;
+    } else {
+        Vegas.Project.Video.FrameRate = 25;
 	    Vegas.Project.Video.FieldOrder = "UpperFieldFirst";
-        }
+    }
 
-        VocSmoother();
-        Vegas.UpdateUI();
+    VocSmoother();
+    Vegas.UpdateUI();
 
 	if (Vegas.Project.Summary.Title == "narrator") {
                 bFirstMediaEvent = 3;
@@ -347,6 +331,8 @@ try {
                 throw "ok1";
         }
 
+    CheckUnderLayers();
+
 	var ofn = ShowSaveFileDialog("Видео (*"+ex_t+")|*"+ex_t, ex_t+" для эфира - "+renderer.FileTypeName, titl);
 
 	if (ofn.length < 5) {
@@ -416,39 +402,36 @@ catch (e) {
         //////////////
 }
 
-function CheckUnderLayers(tLoopST,tLoopEND,trkIndex) {
-    var under_trks = new Enumerator(Vegas.Project.Tracks);
-    var bWarnUser = 1;
-    while (!under_trks.atEnd()) {
-        if (Track(under_trks.item()).Index > trkIndex && Track(under_trks.item()).IsVideo()) {
-            var under_evts = new Enumerator(Track(under_trks.item()).Events);
-            var nCheckSpecPoint = tLoopST;
-            while (!under_evts.atEnd()) {
-                var under_specimen = TrackEvent(under_evts.item());
-                if (under_specimen.Start+under_specimen.Length > tLoopST && under_specimen.Start < tLoopEND) {
-                    var nSpecDelta = under_specimen.Start - nCheckSpecPoint;
-                    nSpecDelta = nSpecDelta.ToMilliseconds();
-                    if (nSpecDelta > 0) {
-                        break; // hole under hole
-                    }
-                    nCheckSpecPoint = under_specimen.Start+under_specimen.Length;
-                    if (nCheckSpecPoint >= tLoopEND) {
-                        bWarnUser = 0;
-                        break; // sealed hole
+function CheckUnderLayers() {
+    var tPole = Vegas.Transport.LoopRegionStart;
+    var tFinish = tPole + Vegas.Transport.LoopRegionLength;
+    var bFaildown = 0; // stop-next-time-flag
+    while (tPole < tFinish) {
+        for (var utrk in Vegas.Project.Tracks) {
+            if (utrk.IsVideo()) {
+                for (var uevnt in utrk.Events) {
+                    if (uevnt.Start+uevnt.Length > tPole && uevnt.Start < tFinish) {
+                        if ((uevnt.Start - tPole).ToMilliseconds() > 0) {
+                            break; //falldown to next track
+                        } else {
+                            bFaildown = 0; // clear stop-next-time-flag, enable retry on next fail
+                            tPole = uevnt.Start+uevnt.Length;
+                        }
                     }
                 }
-                under_evts.moveNext();
-            }
-            if (bWarnUser == 0) {
-                break;
             }
         }
-        under_trks.moveNext();
+        if (bFaildown != 0) {
+            break;
+        }
+        if (tPole < tFinish) {
+            bFaildown = 1; //try once again
+        }
     }
-    if (bWarnUser == 1) {
-        Vegas.Transport.CursorPosition = tLoopST;
+    if (tPole < tFinish) {
+        Vegas.Transport.CursorPosition = tPole;
         Vegas.UpdateUI();
-        MessageBox.Show("Дыра без дна с "+tLoopST.ToString(RulerFormat.TimeAndFrames));
+        MessageBox.Show("Дыра без дна с "+tPole.ToString(RulerFormat.TimeAndFrames));
     }
 }
 
