@@ -12,6 +12,7 @@ import ScriptPortal.Vegas;
 
 var tSoundOffset1 = Timecode.FromMilliseconds(0);
 var sLocalname = null;
+const tntc = "t&t";
 
 try {
 	Vegas.Project.Video.Width = 1920;
@@ -410,6 +411,21 @@ function CheckUnderLayers() {
         for (var utrk in Vegas.Project.Tracks) {
             if (utrk.IsVideo()) {
                 for (var uevnt in utrk.Events) {
+                    if (null != uevnt.ActiveTake) {
+                        if (null != uevnt.ActiveTake.Media) {
+                            if (!uevnt.ActiveTake.Media.IsValid()) {
+                                continue;
+                            } else if (uevnt.ActiveTake.Media.IsOffline()) {
+                                continue;
+                            } else if (uevnt.ActiveTake.Media.FilePath == "tvlesnoy_lowerthird") {
+                                continue;
+                            } else if (uevnt.ActiveTake.Media.FilePath == "tvlesnoy_YT") {
+                                continue;
+                            } else if (uevnt.ActiveTake.Media.Comment == tntc) {
+                                continue;
+                            }
+                        }
+                    }
                     if (uevnt.Start+uevnt.Length > tPole && uevnt.Start < tFinish) {
                         if ((uevnt.Start - tPole).ToMilliseconds() > 0) {
                             break; //falldown to next track
