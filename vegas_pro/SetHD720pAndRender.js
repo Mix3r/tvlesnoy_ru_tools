@@ -1,120 +1,83 @@
-/**
-* Upper to Lower field and render
-*
-**/
 import System;
-import System.Text;
 import System.IO;
-import System.Windows.Forms;
+//import System.Object;
+//import System.Windows.Forms;
 import Sony.Vegas;
+import ScriptPortal.Vegas;
+var proxytxt : StreamWriter = null;
 
 try {
-	Vegas.Project.Video.Width = 1280;
-	Vegas.Project.Video.Height = 720;
-	Vegas.Project.Video.FrameRate = 25;
-	Vegas.Project.Video.FieldOrder = "ProgressiveScan";
-	Vegas.Project.Video.PixelAspectRatio = 1.0;
-	Vegas.Project.Video.MotionBlurType = "Gaussian";
-	Vegas.Project.Video.DeinterlaceMethod = "InterpolateFields";
-	Vegas.Project.Video.RenderQuality = "Best";
-
-	Vegas.Project.Audio.SampleRate = 48000;
-	Vegas.Project.Audio.BitDepth = 16;
-	Vegas.Project.Audio.ResampleQuality = "Best";
-
-	Vegas.Project.Ruler.Format = "TimeAndFrames";
-	Vegas.Project.Ruler.BeatsPerMinute = 60;
-	Vegas.Project.Ruler.BeatsPerMeasure = 4;
-	
-	var mediaEnum = new Enumerator(Vegas.Project.MediaPool);
-
-	while (!mediaEnum.atEnd()) {
-		var media = mediaEnum.item();
-		// video only
-		if (media.HasVideo()) {
-			var mm = new media.Streams();
-			mm.FieldOrder = "ProgressiveScan";
-		}
-		mediaEnum.moveNext();
-	}
-
-	var templateRE = /testtest_80_mjpegB/;
-	var extRE = /.mov/;
-	
-	var renderer : Renderer = FindRenderer(templateRE);
-	
-        if (null == renderer)
-                throw "failed to find renderer";
-		
-        var renderTemplate :RenderTemplate = FindRenderTemplate(renderer, templateRE);
-	
-        if (null == renderTemplate)
-                throw "failed to find render template";
-		
-	var projPath = Vegas.Project.FilePath;
-	var titl = Path.GetFileNameWithoutExtension(projPath);
-	extRE = Vegas.Project.Audio.RecordedFilesFolder.toUpperCase();
-	if (null != extRE.match(/\TEMP/)) {
-		titl = Path.GetDirectoryName(projPath)+"\\"+titl;
-	} else {
-		titl = Vegas.Project.Video.PrerenderedFilesFolder+titl;
-	}
-	var ofn = ShowSaveFileDialog("AVI Files (*.MOV)|*.MOV", "Render MOV - "+renderer.FileTypeName, titl);
-	var renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.SelectionStart,Vegas.SelectionLength);
-}
-
-catch (e) {
-	MessageBox.Show(e);
-}
-
-function FindRenderer(rendererRegExp : RegExp) : Renderer {
-        var rendererEnum : Enumerator = new Enumerator(Vegas.Renderers);
-        while (!rendererEnum.atEnd()) {
-                var renderer : Renderer = Renderer(rendererEnum.item());
-                if (null != renderer.FileExtension.match(extRE)) {
-			if (null != FindRenderTemplate(renderer, templateRE)) {
-				return renderer;
-			}
-                }
-                rendererEnum.moveNext();
-        }
-        return null;
-}
-
-function FindRenderTemplate(renderer : Renderer, templateRegExp : RegExp) : RenderTemplate {
-        var templateEnum : Enumerator = new Enumerator(renderer.Templates);
-        while (!templateEnum.atEnd()) {
-                var renderTemplate : RenderTemplate = RenderTemplate(templateEnum.item());
-                if (renderTemplate.Name.match(templateRegExp)) {
-                        return renderTemplate;
-                }
-                templateEnum.moveNext();
-        }
-        return null;
-}
-
-// an example filter: "PNG File (*.png)|*.png|JPEG File (*.jpg)|*.jpg"
-function ShowSaveFileDialog(filter, title, defaultFilename) {
-    var saveFileDialog = new SaveFileDialog();
-    if (null == filter) {
-        filter = "All Files (*.*)|*.*";
+    var sTempCatPath = Vegas.Project.Video.PrerenderedFilesFolder+"";
+    if (Vegas.Project.FilePath != null) {
+        sTempCatPath = Path.GetDirectoryName(Vegas.Project.FilePath)+"\\";
     }
-    saveFileDialog.Filter = filter;
-    if (null != title)
-        saveFileDialog.Title = title;
-    saveFileDialog.CheckPathExists = true;
-    saveFileDialog.AddExtension = true;
-    if (null != defaultFilename) {
-        var initialDir = Path.GetDirectoryName(defaultFilename);
-        if (Directory.Exists(initialDir)) {
-            saveFileDialog.InitialDirectory = initialDir;
+    var nCCounter = 0;
+    var nCCounter2 = 0;
+    var sFFMpegPath = "\""+System.Environment.GetFolderPath(System.Environment.SpecialFolder.ProgramFiles)+"\\Totalcmd_p\\FFMPEG\\ffmpeg.exe\"";
+    var bStreamMade = 0;
+    for (var mTmpMedia in Vegas.Project.MediaPool) {
+        if (mTmpMedia.HasVideo()) {
+            var sMpPart = mTmpMedia.FilePath.substring(1,2);
+            if (sMpPart == ":" || sMpPart == "\\") {
+                for (var sTmpStm in mTmpMedia.Streams) {
+                    if (sTmpStm.MediaType == MediaType.Video && !sTmpStm.Parent.IsGenerated()) {
+                        if (sTmpStm.FrameRate > 2.00) {
+                            nCCounter = nCCounter + 1;
+                        }
+                    }
+                }
+            }
         }
-        saveFileDialog.DefaultExt = Path.GetExtension(defaultFilename);
-        saveFileDialog.FileName = Path.GetFileName(defaultFilename);
     }
-    if (System.Windows.Forms.DialogResult.OK == saveFileDialog.ShowDialog()) {
-        return Path.GetFullPath(saveFileDialog.FileName);
-    } else {
-        return null;
+    for (var mTmpMedia in Vegas.Project.MediaPool) {
+        if (mTmpMedia.HasVideo()) {
+            var sMpPart = mTmpMedia.FilePath.substring(1,2);
+            if (sMpPart == ":" || sMpPart == "\\") {
+                for (var sTmpStm in mTmpMedia.Streams) {
+                    if (sTmpStm.MediaType == MediaType.Video && !sTmpStm.Parent.IsGenerated()) {
+                        if (sTmpStm.FrameRate > 2.00) {
+                            if (bStreamMade == 0) {
+                                bStreamMade = 1;
+                                proxytxt = new StreamWriter(sTempCatPath+"_proxybuild.txt", false, System.Text.Encoding.Unicode);
+                                proxytxt.WriteLine("if not DEFINED IS_MINIMIZED set IS_MINIMIZED=1 \&\& start \"\" /min \"\%\~dpnx0\" \%\* \&\& exit");
+                            }
+                            if (null != proxytxt) {
+                                nCCounter2 = nCCounter2 + 1;
+                                proxytxt.WriteLine("title БУФЕР "+nCCounter2+"\/"+nCCounter+" - "+Path.GetFileNameWithoutExtension(mTmpMedia.FilePath));
+                                proxytxt.WriteLine(sFFMpegPath+" -hwaccel cuda -y -i \""+mTmpMedia.FilePath+"\" -src_range 1 -dst_range 1 -c:v mjpeg -q:v 1 -filter_complex \"scale=480:-1:in_range=full:out_range=full:flags=lanczos\" -an -f avi \""+mTmpMedia.FilePath+".sfvp0\"");
+                                proxytxt.WriteLine("IF \%ERRORLEVEL\% NEQ 0 (");
+                                proxytxt.WriteLine("    "+sFFMpegPath+" -y -i \""+mTmpMedia.FilePath+"\" -src_range 1 -dst_range 1 -c:v mjpeg -q:v 1 -filter_complex \"scale=480:-1:in_range=full:out_range=full:flags=lanczos\" -an -f avi \""+mTmpMedia.FilePath+".sfvp0\"");
+                                proxytxt.WriteLine(")");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if (null != proxytxt) {
+        proxytxt.WriteLine("del \"\%\~dp0_proxybuild.txt\" /F /Q");
+        proxytxt.WriteLine("del \"\%\~dpnx0\" /F /Q \&\& exit");
+        proxytxt.Close();
+        proxytxt = null;
+        var prog1 = new System.Diagnostics.Process();
+		prog1.StartInfo.UseShellExecute = false;
+		prog1.StartInfo.RedirectStandardOutput = false;
+		prog1.StartInfo.FileName = "cmd.exe";
+
+        prog1.StartInfo.Arguments = '/a /c type "'+sTempCatPath+ '_proxybuild.txt">"'+sTempCatPath+ '_proxybuild.cmd"';
+        prog1.Start();
+        prog1.WaitForExit();
+        prog1.StartInfo.Arguments = '/a /c "'+sTempCatPath+'_proxybuild.cmd"';
+        prog1.Start(prog1.StartInfo);
+    }
+}
+
+catch(e) {
+}
+
+finally {
+    if (null != proxytxt) {
+        proxytxt.Close();
     }
 }
