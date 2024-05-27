@@ -84,8 +84,9 @@ Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{userappdata}\Vegas
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{userappdata}\Sony\Render Templates\xdcam ex"" ""YOUTUBE30P.*"" /MOV"; Flags: runhidden runascurrentuser;
 Filename: robocopy.exe; Parameters: """{tmp}\tmp"" ""{userappdata}\Sony\Render Templates\voukoder"" ""VBR*.sft2"" /R:1 /W:1"; Flags: runhidden runascurrentuser;
 Filename: robocopy.exe; Parameters: """{tmp}\tmp"" ""{userappdata}\VEGAS\Render Templates\voukoder"" ""VBR*.sft2"" /R:1 /W:1"; Flags: runhidden runascurrentuser;
-Filename: robocopy.exe; Parameters: """{tmp}\tmp"" ""{userappdata}\Sony\Render Templates\voukoder"" ""360_admin.sft2"" /R:1 /W:1"; Flags: runhidden runascurrentuser;
-Filename: robocopy.exe; Parameters: """{tmp}\tmp"" ""{userappdata}\VEGAS\Render Templates\voukoder"" ""360_admin.sft2"" /R:1 /W:1"; Flags: runhidden runascurrentuser;
+Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{userappdata}\Sony\Render Templates\voukoder"" ""360_admin.sft2"" /R:1 /W:1"; Flags: runhidden runascurrentuser;
+Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{userappdata}\VEGAS\Render Templates\voukoder"" ""360_admin.sft2"" /R:1 /W:1"; Flags: runhidden runascurrentuser;
+Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{tmp}\git"" ""360_admin.sft2"" /R:1 /W:1 /MOV"; Flags: runhidden runascurrentuser;
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{userappdata}\Sony\Render Templates\mpeg2-mc"" ""*PAL Widescreen.sft2"" /MOV"; Flags: runhidden runascurrentuser; 
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{autopf64}\Sony\Vegas 7.0\Script Menu"" ""ctc-sample.png"" /MOV"; Flags: runhidden runascurrentuser;
 Filename: robocopy.exe; Parameters: """{app}\Script Menu"" ""{autopf64}\Sony\Vegas 7.0\Script Menu"" ""smai75x75_alpha75_hd.png"" /MOV"; Flags: runhidden runascurrentuser; 
