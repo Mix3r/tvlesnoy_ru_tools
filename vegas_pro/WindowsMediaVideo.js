@@ -8,6 +8,8 @@ import System.IO;
 import System.Windows.Forms;
 import Sony.Vegas;
 import ScriptPortal.Vegas;
+var nTmpFPS = Vegas.Project.Video.FrameRate;
+
 
 try {
 	//Vegas.Project.Video.Width = 720;
@@ -28,7 +30,7 @@ try {
 	Vegas.Project.Ruler.BeatsPerMeasure = 4;
 
 	var templateRE = /360_admin/;
-	var extRE = /.wmv/;
+	var extRE = /.mp4/;
         var templateWAV = /48 000 Hz; 16 Bit; Stereo, P/;
         var templateWAVRU = /48 000 Гц; 16 Бит; Стерео, P/;
         var extREWAV = /.wav/;
@@ -153,13 +155,13 @@ try {
 	} else {
 		titl = Vegas.Project.Video.PrerenderedFilesFolder+titl;
 	}
-	var ofn = ShowSaveFileDialog("WMV Files (*.WMV)|*.WMV", "Render Win. Media Video - "+renderer.FileTypeName, titl);
+	var ofn = ShowSaveFileDialog("MP4 Files (*.MP4)|*.MP4", "Render Win. Media Video - "+renderer.FileTypeName, titl);
 	if (ofn.length < 5) {
-		ofn = ofn + ".WMV";
+		ofn = ofn + ".MP4";
 	}
 	titl = ofn.substring(ofn.length-4);
-	if (titl.toUpperCase() != ".WMV") {
-		ofn = ofn + ".WMV";
+	if (titl.toUpperCase() != ".MP4") {
+		ofn = ofn + ".MP4";
 	}
 
         if (MessageBox.Show("Значок надо?", "Значок СПЕКТР-МАИ в правом углу", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes) {
@@ -193,7 +195,7 @@ try {
                 if (d_height < 0) {
                      d_height = d_height * -1;
                 }
-                var moveby1 = new VideoMotionVertex(640/d_width,480/d_height);
+                var moveby1 = new VideoMotionVertex(Vegas.Project.Video.Width/d_width,Vegas.Project.Video.Height/d_height);
                 key_frame.ScaleBy(moveby1);
 	}
         var renderStatus = Vegas.Render(ofn, renderTemplateWAV,Vegas.SelectionStart,Timecode.FromMilliseconds(3000));
@@ -212,6 +214,12 @@ try {
 
 catch (e) {
 	MessageBox.Show(e);
+}
+
+finally {
+    if (null != nTmpFPS) {
+        Vegas.Project.Video.FrameRate = nTmpFPS;
+    }
 }
 
 function VocSmoother() {

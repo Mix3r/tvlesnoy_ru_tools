@@ -44,9 +44,9 @@ try {
                             if (null != proxytxt) {
                                 nCCounter2 = nCCounter2 + 1;
                                 proxytxt.WriteLine("title БУФЕР "+nCCounter2+"\/"+nCCounter+" - "+Path.GetFileNameWithoutExtension(mTmpMedia.FilePath));
-                                proxytxt.WriteLine(sFFMpegPath+" -hwaccel cuvid -hwaccel_output_format cuda -y -i \""+mTmpMedia.FilePath+"\" -vf \"scale_cuda=480:-1:interp_algo=lanczos\" -c:v h264_nvenc -preset p2 -qp 25 -g 2 -an -f mp4 \""+mTmpMedia.FilePath+".sfvp0\"");
+                                proxytxt.WriteLine(sFFMpegPath+" -hwaccel cuvid -hwaccel_output_format cuda -y -i \""+mTmpMedia.FilePath+"\" -vf \"scale_cuda=480:-1:interp_algo=lanczos\" -c:v h264_nvenc -preset p2 -qp 25 -g 2 -movflags faststart -an -f mp4 \""+mTmpMedia.FilePath+".sfvp0\"");
                                 proxytxt.WriteLine("IF \%ERRORLEVEL\% NEQ 0 (");
-                                proxytxt.WriteLine("    "+sFFMpegPath+" -y -i \""+mTmpMedia.FilePath+"\" -c:v libx264 -preset ultrafast -crf 15 -g 2 -vf \"scale=480:-1:in_range=full:out_range=full:flags=lanczos\" -an -f mp4 \""+mTmpMedia.FilePath+".sfvp0\"");
+                                proxytxt.WriteLine("    "+sFFMpegPath+" -y -i \""+mTmpMedia.FilePath+"\" -c:v libx264 -preset ultrafast -crf 15 -g 2 -vf \"scale=480:-1:in_range=full:out_range=full:flags=lanczos\" -movflags faststart -an -f mp4 \""+mTmpMedia.FilePath+".sfvp0\"");
                                 proxytxt.WriteLine(")");
                             }
                         }
