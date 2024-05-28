@@ -126,14 +126,14 @@ try {
 		
 	var projPath = Vegas.Project.FilePath;
 	var titl = Path.GetFileNameWithoutExtension(projPath);
-        //////////////
+
         var prog1 = new System.Diagnostics.Process();
         prog1.StartInfo.FileName = "cmd.exe";
         prog1.StartInfo.Arguments = "/c echo|set /p=^\\^\\Glavred^\\Общее^\\1 СОГЛАСОВАНИЕ^\\"+titl+"|clip";
         prog1.StartInfo.UseShellExecute = false;
         prog1.StartInfo.CreateNoWindow = true;
         prog1.Start();
-        //////////////
+
 	extRE = Vegas.Project.Audio.RecordedFilesFolder.toUpperCase();
 	if (Vegas.Project.Summary.Title == "narrator") {
 		var trackEnum = new Enumerator(Vegas.Project.Tracks);
@@ -164,51 +164,55 @@ try {
 		ofn = ofn + ".MP4";
 	}
 
-        if (MessageBox.Show("Значок надо?", "Значок СПЕКТР-МАИ в правом углу", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes) {
+    // add ! before file name
+    var renderStatus = ofn.lastIndexOf('\\');
+    ofn = ofn.substring(0,renderStatus+1) + "\!" + ofn.substring(renderStatus+1);
 
-	var Titlestrack = FindTrack("LOGOTYPE");
+    if (MessageBox.Show("Значок надо?", "Значок СПЕКТР-МАИ в правом углу", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes) {
+	    var Titlestrack = FindTrack("LOGOTYPE");
         if (null == Titlestrack) {
-                Titlestrack = new VideoTrack(0, "LOGOTYPE");
-		Vegas.Project.Tracks.Add(Titlestrack);
-                var media = new Media("C:\\Program Files\\VEGAS\\tvlesnoy_banners.veg");
-                var stream = media.Streams[0]; //The "video" stream
-                var newEvent = new VideoEvent(Vegas.SelectionStart, Vegas.SelectionLength);
-                Titlestrack.Events.Add(newEvent);
-                var take = new Take(stream);
+            Titlestrack = new VideoTrack(0, "LOGOTYPE");
+		    Vegas.Project.Tracks.Add(Titlestrack);
+            var media = new Media("C:\\Program Files\\VEGAS\\tvlesnoy_banners.veg");
+            var stream = media.Streams[0]; //The "video" stream
+            var newEvent = new VideoEvent(Vegas.SelectionStart, Vegas.SelectionLength);
+            Titlestrack.Events.Add(newEvent);
+            var take = new Take(stream);
 	        newEvent.Takes.Add(take);
-                take.Offset = Timecode.FromMilliseconds(4250);
-                newEvent.VideoMotion.ScaleToFill = 1;
-                newEvent.MaintainAspectRatio = null;
-                TrackEvent(newEvent).Loop = null;
-                newEvent.ResampleMode = "Disable";
-                ///////
-                var vlc = new Envelope(EnvelopeType.Velocity);
-                newEvent.Envelopes.Add(vlc);
-                vlc.Points[0].Y = 0.0;
-                ////////
-                var key_frame = newEvent.VideoMotion.Keyframes[0];
-                var d_width = key_frame.TopRight.X   - key_frame.TopLeft.X;
-                var d_height = key_frame.BottomLeft.Y - key_frame.TopLeft.Y;
-                if (d_width < 0) {
-                     d_width = d_width * -1;
-                }
-                if (d_height < 0) {
-                     d_height = d_height * -1;
-                }
-                var moveby1 = new VideoMotionVertex(Vegas.Project.Video.Width/d_width,Vegas.Project.Video.Height/d_height);
-                key_frame.ScaleBy(moveby1);
-	}
-        var renderStatus = Vegas.Render(ofn, renderTemplateWAV,Vegas.SelectionStart,Timecode.FromMilliseconds(3000));
-	renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.SelectionStart,Vegas.SelectionLength);
+            take.Offset = Timecode.FromMilliseconds(4250);
+            newEvent.VideoMotion.ScaleToFill = 1;
+            newEvent.MaintainAspectRatio = null;
+            TrackEvent(newEvent).Loop = null;
+            newEvent.ResampleMode = "Disable";
+            ///////
+            var vlc = new Envelope(EnvelopeType.Velocity);
+            newEvent.Envelopes.Add(vlc);
+            vlc.Points[0].Y = 0.0;
+            ////////
+            var key_frame = newEvent.VideoMotion.Keyframes[0];
+            var d_width = key_frame.TopRight.X   - key_frame.TopLeft.X;
+            var d_height = key_frame.BottomLeft.Y - key_frame.TopLeft.Y;
+            if (d_width < 0) {
+                d_width = d_width * -1;
+            }
+            if (d_height < 0) {
+                d_height = d_height * -1;
+            }
+            var moveby1 = new VideoMotionVertex(Vegas.Project.Video.Width/d_width,Vegas.Project.Video.Height/d_height);
+            key_frame.ScaleBy(moveby1);
+	    }
+
+        renderStatus = Vegas.Render(ofn, renderTemplateWAV,Vegas.SelectionStart,Timecode.FromMilliseconds(3000));
+	    renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.SelectionStart,Vegas.SelectionLength);
 
         var TitlestrackKeep = FindTrack("keeplogo");
         if (null == TitlestrackKeep) {
                 Vegas.Project.Tracks.Remove(Titlestrack);
         }
-        } else {
-                var renderStatus = Vegas.Render(ofn, renderTemplateWAV,Vegas.SelectionStart,Timecode.FromMilliseconds(3000));
-                renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.SelectionStart,Vegas.SelectionLength);
-        }
+    } else {
+        renderStatus = Vegas.Render(ofn, renderTemplateWAV,Vegas.SelectionStart,Timecode.FromMilliseconds(3000));
+        renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.SelectionStart,Vegas.SelectionLength);
+    }
 
 }
 
