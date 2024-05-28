@@ -13,8 +13,7 @@ var RegionName   : String;
 
 try {
       var Titlebgtrack = FindTrack("Ticker");
-      if (null == Titlebgtrack) {
-      } else {
+      if (null != Titlebgtrack) {
               var evntEnum = new Enumerator(Titlebgtrack.Events);
               while (!evntEnum.atEnd()) {
               if ((TrackEvent(evntEnum.item()).Start <= Vegas.Transport.CursorPosition) & (TrackEvent(evntEnum.item()).Start + TrackEvent(evntEnum.item()).Length >= Vegas.Transport.CursorPosition)) {
@@ -48,6 +47,15 @@ try {
 
         // Create the region name from the Listbox, textbox, and region number
         if (dialog.RegionNameBox.Text != " ") {
+          if (dialog.RegionNameBox.Text == "0") {
+              for (var med in Vegas.Project.MediaPool) {
+                  if (med.HasVideo()) {
+                      med.UseCustomTimecode = 1;
+                      med.TimecodeIn = Timecode.FromSeconds(0);
+                  }
+              }
+              throw "ok"
+          }
 
           var Narratortrack = FindTrack("ДИКТОР_ВИДЕО");
           if (null == Narratortrack) {
