@@ -55,6 +55,116 @@ try {
                   }
               }
               throw "ok"
+          } else if (dialog.RegionNameBox.Text == "z" || dialog.RegionNameBox.Text == "я") {
+              for (var protrk in Vegas.Project.Tracks) {
+                  if (protrk.IsAudio()) {
+                      for (var proevt in protrk.Events) {
+                          if (proevt.Start <= Vegas.Transport.CursorPosition && proevt.Start+proevt.Length > Vegas.Transport.CursorPosition) {
+                              proevt.Split(Vegas.Transport.CursorPosition-proevt.Start);
+                              proevt.Selected = null;
+                              protrk.Events[proevt.Index+1].Start = protrk.Events[proevt.Index+1].Start+Timecode.FromMilliseconds(1000);
+                              protrk.Events[proevt.Index+1].FadeIn.Length = Timecode.FromMilliseconds(640);
+                              protrk.Events[proevt.Index+1].FadeIn.Curve = CurveType.Fast;
+                              for (var undrevt in Vegas.Project.Tracks[protrk.Index+1].Events) {
+                                  for (var undrevttake in undrevt.Takes) {
+                                      if (undrevttake.Name == "Главное") {
+                                          undrevt.Start = Vegas.Transport.CursorPosition;
+                                          break;
+                                      }
+                                  }
+                              }
+                              //Vegas.Project.Tracks[0].Name = proevt.FadeIn.Gain;
+                              break;
+                          }
+                      }
+                      break;
+                  }
+              }
+              throw "ok"
+          } else if (dialog.RegionNameBox.Text == "x" || dialog.RegionNameBox.Text == "ч") {
+              for (var protrk in Vegas.Project.Tracks) {
+                  if (protrk.IsAudio()) {
+                      for (var proevt in protrk.Events) {
+                          if (proevt.Start <= Vegas.Transport.CursorPosition && proevt.Start+proevt.Length > Vegas.Transport.CursorPosition) {
+                              proevt.Split(Vegas.Transport.CursorPosition-proevt.Start);
+                              proevt.Selected = null;
+                              protrk.Events[proevt.Index+1].Start = protrk.Events[proevt.Index+1].Start+Timecode.FromMilliseconds(1000);
+                              protrk.Events[proevt.Index+1].FadeIn.Length = Timecode.FromMilliseconds(640);
+                              protrk.Events[proevt.Index+1].FadeIn.Curve = CurveType.Fast;
+                              var audevt = new AudioEvent(Vegas.Transport.CursorPosition,Timecode.FromMilliseconds(4500));
+                              Vegas.Project.Tracks[protrk.Index+1].Events.Add(audevt);
+                              TrackEvent(audevt).Loop = null;
+                              audevt.FadeIn.Length = Timecode.FromMilliseconds(720);
+                              audevt.FadeIn.Curve = CurveType.Fast;
+                              ////
+                              Vegas.UpdateUI();
+                              var mdpth = GetProDialog();
+                              if (null != mdpth) {
+                                  var mda = new Media(mdpth);
+                                  if (null != mda) {
+                                      for (var mstm in mda.Streams) {
+                                          audevt.Takes.Add(new Take(mstm));
+                                          break;
+                                      }
+                                  }
+                              }
+                              ////
+                          }
+                      }
+                      break;
+                  }
+              }
+              throw "ok"
+          } else if (dialog.RegionNameBox.Text == "c" || dialog.RegionNameBox.Text == "с") {
+              for (var protrk in Vegas.Project.Tracks) {
+                  if (protrk.IsAudio()) {
+                      for (var proevt in protrk.Events) {
+                          if (proevt.Start <= Vegas.Transport.CursorPosition && proevt.Start+proevt.Length > Vegas.Transport.CursorPosition) {
+                              proevt.Split(Vegas.Transport.CursorPosition-proevt.Start);
+                              proevt.Selected = null;
+                              protrk.Events[proevt.Index+1].Start = protrk.Events[proevt.Index+1].Start+Timecode.FromMilliseconds(500);
+                              protrk.Events[proevt.Index+1].FadeIn.Length = Timecode.FromMilliseconds(640);
+                              protrk.Events[proevt.Index+1].FadeIn.Curve = CurveType.Fast;
+                              for (var undrevt in Vegas.Project.Tracks[protrk.Index+1].Events) {
+                                  for (var undrevttake in undrevt.Takes) {
+                                      if (undrevttake.Name == "! В-В-ЖЖЖИК !") {
+                                          undrevt.Start = Vegas.Transport.CursorPosition;
+                                          break;
+                                      }
+                                  }
+                              }
+                              break;
+                          }
+                      }
+                      break;
+                  }
+              }
+              throw "ok"
+          } else if (dialog.RegionNameBox.Text == "v" || dialog.RegionNameBox.Text == "м") {
+              for (var protrk in Vegas.Project.Tracks) {
+                  if (protrk.IsAudio()) {
+                      for (var proevt in protrk.Events) {
+                          if (proevt.Start <= Vegas.Transport.CursorPosition && proevt.Start+proevt.Length > Vegas.Transport.CursorPosition) {
+                              proevt.Split(Vegas.Transport.CursorPosition-proevt.Start);
+                              proevt.Selected = null;
+                              protrk.Events[proevt.Index+1].Start = protrk.Events[proevt.Index+1].Start+Timecode.FromMilliseconds(1080);
+                              protrk.Events[proevt.Index+1].FadeIn.Length = Timecode.FromMilliseconds(640);
+                              protrk.Events[proevt.Index+1].FadeIn.Curve = CurveType.Fast;
+                              for (var undrevt in Vegas.Project.Tracks[protrk.Index+1].Events) {
+                                  for (var undrevttake in undrevt.Takes) {
+                                      if (undrevttake.Name == "погоду") {
+                                          undrevt.Start = Vegas.Transport.CursorPosition;
+                                          break;
+                                      }
+                                  }
+                              }
+                              break;
+                          }
+                      }
+                      break;
+                  }
+              }
+              throw "ok"
           }
 
           var Narratortrack = FindTrack("ДИКТОР_ВИДЕО");
@@ -207,6 +317,7 @@ class MainDialog extends Form {
         var buttonTop = RegionNameBox.Top;
 
         var NextButton = new Button();
+
         NextButton.Text = "Хорошо";
         NextButton.Left = this.Width - (buttonWidth+btnGap+btnGap+btnGap);
         NextButton.Top = buttonTop-2;
@@ -252,4 +363,19 @@ function FindTrack(WhichTrack) : Track {
 	trackEnum.moveNext();
   }
   return null;
+}
+
+function GetProDialog() {
+    var openFileDialog = new OpenFileDialog();
+    openFileDialog.Filter = "Любой про (*.*)|*.*";
+        openFileDialog.Title = "Укажите Про что";
+        var initialDir2 = "\\\\xrebtova\\Монтаж звука\\Джинглы\\Авторадио\\Прошки_ВСЕ";
+        if (Directory.Exists(initialDir2)) {
+            openFileDialog.InitialDirectory = initialDir2;
+        }
+    if (System.Windows.Forms.DialogResult.OK == openFileDialog.ShowDialog()) {
+        return Path.GetFullPath(openFileDialog.FileName);
+    } else {
+        return null;
+    }
 }
