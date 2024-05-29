@@ -9,7 +9,7 @@ import ScriptPortal.Vegas;
 
 var writer : StreamWriter = null;
 var writer2 : StreamWriter = null;
-var RegionName   : String;
+var RegionName : String;
 
 try {
       var Titlebgtrack = FindTrack("Ticker");
@@ -369,9 +369,14 @@ function GetProDialog() {
     var openFileDialog = new OpenFileDialog();
     openFileDialog.Filter = "Любой про (*.*)|*.*";
         openFileDialog.Title = "Укажите Про что";
-        var initialDir2 = "\\\\xrebtova\\Монтаж звука\\Джинглы\\Авторадио\\Прошки_ВСЕ";
+        var initialDir2 = Vegas.Project.Tracks[1].Name;
         if (Directory.Exists(initialDir2)) {
             openFileDialog.InitialDirectory = initialDir2;
+        } else {
+            initialDir2 = Vegas.Project.Tracks[0].Name;
+            if (Directory.Exists(initialDir2)) {
+                openFileDialog.InitialDirectory = initialDir2;
+            }
         }
     if (System.Windows.Forms.DialogResult.OK == openFileDialog.ShowDialog()) {
         return Path.GetFullPath(openFileDialog.FileName);
