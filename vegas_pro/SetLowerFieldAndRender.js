@@ -165,6 +165,10 @@ try {
                   }
               }
               throw "ok"
+          } else if (dialog.RegionNameBox.Text == "\'") {
+              dialog.RegionNameBox.Text = "\«\»";
+              dialog.ShowDialog();
+              throw "ok"
           }
 
           var Narratortrack = FindTrack("ДИКТОР_ВИДЕО");

@@ -530,7 +530,7 @@ function VocSmoother() {
                 var prev_vocitem = null;
                 while (!vocs.atEnd()) {
                     if (null != prev_vocitem && TrackEvent(vocs.item()).Start <= TrackEvent(prev_vocitem).Start + TrackEvent(prev_vocitem).Length + Timecode.FromFrames(1)) {
-                    } else if (TrackEvent(vocs.item()).FadeIn.Length < minimum_voc_in_fade) {
+                    } else if (TrackEvent(vocs.item()).FadeIn.Length < minimum_voc_in_fade && TrackEvent(vocs.item()).Length >= minimum_voc_in_fade) {
                             TrackEvent(vocs.item()).FadeIn.Length = minimum_voc_in_fade;
                             TrackEvent(vocs.item()).FadeIn.Curve = CurveType.Fast;
                     }
