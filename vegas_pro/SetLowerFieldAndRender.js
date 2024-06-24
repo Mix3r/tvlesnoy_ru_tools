@@ -165,7 +165,7 @@ try {
                   }
               }
               throw "ok"
-          } else if (dialog.RegionNameBox.Text == "\'") {
+          } else if (dialog.RegionNameBox.Text == "\'" || dialog.RegionNameBox.Text == "э") {
               dialog.RegionNameBox.Text = "\«\»";
               dialog.ShowDialog();
               throw "ok"
