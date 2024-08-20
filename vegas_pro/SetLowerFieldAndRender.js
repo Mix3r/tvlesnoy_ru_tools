@@ -164,16 +164,54 @@ try {
                       break;
                   }
               }
-              throw "ok"
+              throw "ok";
           } else if (dialog.RegionNameBox.Text == "\'" || dialog.RegionNameBox.Text == "э") {
               dialog.RegionNameBox.Text = "\«\»";
               dialog.ShowDialog();
-              throw "ok"
+              throw "ok";
           }
 
           var Narratortrack = FindTrack("ДИКТОР_ВИДЕО");
           if (null == Narratortrack) {
-                  throw "Нет дорожки ДИКТОР_ВИДЕО.";
+              var mydocs_path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)+"\\Аватар-текст-новость.txt";
+              var writercc = new StreamWriter(mydocs_path, false, System.Text.Encoding.UTF8); // 30 chars max
+              var tstring = "";
+              var charcount = 0;
+              while (charcount < dialog.RegionNameBox.Text.length) {
+                  tstring = tstring + dialog.RegionNameBox.Text.charAt(charcount);
+                  if (tstring.length >= 30) {
+                      if (charcount+1 < dialog.RegionNameBox.Text.length && dialog.RegionNameBox.Text.charAt(charcount+1) == ' ') {
+                          while (tstring.length > 0 && tstring.charAt(0) == ' ') {
+                              tstring = tstring.substring(1);
+                          }
+                          if (tstring.length > 0) {
+                              writercc.WriteLine(tstring);
+                          }
+                          tstring = "";
+                      } else {
+                          var lastspaceidx = tstring.lastIndexOf(' ');
+                          var lastspacestr = tstring.substring(0,lastspaceidx);
+                          while (lastspacestr.length > 0 && lastspacestr.charAt(0) == ' ') {
+                              lastspacestr = lastspacestr.substring(1);
+                          }
+                          if (lastspacestr.length > 0) {
+                              writercc.WriteLine(lastspacestr);
+                          }
+                          tstring = tstring.substring(lastspaceidx+1);
+                      }
+                  }
+                  charcount = charcount + 1;
+              }
+              while (tstring.length > 0 && tstring.charAt(0) == ' ') {
+                  tstring = tstring.substring(1);
+              }
+              if (tstring.length > 0) {
+                  writercc.WriteLine(tstring);
+              }
+
+              writercc.Close();
+              //throw "Нет дорожки ДИКТОР_ВИДЕО.";
+              throw "ok";
           }
           var narEnum = new Enumerator(Narratortrack.Events);
           while (!narEnum.atEnd()) {
