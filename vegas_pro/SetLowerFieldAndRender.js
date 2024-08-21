@@ -210,6 +210,13 @@ try {
               }
 
               writercc.Close();
+              //////////////
+              var prog3 = new System.Diagnostics.Process();
+              prog3.StartInfo.FileName = "https://trychatgpt.ru";
+              prog3.StartInfo.UseShellExecute = true;
+              prog3.Start();
+              //////////////
+              System.Windows.Forms.Clipboard.SetText('Привет! Пожалуйста, замени числа на слова в данном тексте (с правильным склонением этих слов), а также замени символ % (если он будет в тексте) на слово "процент", выполнив правильное склонение слова "процент". После чего определи в полученном результате количество знаков. Затем раздели текст на фрагменты от 250 до 300 знаков в каждом. Прилагаю текст: '+dialog.RegionNameBox.Text);
               //throw "Нет дорожки ДИКТОР_ВИДЕО.";
               throw "ok";
           }
