@@ -1,7 +1,7 @@
-
 import System;
 import System.IO;
 import System.Collections;
+import System.Drawing;
 import System.Text;
 import System.Windows.Forms;
 import Sony.Vegas;
@@ -39,11 +39,18 @@ try {
       }
 
       var dialog = new MainDialog("");
+      dialog.RegionNameBox.Font = new Font("Verdana", 15);
       var dialogResult = dialog.ShowDialog();
       var idx = 0;
 
+      while (System.Windows.Forms.DialogResult.No == dialogResult) {
+          dialog.RegionNameBox.Text = "";
+          dialog.RegionNameBox.Select();
+          dialogResult = dialog.ShowDialog();
+      }
       // Proceed if the "Next" button was pressed.
-      if (System.Windows.Forms.DialogResult.OK == dialogResult) {
+      if (System.Windows.Forms.DialogResult.OK == dialogResult && dialog.RegionNameBox.Text != "") {
+        System.Windows.Forms.Clipboard.Clear();
 
         // Create the region name from the Listbox, textbox, and region number
         if (dialog.RegionNameBox.Text != " ") {
@@ -170,57 +177,9 @@ try {
               dialog.ShowDialog();
               throw "ok";
           }
-
           var Narratortrack = FindTrack("ДИКТОР_ВИДЕО");
           if (null == Narratortrack) {
-              var mydocs_path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)+"\\Аватар-текст-новость.txt";
-              var writercc = new StreamWriter(mydocs_path, false, System.Text.Encoding.UTF8); // 30 chars max
-              var tstring = "";
-              var charcount = 0;
-              while (charcount < dialog.RegionNameBox.Text.length) {
-                  tstring = tstring + dialog.RegionNameBox.Text.charAt(charcount);
-                  if (tstring.length >= 30) {
-                      if (charcount+1 < dialog.RegionNameBox.Text.length && dialog.RegionNameBox.Text.charAt(charcount+1) == ' ') {
-                          while (tstring.length > 0 && tstring.charAt(0) == ' ') {
-                              tstring = tstring.substring(1);
-                          }
-                          if (tstring.length > 0) {
-                              writercc.WriteLine(tstring);
-                          }
-                          tstring = "";
-                      } else {
-                          var lastspaceidx = tstring.lastIndexOf(' ');
-                          var lastspacestr = tstring.substring(0,lastspaceidx);
-                          while (lastspacestr.length > 0 && lastspacestr.charAt(0) == ' ') {
-                              lastspacestr = lastspacestr.substring(1);
-                          }
-                          if (lastspacestr.length > 0) {
-                              writercc.WriteLine(lastspacestr);
-                          }
-                          tstring = tstring.substring(lastspaceidx+1);
-                      }
-                  }
-                  charcount = charcount + 1;
-              }
-              while (tstring.length > 0 && tstring.charAt(0) == ' ') {
-                  tstring = tstring.substring(1);
-              }
-              if (tstring.length > 0) {
-                  writercc.WriteLine(tstring);
-              }
-
-              writercc.Close();
-              //////////////
-              var prog3 = new System.Diagnostics.Process();
-              prog3.StartInfo.FileName = "https://www.hedra.com/app/characters";
-              prog3.StartInfo.UseShellExecute = true;
-              prog3.Start();
-              prog3.StartInfo.FileName = "https://trychatgpt.ru";
-              prog3.Start();
-              //////////////
-              System.Windows.Forms.Clipboard.SetText('Привет! Пожалуйста, замени числа на слова в данном тексте (с правильным склонением этих слов), а также замени символ % (если он будет в тексте) на слово "процент", выполнив правильное склонение слова "процент". После чего определи в полученном результате количество знаков. Затем раздели текст на фрагменты от 250 до 300 знаков в каждом. Прилагаю текст: '+dialog.RegionNameBox.Text);
-              //throw "Нет дорожки ДИКТОР_ВИДЕО.";
-              throw "ok";
+              throw "Нет дорожки ДИКТОР_ВИДЕО.";
           }
           var narEnum = new Enumerator(Narratortrack.Events);
           while (!narEnum.atEnd()) {
@@ -354,16 +313,17 @@ class MainDialog extends Form {
 
     function MainDialog(RegionName) {
 
-        this.Text = "Бегучая Строка";
+        this.Text = "Бегущая Строка";
         this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
         this.MaximizeBox = false;
         this.StartPosition = FormStartPosition.CenterScreen;
-        this.Width = 600;
+        this.Width = Math.floor(System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Width * 0.7); //600;
+        this.Height = Math.floor(System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Height * 0.7);
 
         var buttonWidth = 80;
         var btnGap = 10;
 
-        RegionNameBox = addTextControl("Текст", btnGap, this.Width-(btnGap+btnGap+buttonWidth+btnGap+btnGap+btnGap), 20, "");
+        RegionNameBox = addTextControl("Текст", btnGap, this.Width-(btnGap+btnGap+buttonWidth+btnGap+btnGap+btnGap), this.Height-100, 20, "");
 
         var buttonTop = RegionNameBox.Top;
 
@@ -371,18 +331,26 @@ class MainDialog extends Form {
 
         NextButton.Text = "Хорошо";
         NextButton.Left = this.Width - (buttonWidth+btnGap+btnGap+btnGap);
-        NextButton.Top = buttonTop-2;
+        NextButton.Top = RegionNameBox.Top;
         NextButton.Width = buttonWidth;
-        NextButton.Height = RegionNameBox.Height+4;
+        NextButton.Height = Math.floor(RegionNameBox.Height / 6) - 5;
         NextButton.DialogResult = System.Windows.Forms.DialogResult.OK;
         AcceptButton = NextButton;  // The Enter key will automatically activate this button.
         Controls.Add(NextButton);
 
+        var btnClear = new Button();
+        btnClear.Text = "Очистить";
+        btnClear.Left = NextButton.Left;
+        btnClear.Width = NextButton.Width;
+        btnClear.Height = Math.floor(RegionNameBox.Height / 6);
+        btnClear.Top = RegionNameBox.Top + NextButton.Height + 5;
+        btnClear.DialogResult = System.Windows.Forms.DialogResult.No;
+        Controls.Add(btnClear);
+
         var titleHeight = this.Height - this.ClientSize.Height;
-        this.Height = titleHeight + NextButton.Bottom + 20;
     }
 
-    function addTextControl(labelName, left, width, top, defaultValue) {
+    function addTextControl(labelName, left, width, nHeight, top, defaultValue) {
         var label = new Label();
         label.AutoSize = true;
         label.Text = labelName + ":";
@@ -394,10 +362,13 @@ class MainDialog extends Form {
         textbox.Multiline = false;
         textbox.Left = label.Right;
         textbox.Top = top;
+        textbox.Multiline = true;
+        textbox.ScrollBars = ScrollBars.Vertical;
         textbox.Width = width - (label.Width);
-        textbox.Text = defaultValue;
+        textbox.Height = nHeight;
+        textbox.Text = System.Windows.Forms.Clipboard.GetText(); //defaultValue;
+        textbox.SelectionStart = textbox.Text.Length;
         Controls.Add(textbox);
-
         return textbox;
     }
 
