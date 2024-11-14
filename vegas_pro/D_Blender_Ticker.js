@@ -14,6 +14,7 @@ var tStrmLength = null;
 var newsGroup = null;
 var bFlag_DoneV = null;
 var bFlag_DoneA = null;
+var nExitFlag = 0;
 var tEventLoc = Vegas.Transport.CursorPosition;
 
 try
@@ -61,7 +62,12 @@ catch (errorMsg)
 
 function CanOpener() {
 try {
+    var bForceConversion = null;
     var fullpath_all = GetVideoDialog();
+
+    if (System.Windows.Forms.Control.ModifierKeys == Keys.Control) {
+        bForceConversion = 1;
+    }
 
     for (var tTmpTrk in Vegas.Project.Tracks) {
         if (tTmpTrk.Events.Count > 0) {
@@ -76,6 +82,9 @@ try {
         newsGroup = null;
         bFlag_DoneV = null;
         bFlag_DoneA = null;
+        var sCustomParmV = "";
+        var sCustomParmA = "";
+        var postfix = "";
 
         var fullpath_base = Path.GetExtension(fullpath_all[fullpath_N]);
         fullpath_base = fullpath_base.toUpperCase();
@@ -111,6 +120,12 @@ try {
                 }
             }
         }
+        // decide for .avif
+        if (fullpath_base == ".AVIF") {
+            postfix = ".v.png";
+            sCustomParmV = '-i "'+Path.GetFullPath(fullpath_all[fullpath_N])+ '" -filter_complex "[0:v:1][0:v:0]alphamerge[vid]" -map [vid] -c:v png -an -y "'+Path.GetFullPath(fullpath_all[fullpath_N])+postfix+'"';
+        }
+
 
         fullpath_base = Path.GetFullPath(fullpath_all[fullpath_N]);
 
@@ -119,27 +134,42 @@ try {
             //continue;
         // debug end
 
-        if (System.Windows.Forms.Control.ModifierKeys == Keys.Control) {
-        } else {
+        if (null == bForceConversion) {
             CanOpen(fullpath_base);
         }
 
         if (null == bFlag_DoneV) {
-            var postfix = ".v.mp4";
-            TryToConvert('-i "'+fullpath_base+ '" -an -c:v libx264 -preset veryfast -crf 15 -y "'+fullpath_base+postfix+'"');
-            CanOpen(fullpath_base + postfix);
-            if (null == bFlag_DoneV) {
-                Vegas.Project.MediaPool.Remove(fullpath_base + postfix);
+            if (sCustomParmV != "") {
+                TryToConvert(sCustomParmV);
+            } else {
+                postfix = ".v.mp4";
+                TryToConvert('-hwaccel cuvid -hwaccel_output_format cuda -y -i "'+fullpath_base+ '" -an -c:v h264_nvenc -preset p6 -tune ll -b:v 5M -bufsize 5M -maxrate 10M -qmin 0 -g 250 -bf 3 -b_ref_mode middle -temporal-aq 1 -rc-lookahead 20 -i_qfactor 0.75 -b_qfactor 1.1 -y "'+fullpath_base+postfix+'"');
+                if (nExitFlag != 0) {
+                    TryToConvert('-i "'+fullpath_base+ '" -an -c:v libx264 -preset veryfast -crf 15 -y "'+fullpath_base+postfix+'"');
+                }
+            }
+            if (nExitFlag == 0) {
+                CanOpen(fullpath_base + postfix);
+                if (null == bFlag_DoneV) {
+                    Vegas.Project.MediaPool.Remove(fullpath_base + postfix);
+                }
             }
         }
         if (null == bFlag_DoneA) {
-            var postfix = ".a.wav";
-            TryToConvert('-i "'+fullpath_base+'" -vn -c:a pcm_s16le -ar 48000 -y "'+fullpath_base+postfix+'"');
-            CanOpen(fullpath_base + postfix);
-            if (null == bFlag_DoneA) {
-                Vegas.Project.MediaPool.Remove(fullpath_base + postfix);
+            if (sCustomParmA != "") {
+                TryToConvert(sCustomParmA);
+            } else {
+                postfix = ".a.wav";
+                TryToConvert('-i "'+fullpath_base+'" -vn -c:a pcm_s16le -ar 48000 -y "'+fullpath_base+postfix+'"');
+            }
+            if (nExitFlag == 0) {
+                CanOpen(fullpath_base + postfix);
+                if (null == bFlag_DoneA) {
+                    Vegas.Project.MediaPool.Remove(fullpath_base + postfix);
+                }
             }
         }
+
         if (null != tStrmLength) {
             tEventLoc = tEventLoc + tStrmLength;
             Vegas.UpdateUI();
@@ -242,7 +272,7 @@ function CanOpen(f_path) {
         var newAud = null;
         if (null == tStrmLength) {
             tStrmLength = sTmpStm.Length;
-            if (tStrmLength.ToMilliseconds() == 0) {
+            if (tStrmLength <= Timecode.FromFrames(2)) {
                 tStrmLength = Timecode.FromMilliseconds(3000);
             }
         }
@@ -309,16 +339,20 @@ function TryToConvert(sArgs) {
     prog1.StartInfo.Arguments = sArgs;
     prog1.Start();
     prog1.WaitForExit();
+    nExitFlag = prog1.ExitCode;
+    prog1.Close();
 }
 
 function GetVideoDialog() {
     var openFileDialog = new OpenFileDialog();
-    openFileDialog.Filter = "Любые видео (*.*)|*.*";
-    openFileDialog.Title = "Укажите файл(ы) видео";
+    openFileDialog.Filter = "Любые медиа (*.*)|*.*";
+    openFileDialog.Title = "Импорт файлов. Для обязательной конверсии держите Ctrl при нажатии Открыть.";
     openFileDialog.Multiselect = true;
     var initialDir2 = Path.GetDirectoryName(Vegas.Project.FilePath);
     if (Directory.Exists(initialDir2)) {
         openFileDialog.InitialDirectory = initialDir2;
+    } else {
+        openFileDialog.InitialDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
     }
     if (System.Windows.Forms.DialogResult.OK == openFileDialog.ShowDialog()) {
         return openFileDialog.FileNames;
