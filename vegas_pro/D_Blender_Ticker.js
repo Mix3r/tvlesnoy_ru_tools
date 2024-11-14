@@ -119,7 +119,11 @@ try {
             //continue;
         // debug end
 
-        CanOpen(fullpath_base);
+        if (System.Windows.Forms.Control.ModifierKeys == Keys.Control) {
+        } else {
+            CanOpen(fullpath_base);
+        }
+
         if (null == bFlag_DoneV) {
             var postfix = ".v.mp4";
             TryToConvert('-i "'+fullpath_base+ '" -an -c:v libx264 -preset veryfast -crf 15 -y "'+fullpath_base+postfix+'"');
