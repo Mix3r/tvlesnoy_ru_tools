@@ -62,6 +62,29 @@ try {
                   }
               }
               throw "ok"
+          } else if (dialog.RegionNameBox.Text == "1") {
+              for (var tTrack in Vegas.Project.Tracks) {
+                  var bArranged = 0;
+                  while (bArranged == 0) {
+                      bArranged = 1;
+                      for (var eEvt in tTrack.Events) {
+                          if (null != TrackEvent(eEvt).ActiveTake) {
+                              if (null != TrackEvent(eEvt).ActiveTake.MediaPath) {
+                                  var this_media = Vegas.Project.MediaPool.Find(TrackEvent(eEvt).ActiveTake.MediaPath);
+                                  if (null != this_media) {
+                                      if (eEvt.Start != this_media.TimecodeIn) {
+                                          eEvt.Start = this_media.TimecodeIn;
+                                          bArranged = 0;
+                                          Vegas.UpdateUI();
+                                          break;
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  }
+              }
+              throw "ok"
           } else if (dialog.RegionNameBox.Text == "z" || dialog.RegionNameBox.Text == "я") {
               for (var protrk in Vegas.Project.Tracks) {
                   if (protrk.IsAudio()) {
