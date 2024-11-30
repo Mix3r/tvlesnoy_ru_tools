@@ -5,7 +5,7 @@ import System.Object;
 import Sony.Vegas;
 //import System.Windows.Forms;
 import ScriptPortal.Vegas;
-var fac1 = Vegas.Project.Video.Height*0.333;
+var fac1 = Vegas.Project.Video.Width*1;
 
 try
 {
@@ -40,8 +40,10 @@ try
                                                 var scaleby2 = new VideoMotionVertex(Vegas.Project.Video.Width/Vegas.Project.Video.Height,1);
                                                 key_frame.ScaleBy(scaleby2); // fit to project aspect ratio
                                         }
-                                        var d_height = 1 - TrackEvent(evntEnum.item()).SnapOffset.ToMilliseconds() / TrackEvent(evntEnum.item()).Length.ToMilliseconds();
-
+                                        var d_height = System.Windows.Forms.Control.MousePosition.Y / System.Windows.Forms.Screen.PrimaryScreen.WorkingArea.Height;
+                                        if (d_height > 1) {
+                                            d_height = 1.0;
+                                        }
                                         fac1 = fac1 * d_height;
                                         if (fac1 < 1) {
                                                 fac1 = 1;
