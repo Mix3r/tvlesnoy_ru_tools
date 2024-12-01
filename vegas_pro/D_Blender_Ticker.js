@@ -105,6 +105,14 @@ try {
         if (fullpath_base == ".SFVP0") {
             continue;
         }
+        // skip .a
+        if (fullpath_base == ".A") {
+            continue;
+        }
+        // skip .v
+        if (fullpath_base == ".V") {
+            continue;
+        }
         // decide for .veg
         if (fullpath_base == ".VEG") {
             if (Vegas.Project.FilePath != null) {
@@ -135,21 +143,30 @@ try {
         // debug end
 
         if (null == bForceConversion) {
-            CanOpen(fullpath_base);
+            CanOpen(fullpath_base,1);
         }
 
         if (null == bFlag_DoneV) {
             if (sCustomParmV != "") {
                 TryToConvert(sCustomParmV);
             } else {
-                postfix = ".v.mp4";
-                TryToConvert('-hwaccel cuvid -hwaccel_output_format cuda -y -i "'+fullpath_base+ '" -an -c:v h264_nvenc -preset p6 -tune ll -b:v 5M -bufsize 5M -maxrate 10M -qmin 0 -g 250 -bf 3 -b_ref_mode middle -temporal-aq 1 -rc-lookahead 20 -i_qfactor 0.75 -b_qfactor 1.1 -y "'+fullpath_base+postfix+'"');
-                if (nExitFlag != 0) {
-                    TryToConvert('-i "'+fullpath_base+ '" -an -c:v libx264 -preset veryfast -crf 15 -y "'+fullpath_base+postfix+'"');
+                postfix = ".v";
+                TryToConvert('-i "'+fullpath_base+ '" -an -c:v copy -y -f mp4 "'+fullpath_base+postfix+'"');
+                if (nExitFlag == 0) {
+                    CanOpen(fullpath_base + postfix,1);
+                }
+                if (null == bFlag_DoneV) {
+                    Vegas.Project.MediaPool.Remove(fullpath_base + postfix);
+                    TryToConvert('-hwaccel cuvid -hwaccel_output_format cuda -y -i "'+fullpath_base+ '" -an -c:v h264_nvenc -preset p6 -tune ll -b:v 5M -bufsize 5M -maxrate 10M -qmin 0 -g 250 -bf 3 -b_ref_mode middle -temporal-aq 1 -rc-lookahead 20 -i_qfactor 0.75 -b_qfactor 1.1 -y -f mp4 "'+fullpath_base+postfix+'"');
+                    if (nExitFlag != 0) {
+                        TryToConvert('-i "'+fullpath_base+ '" -an -c:v libx264 -preset veryfast -crf 15 -y -f mp4 "'+fullpath_base+postfix+'"');
+                    }
+                } else {
+                    nExitFlag = 1;
                 }
             }
             if (nExitFlag == 0) {
-                CanOpen(fullpath_base + postfix);
+                CanOpen(fullpath_base + postfix,0);
                 if (null == bFlag_DoneV) {
                     Vegas.Project.MediaPool.Remove(fullpath_base + postfix);
                 }
@@ -159,11 +176,13 @@ try {
             if (sCustomParmA != "") {
                 TryToConvert(sCustomParmA);
             } else {
-                postfix = ".a.wav";
-                TryToConvert('-i "'+fullpath_base+'" -vn -c:a pcm_s16le -ar 48000 -y "'+fullpath_base+postfix+'"');
+                //postfix = ".a.wav";
+                //TryToConvert('-i "'+fullpath_base+'" -vn -c:a pcm_s16le -ar 48000 -y "'+fullpath_base+postfix+'"');
+                postfix = ".a";
+                TryToConvert('-i "'+fullpath_base+'" -vn -c:a flac -sample_fmt s16 -ar 48000 -y -f flac "'+fullpath_base+postfix+'"');
             }
             if (nExitFlag == 0) {
-                CanOpen(fullpath_base + postfix);
+                CanOpen(fullpath_base + postfix,0);
                 if (null == bFlag_DoneA) {
                     Vegas.Project.MediaPool.Remove(fullpath_base + postfix);
                 }
@@ -173,6 +192,14 @@ try {
         if (null != tStrmLength) {
             tEventLoc = tEventLoc + tStrmLength;
             Vegas.UpdateUI();
+        }
+
+        var mOrphanPoolItem = Vegas.Project.MediaPool.Find(fullpath_base);
+
+        if (null != mOrphanPoolItem) {
+            if (mOrphanPoolItem.UseCount <= 0) {
+                Vegas.Project.MediaPool.Remove(fullpath_base);
+            }
         }
     }
 }
@@ -264,7 +291,7 @@ function CreateGeneratedMedia(ticker_track, presetName) {
   return newEvent;
 }
 
-function CanOpen(f_path) {
+function CanOpen(f_path,bGetProbe) {
     var mMedia = new Media(f_path);
     try {
     for (var sTmpStm in mMedia.Streams) {
@@ -282,13 +309,37 @@ function CanOpen(f_path) {
         }
 
         if (sTmpStm.MediaType == MediaType.Video) {
-            newVid = new VideoEvent(tEventLoc, tStrmLength);
+            // retrieve fps probe for first try
+            if (sTmpStm.FrameRate > 2.0 && bGetProbe == 1) {
+                var tmpPostfix = ".v.tmp";
+                TryToConvert('-i "'+f_path+ '" -an -c:v libx264 -preset ultrafast -t 1 -y -f mp4 "'+f_path+tmpPostfix+'"');
+                if (nExitFlag == 0) {
+                    var mTempMedia = new Media(f_path+tmpPostfix);
+                    for (var sTmpStm2 in mTempMedia.Streams) {
+                        if (sTmpStm2.MediaType == MediaType.Video) {
+                            if (sTmpStm2.FrameRate != sTmpStm.FrameRate) {
+                                nExitFlag = 1;
+                                break;
+                            }
+                        }
+                    }
+                    Vegas.Project.MediaPool.Remove(f_path+tmpPostfix);
+                    if (File.Exists(f_path+tmpPostfix)) {
+                        File.Delete(f_path+tmpPostfix);
+                    }
+                    if (nExitFlag == 1) {
+                        nExitFlag = 0;
+                        continue;
+                    }
+                }
+            }
+            // ***
             while (1) {
-                //MessageBox.Show("vid");
-                for (var tTmpTrk in Vegas.Project.Tracks) {
-                    if (tTmpTrk.IsVideo()) {
+                for (var nTmpVIndex = Vegas.Project.Tracks.Count; nTmpVIndex > 0; nTmpVIndex--) {
+                    if (Vegas.Project.Tracks[nTmpVIndex-1].IsVideo()) {
                         bFlag_DoneV = 1;
-                        tTmpTrk.Events.Add(newVid);
+                        newVid = new VideoEvent(tEventLoc, tStrmLength);
+                        Vegas.Project.Tracks[nTmpVIndex-1].Events.Add(newVid);
                         newVid.Takes.Add(new Take(sTmpStm));
                         TrackEvent(newVid).Loop = null;
                         newVid.ResampleMode = "Disable";
@@ -304,12 +355,11 @@ function CanOpen(f_path) {
                 }
             }
         } else if (sTmpStm.MediaType == MediaType.Audio) {
-            newAud = new AudioEvent(tEventLoc, tStrmLength);
             while (1) {
-                //MessageBox.Show("aud");
                 for (var tTmpTrk in Vegas.Project.Tracks) {
                     if (tTmpTrk.IsAudio()) {
                         bFlag_DoneA = 1;
+                        newAud = new AudioEvent(tEventLoc, tStrmLength);
                         tTmpTrk.Events.Add(newAud);
                         newAud.Takes.Add(new Take(sTmpStm));
                         TrackEvent(newAud).Loop = null;
@@ -333,11 +383,14 @@ function CanOpen(f_path) {
 
 function TryToConvert(sArgs) {
     var prog1 = new System.Diagnostics.Process();
-    prog1.StartInfo.UseShellExecute = false;
+    prog1.StartInfo.CreateNoWindow = false;
+    prog1.StartInfo.RedirectStandardError = false;
 	prog1.StartInfo.RedirectStandardOutput = false;
+    prog1.StartInfo.UseShellExecute = false;
     prog1.StartInfo.FileName = sFFMpegPath;
     prog1.StartInfo.Arguments = sArgs;
     prog1.Start();
+    //MessageBox.Show(prog1.StandardError.ReadToEnd());
     prog1.WaitForExit();
     nExitFlag = prog1.ExitCode;
     prog1.Close();
@@ -352,7 +405,27 @@ function GetVideoDialog() {
     if (Directory.Exists(initialDir2)) {
         openFileDialog.InitialDirectory = initialDir2;
     } else {
-        openFileDialog.InitialDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+        var bFirstMediaEvent = 0;
+        for (var tTmpTrk3 in Vegas.Project.Tracks) {
+            for (var eTmpEvt in tTmpTrk3.Events) {
+                if (eTmpEvt.ActiveTake != null) {
+                    if (eTmpEvt.ActiveTake.MediaPath != null) {
+                        initialDir2 = Path.GetDirectoryName(eTmpEvt.ActiveTake.MediaPath);
+                        if (Directory.Exists(initialDir2)) {
+                            openFileDialog.InitialDirectory = initialDir2;
+                            bFirstMediaEvent = 1;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (bFirstMediaEvent == 1) {
+                break;
+            }
+        }
+        if (bFirstMediaEvent != 1) {
+            openFileDialog.InitialDirectory = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+        }
     }
     if (System.Windows.Forms.DialogResult.OK == openFileDialog.ShowDialog()) {
         return openFileDialog.FileNames;
