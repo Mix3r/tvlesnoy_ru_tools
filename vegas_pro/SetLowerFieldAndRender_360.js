@@ -509,37 +509,17 @@ function Prepare4YT() {
 }
 
 function VocSmoother() {
-    const minimum_voc_in_fade = Timecode.FromMilliseconds(520);
-    var voc_t = new Enumerator(Vegas.Project.Tracks);
-    while (!voc_t.atEnd()) {
-        Track(voc_t.item()).Selected = null;
-        if (Track(voc_t.item()).IsAudio()) {
-            if (Track(voc_t.item()).BusTrack.Name == 'Bus A' || Track(voc_t.item()).BusTrack.Name == 'Шина A') {
-                var busa_fx_enum = new Enumerator(Track(voc_t.item()).Effects);
-                var busa_fx_num = 0;
-                while (!busa_fx_enum.atEnd()) {
-                    busa_fx_num = busa_fx_num + 1;
-                    busa_fx_enum.moveNext();
-                }
-                if (busa_fx_num > 0) {
-                    Track(voc_t.item()).Selected = 1;
+    for (var voc_t in Vegas.Project.Tracks) {
+        voc_t.Selected = null;
+        if (voc_t.IsAudio()) {
+            if (voc_t.BusTrack.Name == 'Bus A' || voc_t.BusTrack.Name == 'Шина A') {
+                if (voc_t.Effects.Count > 0) {
+                    voc_t.Selected = 1;
                     Vegas.UpdateUI();
                     MessageBox.Show("Звуковой эффект на дорожке с БУКВОЙ А!\nЛишняя компрессия?");
                 }
-                var vocs = new Enumerator(Track(voc_t.item()).Events);
-                var prev_vocitem = null;
-                while (!vocs.atEnd()) {
-                    if (null != prev_vocitem && TrackEvent(vocs.item()).Start <= TrackEvent(prev_vocitem).Start + TrackEvent(prev_vocitem).Length + Timecode.FromFrames(1)) {
-                    } else if (TrackEvent(vocs.item()).FadeIn.Length < minimum_voc_in_fade && TrackEvent(vocs.item()).Length >= minimum_voc_in_fade) {
-                            TrackEvent(vocs.item()).FadeIn.Length = minimum_voc_in_fade;
-                            TrackEvent(vocs.item()).FadeIn.Curve = CurveType.Fast;
-                    }
-                    prev_vocitem = vocs.item();
-                    vocs.moveNext();
-                }
             }
         }
-        voc_t.moveNext();
     }
     return null;
 }

@@ -448,25 +448,17 @@ catch (e) {
 }
 
 function VocSmoother() {
-    const minimum_voc_in_fade = Timecode.FromMilliseconds(520);
-    var voc_t = new Enumerator(Vegas.Project.Tracks);
-    while (!voc_t.atEnd()) {
-        if (Track(voc_t.item()).IsAudio()) {
-            if (Track(voc_t.item()).BusTrack.Name == 'Bus A' || Track(voc_t.item()).BusTrack.Name == 'Шина A') {
-                var vocs = new Enumerator(Track(voc_t.item()).Events);
-                var prev_vocitem = null;
-                while (!vocs.atEnd()) {
-                    if (null != prev_vocitem && TrackEvent(vocs.item()).Start <= TrackEvent(prev_vocitem).Start + TrackEvent(prev_vocitem).Length + Timecode.FromFrames(1)) {
-                    } else if (TrackEvent(vocs.item()).FadeIn.Length < minimum_voc_in_fade) {
-                            TrackEvent(vocs.item()).FadeIn.Length = minimum_voc_in_fade;
-                            TrackEvent(vocs.item()).FadeIn.Curve = CurveType.Fast;
-                    }
-                    prev_vocitem = vocs.item();
-                    vocs.moveNext();
+    for (var voc_t in Vegas.Project.Tracks) {
+        voc_t.Selected = null;
+        if (voc_t.IsAudio()) {
+            if (voc_t.BusTrack.Name == 'Bus A' || voc_t.BusTrack.Name == 'Шина A') {
+                if (voc_t.Effects.Count > 0) {
+                    voc_t.Selected = 1;
+                    Vegas.UpdateUI();
+                    MessageBox.Show("Звуковой эффект на дорожке с БУКВОЙ А!\nЛишняя компрессия?");
                 }
             }
         }
-        voc_t.moveNext();
     }
     return null;
 }
