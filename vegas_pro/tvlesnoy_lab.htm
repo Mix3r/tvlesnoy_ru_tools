@@ -26,7 +26,8 @@ a:active {
 <script type="text/javascript">
 function ConvertTextRequest() {
     let inputF = document.getElementById("srclink");
-    inputF.value = inputF.value + inputF.value;
+    let vid_info_link = inputF.value.indexOf('//');
+    inputF.value = inputF.value.substring(vid_info_link);
 }
 </script>
 </HEAD>
