@@ -26,8 +26,12 @@ a:active {
 <script type="text/javascript">
 function ConvertTextRequest() {
     let inputF = document.getElementById("srclink");
-    let vid_info_link = inputF.value.indexOf('//');
+    let vid_info_link = inputF.value.indexOf('/');
     inputF.value = inputF.value.substring(vid_info_link+2);
+    vid_info_link = inputF.value.indexOf('/');
+    inputF.value = inputF.value.substring(vid_info_link);
+    inputF.value = 'https://get-save.com'+inputF.value;
+    open(inputF.value);
 }
 </script>
 </HEAD>
@@ -48,14 +52,8 @@ function ConvertTextRequest() {
  </g>
 </svg>
 <DIV style="text-align:center;"><br>
-<input type="textfield" name="ui_tool_1" id="srclink" value="" size="60"><p>
-<input type="button" name="ui_tool_2" value="Cкачать" size="60" onclick="ConvertTextRequest();"><p>
-Скачать видео/аудио с ВК через <a href="https://getvideo.tv/ru/">&lsqb;сайт&rsqb;</a> или через другой <a href="https://ru.get-save.net/1015-vk-video-downloader/">&lsqb;сайт&rsqb;</a><br>
-Скачать видео/аудио с Ютуба через <a href="https://www.socialplug.io/free-tools/youtube-video-downloader">&lsqb;сайт&rsqb;</a><br>
-Скачать видео/аудио с РУтуба через <a href="https://getvideo.tv/ru/">&lsqb;сайт&rsqb;</a><br>
-<br>
-ЕСЛИ СКАЧИВАНИЕ ВИДЕО/АУДИО НЕ РАБОТАЕТ, СООБЩИТЕ МЕСТНОМУ IT-ШАМАНУ!  
-<br>
+Скачать видео/аудио с ВК/Ютуба/Яндекса (вставьте сcылку в поле внизу и нажмите &quot;Скачать&quot;):<br><br>
+<input type="textfield" name="ui_tool_1" id="srclink" value="" size="110">&nbsp;&nbsp;<input type="button" name="ui_tool_2" value="Cкачать" size="60" onclick="ConvertTextRequest();"><p>
 <br>
 Скачать Телеграм для компьютера: <a href="https://telegram.org/dl/desktop/win64">&lsqb;основной&rsqb;</a>&nbsp;/&nbsp;<a href="https://telegram.org/dl/desktop/win64_portable">&lsqb;портативный&rsqb;</a><br><br>
 Утилиты:<br>
