@@ -24,23 +24,9 @@ a:active {
 }
 </style>
 <script type="text/javascript">
-function GetBikeStep() {
-
-if (document.calculator.pl_ratio.value.indexOf(",")>-1){
-  document.calculator.pl_ratio.value = document.calculator.pl_ratio.value.substr(0,document.calculator.pl_ratio.value.indexOf(",")) + "." + document.calculator.pl_ratio.value.substr(document.calculator.pl_ratio.value.indexOf(",")+1);
-}
-document.getElementById("b_ratio").innerHTML = document.calculator.frontsp.value / document.calculator.rearsp.value * document.calculator.pl_ratio.value;
-document.getElementById("b_step").innerHTML = document.getElementById("b_ratio").innerHTML * document.calculator.ans.value / 1000;
-document.getElementById("b_speed").innerHTML = document.getElementById("b_step").innerHTML * document.bcadence.b_cdnc.value * 60 / 1000;
-document.getElementById("b_ratio").innerHTML = Math.round(document.getElementById("b_ratio").innerHTML * 1000) / 1000;
-document.getElementById("b_step").innerHTML = Math.round(document.getElementById("b_step").innerHTML * 100) / 100;
-document.getElementById("b_speed").innerHTML = Math.round(document.getElementById("b_speed").innerHTML * 100) / 100;
-}
-function GetWheelStep() {
-document.calculator.ans.value=document.calculator.menu.options[document.calculator.menu.selectedIndex].value;
-}
 function ConvertTextRequest() {
-document.calculator.ans.value=0;
+    let inputF = document.getElementById("srclink");
+    inputF.value = "textValue";
 }
 </script>
 </HEAD>
@@ -61,7 +47,7 @@ document.calculator.ans.value=0;
  </g>
 </svg>
 <DIV style="text-align:center;"><br>
-<input type="textfield" name="ans" value="" size="60"><p>
+<input type="textfield" name="ans" id="srclink" value="" size="60"><p>
 <input type="button" name="ans2" value="Cкачать" size="60" onclick="ConvertTextRequest();"><p>
 Скачать видео/аудио с ВК через <a href="https://getvideo.tv/ru/">&lsqb;сайт&rsqb;</a> или через другой <a href="https://ru.get-save.net/1015-vk-video-downloader/">&lsqb;сайт&rsqb;</a><br>
 Скачать видео/аудио с Ютуба через <a href="https://www.socialplug.io/free-tools/youtube-video-downloader">&lsqb;сайт&rsqb;</a><br>
