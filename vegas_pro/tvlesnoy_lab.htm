@@ -23,6 +23,26 @@ a:active {
   color: white;
 }
 </style>
+<script type="text/javascript">
+function GetBikeStep() {
+
+if (document.calculator.pl_ratio.value.indexOf(",")>-1){
+  document.calculator.pl_ratio.value = document.calculator.pl_ratio.value.substr(0,document.calculator.pl_ratio.value.indexOf(",")) + "." + document.calculator.pl_ratio.value.substr(document.calculator.pl_ratio.value.indexOf(",")+1);
+}
+document.getElementById("b_ratio").innerHTML = document.calculator.frontsp.value / document.calculator.rearsp.value * document.calculator.pl_ratio.value;
+document.getElementById("b_step").innerHTML = document.getElementById("b_ratio").innerHTML * document.calculator.ans.value / 1000;
+document.getElementById("b_speed").innerHTML = document.getElementById("b_step").innerHTML * document.bcadence.b_cdnc.value * 60 / 1000;
+document.getElementById("b_ratio").innerHTML = Math.round(document.getElementById("b_ratio").innerHTML * 1000) / 1000;
+document.getElementById("b_step").innerHTML = Math.round(document.getElementById("b_step").innerHTML * 100) / 100;
+document.getElementById("b_speed").innerHTML = Math.round(document.getElementById("b_speed").innerHTML * 100) / 100;
+}
+function GetWheelStep() {
+document.calculator.ans.value=document.calculator.menu.options[document.calculator.menu.selectedIndex].value;
+}
+function ConvertTextRequest() {
+document.calculator.ans.value="";
+}
+</script>
 </HEAD>
 <BODY style="background-color:#2D5156; font-family:century gothic,sans serif; font-size:20; color:#FFFFFF">
 <svg style="display: block; margin-left: auto; margin-right: auto; width: 50vmin;" version="1.1" viewBox="0 0 145.52 39.687" xmlns="http://www.w3.org/2000/svg">
