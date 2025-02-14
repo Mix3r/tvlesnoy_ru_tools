@@ -157,9 +157,9 @@ try {
                 }
                 if (null == bFlag_DoneV) {
                     Vegas.Project.MediaPool.Remove(fullpath_base + postfix);
-                    TryToConvert('-hwaccel cuvid -hwaccel_output_format cuda -y -i "'+fullpath_base+ '" -an -vf scale=-1:1080 -c:v h264_nvenc -preset p6 -tune ll -b:v 5M -bufsize 5M -maxrate 10M -qmin 0 -g 250 -bf 3 -b_ref_mode middle -temporal-aq 1 -rc-lookahead 20 -i_qfactor 0.75 -b_qfactor 1.1 -y -f mp4 "'+fullpath_base+postfix+'"');
+                    TryToConvert('-hwaccel cuvid -hwaccel_output_format cuda -y -i "'+fullpath_base+ '" -an -c:v h264_nvenc -preset p6 -tune ll -b:v 5M -bufsize 5M -maxrate 10M -qmin 0 -g 250 -bf 3 -b_ref_mode middle -temporal-aq 1 -rc-lookahead 20 -i_qfactor 0.75 -b_qfactor 1.1 -y -f mp4 "'+fullpath_base+postfix+'"');
                     if (nExitFlag != 0) {
-                        TryToConvert('-i "'+fullpath_base+ '" -an -vf scale=-1:1080 -c:v libx264 -preset veryfast -crf 15 -y -f mp4 "'+fullpath_base+postfix+'"');
+                        TryToConvert('-i "'+fullpath_base+ '" -an -c:v libx264 -preset veryfast -crf 15 -y -f mp4 "'+fullpath_base+postfix+'"');
                     }
                 } else {
                     nExitFlag = 1;
