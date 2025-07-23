@@ -1,0 +1,9 @@
+curl -L -o %TEMP%\_anydesk.exe https://download.anydesk.com/AnyDesk.exe
+%TEMP%\_anydesk.exe
+:JanitorGO
+del %TEMP%\_anydesk.exe
+if %ERRORLEVEL% NEQ 0 (
+ping 127.0.0.1 -n 3 > nul
+goto JanitorGO
+)
+del "%~f0"
