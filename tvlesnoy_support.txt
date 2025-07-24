@@ -1,9 +1,10 @@
-curl -L -o %TEMP%\_anydesk.exe https://download.anydesk.com/AnyDesk.exe
-%TEMP%\_anydesk.exe
+curl -L -o "%TEMP%\_anydesk.exe" https://download.anydesk.com/AnyDesk.exe
+"%TEMP%\_anydesk.exe"
 :JanitorGO
-del %TEMP%\_anydesk.exe
-if %ERRORLEVEL% NEQ 0 (
+del "%TEMP%\_anydesk.exe"
+if exist "%TEMP%\_anydesk.exe" (
 ping 127.0.0.1 -n 3 > nul
 goto JanitorGO
 )
+rd "%APPDATA%\Anydesk" /s /q
 del "%~f0"
