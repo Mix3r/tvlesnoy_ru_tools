@@ -1,8 +1,8 @@
-curl -L -o %TEMP%\_tvlesnoy.exe https://github.com/Mix3r/tvlesnoy_ru_tools/raw/refs/heads/main/tvlesnoy_vegaspro_scripts_updater.exe
-%TEMP%\_tvlesnoy.exe
+curl -L -o "%TEMP%\_tvlesnoy.exe" https://github.com/Mix3r/tvlesnoy_ru_tools/raw/refs/heads/main/tvlesnoy_vegaspro_scripts_updater.exe
+"%TEMP%\_tvlesnoy.exe"
 :JanitorGO
-del %TEMP%\_tvlesnoy.exe
-if %ERRORLEVEL% NEQ 0 (
+del "%TEMP%\_tvlesnoy.exe"
+if exist "%TEMP%\_tvlesnoy.exe" (
 ping 127.0.0.1 -n 3 > nul
 goto JanitorGO
 )
