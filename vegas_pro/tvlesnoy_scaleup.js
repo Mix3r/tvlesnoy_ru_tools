@@ -5,14 +5,15 @@ import System.Object;
 import Sony.Vegas;
 import ScriptPortal.Vegas;
 var fac1 = 2.0;
-
+var bSwitchAudioChannel = 0;
 try
 {
         var trackEnum = new Enumerator(Vegas.Project.Tracks);
         while (!trackEnum.atEnd()) {
                 var evntEnum = new Enumerator(Track(trackEnum.item()).Events);
                 while (!evntEnum.atEnd()) {
-                        if (TrackEvent(evntEnum.item()).Selected && TrackEvent(evntEnum.item()).Start <= Vegas.Transport.CursorPosition && TrackEvent(evntEnum.item()).Start + TrackEvent(evntEnum.item()).Length >= Vegas.Transport.CursorPosition) {
+                    if (TrackEvent(evntEnum.item()).Selected) {
+                        if (TrackEvent(evntEnum.item()).Start <= Vegas.Transport.CursorPosition && TrackEvent(evntEnum.item()).Start + TrackEvent(evntEnum.item()).Length >= Vegas.Transport.CursorPosition) {
                                 if (TrackEvent(evntEnum.item()).IsVideo()) {
                                         var keyEnum = new Enumerator(VideoEvent(evntEnum.item()).VideoMotion.Keyframes);
                                         var keyz = 0;
@@ -52,9 +53,17 @@ try
                                         key_frame.ScaleBy(moveby2);
                                 }
                         }
-                        evntEnum.moveNext();
+                        if (TrackEvent(evntEnum.item()).IsAudio()) {
+                            AudioEvent(evntEnum.item()).Channels = ChannelRemapping.DisableLeft;
+                            bSwitchAudioChannel = 1;
+                        }
+                    }
+                    evntEnum.moveNext();
                 }
                 trackEnum.moveNext();
+        }
+        if (bSwitchAudioChannel == 1) {
+            Vegas.Transport.Play();
         }
 }
 catch (errorMsg)
