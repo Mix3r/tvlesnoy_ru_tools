@@ -63,6 +63,9 @@ try
                 }
                 trackEnum.moveNext();
         }
+        if (bSwitchAudioChannel == 1) {
+            Vegas.Transport.Play();
+        }
 }
 catch (errorMsg)
 {
