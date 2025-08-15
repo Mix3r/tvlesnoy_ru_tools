@@ -389,7 +389,11 @@ class MainDialog extends Form {
         textbox.ScrollBars = ScrollBars.Vertical;
         textbox.Width = width - (label.Width);
         textbox.Height = nHeight;
-        textbox.Text = System.Windows.Forms.Clipboard.GetText(); //defaultValue;
+        if (Vegas.Project.Summary.Title == "narrator") {
+            textbox.Text = System.Windows.Forms.Clipboard.GetText(); //defaultValue;
+        } else {
+            textbox.Text = "";
+        }
         textbox.SelectionStart = textbox.Text.Length;
         Controls.Add(textbox);
         return textbox;
