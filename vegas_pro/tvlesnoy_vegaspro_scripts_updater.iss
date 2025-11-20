@@ -3,7 +3,7 @@
 [Setup]
 AppName=Vegas Pro Scripts TVLesnoy
 AppPublisher=Mix3r_Durachok
-AppVersion=270323
+AppVersion=201125
 Compression=lzma
 DefaultDirName={autopf64}\VEGAS\VEGAS Pro 13.0
 DefaultGroupName=My Program
@@ -149,16 +149,22 @@ begin
         if (WizardIsComponentSelected('networktv')) then begin
             wr_str:='[.ShellClassInfo]' + #13#10 + ExpandConstant('IconResource={sys}\shell32.dll,18');
             SaveStringToFile(ExpandConstant('{tmp}\desktop.ini'), wr_str, False);
-            GitDownTmp('shortcuts_net_win.zip');
-            GitDownTmp('shortcuts_net_dc.zip');
-            if FileExists(ExpandConstant('{tmp}\tmp\shortcuts_net_win.zip')) then begin
+            DownloadPage.Show;
+            GitDownTmp('shortcuts_net_win.cab');
+            GitDownTmp('shortcuts_net_dc.cab');
+            try
+                 DownloadPage.Download;
+            finally
+                 DownloadPage.Hide;
+            end;
+            if FileExists(ExpandConstant('{tmp}\tmp\shortcuts_net_win.cab')) then begin
                 ForceDirectories(ExpandConstant('{userdesktop}\Сеть TV'));
-                if Exec('powershell.exe',ExpandConstant('-command "Expand-Archive -Force ''{tmp}\tmp\shortcuts_net_win.zip'' ''{userdesktop}\Сеть TV'''), '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+                if Exec('expand.exe',ExpandConstant('-F:* "{tmp}\tmp\shortcuts_net_win.cab" "{userdesktop}\Сеть TV"'), '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
                 end;
             end;
-            if FileExists(ExpandConstant('{tmp}\tmp\shortcuts_net_dc.zip')) then begin
+            if FileExists(ExpandConstant('{tmp}\tmp\shortcuts_net_dc.cab')) then begin
                 ForceDirectories(ExpandConstant('{autopf64}\Totalcmd_p\network'));
-                if Exec('powershell.exe',ExpandConstant('-command "Expand-Archive -Force ''{tmp}\tmp\shortcuts_net_dc.zip'' ''{autopf64}\Totalcmd_p\network'''), '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+                if Exec('expand.exe',ExpandConstant('-F:* "{tmp}\tmp\shortcuts_net_dc.cab" "{autopf64}\Totalcmd_p\network"'), '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
                 end;
             end;
             Result := True;
