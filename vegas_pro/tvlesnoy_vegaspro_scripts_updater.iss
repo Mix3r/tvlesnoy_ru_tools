@@ -58,22 +58,6 @@ Name: "{commonpf32}\VEGAS\Shared Plug-Ins\Audio_x64"; Components: videoeditor1
 Name: "{userdesktop}\Сеть TV"; Components: networktv
 
 [Icons]
-Name: "{userdesktop}\Сеть TV\1_СОГЛАСОВАНИЕ"; Filename: "\\Glavred\Общее\1 СОГЛАСОВАНИЕ"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_ГЛАВРЕД"; Filename: "\\Glavred\Общее\Teleport"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_CЕРВЕР"; Filename: "\\server\Захват (e)\Teleport"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\_CЮЖЕТЫ"; Filename: "\\server\Захват (e)\_СЮЖЕТЫ"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\МОДЕРАТОР"; Filename: "\\METELKINA\Share"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\XРЕБТОВА"; Filename: "\\xrebtova\Монтаж звука"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\МИХЕЕВ"; Filename: "\\Mikheev\захват"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\ЖУРНАЛИСТ"; Filename: "\\Journalist\Общее"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\КОРРЕСПОНДЕНТ"; Filename: "\\korrespondent\ОБЩЕЕ"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\СМОЛКИНА"; Filename: "\\smolkina\ВСЕ!!!!"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\КОРЕПИНА"; Filename: "\\Korepina\Общее"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\АЗА"; Filename: "\\Aza\D"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\РЕЖИССЕР"; Filename: "\\Regisser\захват"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\СУФЛЕР"; Filename: "\\studio\Share"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\ИВАНОВА"; Filename: "\\Ivanova\общее"; WorkingDir: ""; Components: networktv
-Name: "{userdesktop}\Сеть TV\АНТОН"; Filename: "\\anton\Disc_E"; WorkingDir: ""; Components: networktv
 
 [Run]
 Filename: robocopy.exe; Parameters: """{tmp}\git"" ""{app}\Script Menu"" /E /MOV"; Flags: runhidden runascurrentuser;
@@ -165,6 +149,18 @@ begin
         if (WizardIsComponentSelected('networktv')) then begin
             wr_str:='[.ShellClassInfo]' + #13#10 + ExpandConstant('IconResource={sys}\shell32.dll,18');
             SaveStringToFile(ExpandConstant('{tmp}\desktop.ini'), wr_str, False);
+            GitDownTmp('shortcuts_net_win.zip');
+            GitDownTmp('shortcuts_net_dc.zip');
+            if FileExists(ExpandConstant('{tmp}\tmp\shortcuts_net_win.zip')) then begin
+                ForceDirectories(ExpandConstant('{userdesktop}\Сеть TV'));
+                if Exec('powershell.exe',ExpandConstant('-command "Expand-Archive -Force ''{tmp}\tmp\shortcuts_net_win.zip'' ''{userdesktop}\Сеть TV'''), '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+                end;
+            end;
+            if FileExists(ExpandConstant('{tmp}\tmp\shortcuts_net_dc.zip')) then begin
+                ForceDirectories(ExpandConstant('{autopf64}\Totalcmd_p\network'));
+                if Exec('powershell.exe',ExpandConstant('-command "Expand-Archive -Force ''{tmp}\tmp\shortcuts_net_dc.zip'' ''{autopf64}\Totalcmd_p\network'''), '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+                end;
+            end;
             Result := True;
         end;
         // videoeditor section
