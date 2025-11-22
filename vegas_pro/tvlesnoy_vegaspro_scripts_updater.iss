@@ -1,4 +1,5 @@
 ; Inno Setup Script Wizard to update Vegas Pro Scripts with our own tools.
+; !!! USE InnoSetup 6.2.2 version to keep support of Windows 7 !!!
 
 [Setup]
 AppName=Vegas Pro Scripts TVLesnoy
