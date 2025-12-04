@@ -1,3 +1,0 @@
-https://shell.cloud.google.com/?pli=1&show=ide%2Cterminal
-https://raw.githubusercontent.com/ImMALWARE/bash-warp-generator/main/warp_generator.sh
-https://github.com/amnezia-vpn/amneziawg-windows-client/releases
