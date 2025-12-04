@@ -1,10 +1,36 @@
-curl -L -o "%TEMP%\_anydesk.exe" https://download.anydesk.com/AnyDesk.exe
-"%TEMP%\_anydesk.exe"
-:JanitorGO
-del "%TEMP%\_anydesk.exe"
-if exist "%TEMP%\_anydesk.exe" (
-ping 127.0.0.1 -n 3 > nul
-goto JanitorGO
+@echo off
+curl -o "%~dp0_temp_page.txt" "https://rudesktop.ru/downloads"
+
+setlocal enabledelayedexpansion
+
+FOR /f "usebackq delims=" %%a IN ("%~dp0_temp_page.txt") DO (
+   SET str0=%%a
+	 SET str1=x!str0:^.^exe^"^>=!
+   IF NOT x!str0! == !str1! (
+      goto treat_request
+   )
 )
-rd "%APPDATA%\Anydesk" /s /q
+
+:treat_request
+
+IF NOT "!str0:~0,1!" == "=" (
+    SET str0=!str0:~1!
+    goto treat_request
+)
+
+del "%~dp0_temp_page.txt"
+
+SET str0=!str0:~1!
+SET str0=!str0:~0,-1!
+
+curl -L -o "%~dp0rudesktop.exe" !str0!
+
+"%~dp0rudesktop.exe"
+:JanitorGO
+del "%~dp0rudesktop.exe"
+if exist "%~dp0rudesktop.exe" (
+    timeout /t 3
+    goto JanitorGO
+)
+endlocal
 del "%~f0"
