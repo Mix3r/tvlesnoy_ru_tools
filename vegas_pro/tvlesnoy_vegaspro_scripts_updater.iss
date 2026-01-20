@@ -56,13 +56,23 @@ begin
 end;
 
 function GitDown(whattoget:string; nPbar:integer):boolean;
-var ResultCode:integer;
+var ResultCode:integer; gittmp:string;
 begin
     ProgressPage.SetProgress(nPbar, 100);
     ProgressPage.SetText('Устанавливается:', whattoget);
     ResultCode:=-999;
     Result:=false;
-    if Exec(ExpandConstant('{tmp}\curl.exe'), ExpandConstant('-L -o "'+GitDownPath+'\'+whattoget+'" "https://github.com/Mix3r/tvlesnoy_ru_tools/raw/refs/heads/main/vegas_pro/'+whattoget+'"'), '', SW_SHOWMINNOACTIVE, ewWaitUntilTerminated, ResultCode) then begin
+    
+    gittmp:='';
+    for nPbar:=1 to Length(whattoget) do begin
+        if (whattoget[nPbar] = ' ') then begin
+            gittmp:=gittmp+'%20';
+        end else begin
+            gittmp:=gittmp+whattoget[nPbar];
+        end;
+    end;
+
+    if Exec(ExpandConstant('{tmp}\curl.exe'), ExpandConstant('-L -o "'+GitDownPath+'\'+whattoget+'" "https://github.com/Mix3r/tvlesnoy_ru_tools/raw/refs/heads/main/vegas_pro/'+gittmp+'"'), '', SW_SHOWMINNOACTIVE, ewWaitUntilTerminated, ResultCode) then begin
         if ResultCode = 0 then begin
             Result:=true;
         end;
@@ -334,5 +344,4 @@ begin
         ProgressPage.Hide;
     end;
 end;
-
 
