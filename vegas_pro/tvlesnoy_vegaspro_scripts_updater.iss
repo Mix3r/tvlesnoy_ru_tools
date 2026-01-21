@@ -241,7 +241,7 @@ begin
                 if FileExists(ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\vegas130.exe')) then begin
                     if GitDown('voukoderplug13.cab',10) then begin
                         ForceDirectories(ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\FileIO Plug-Ins\voukoderplug'));
-                        if Exec('expand.exe','-F:* "'+GitDownPath+'\voukoderplug13.cab" "'+ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\FileIO Plug-Ins\voukoderplug')+'"', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+                        if Exec('expand.exe','-F:* "'+GitDownPath+'\voukoderplug13.cab" "'+ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\FileIO Plug-Ins\voukoderplug\voukoderplug13.dll')+'"', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
                             if ResultCode = 0 then begin
                                 SaveStringToFile(ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\Voukoder-x64.fio2007-config'), '[FileIO Plug-Ins]' + #13#10 + 'voukoderplug=FileIO Plug-Ins\voukoderplug\voukoderplug13.dll', False);
                             end;
@@ -251,7 +251,7 @@ begin
                 if FileExists(ExpandConstant('{autopf64}\VEGAS\Vegas Pro 20\vegas200.exe')) then begin
                     if GitDown('voukoderplug.cab',15) then begin
                         ForceDirectories(ExpandConstant('{autopf64}\VEGAS\Vegas Pro 20\FileIO Plug-Ins\voukoderplug'));
-                        if Exec('expand.exe','-F:* "'+GitDownPath+'\voukoderplug.cab" "'+ExpandConstant('{autopf64}\VEGAS\Vegas Pro 20\FileIO Plug-Ins\voukoderplug')+'"', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+                        if Exec('expand.exe','-F:* "'+GitDownPath+'\voukoderplug.cab" "'+ExpandConstant('{autopf64}\VEGAS\Vegas Pro 20\FileIO Plug-Ins\voukoderplug\voukoderplug.dll')+'"', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
                             if ResultCode = 0 then begin
                                 SaveStringToFile(ExpandConstant('{autopf64}\VEGAS\Vegas Pro 20\Voukoder-x64.fio2007-config'), '[FileIO Plug-Ins]' + #13#10 + 'voukoderplug=FileIO Plug-Ins\voukoderplug\voukoderplug.dll', False);
                             end;
@@ -335,13 +335,15 @@ begin
                     end else begin
                     end;
                 end;
-                ////////////////
             end;
             //
         end;
+        // sound edit section
+        //if () then begin
+        //end;
+
         ///////////////////////////////////////////
 
         ProgressPage.Hide;
     end;
 end;
-
