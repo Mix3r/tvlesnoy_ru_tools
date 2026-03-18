@@ -1,5 +1,5 @@
 /** 
-new school
+20260318.0
  **/ 
 
 import System;
@@ -151,9 +151,11 @@ try {
                 TryToConvert(sCustomParmV);
             } else {
                 postfix = ".v";
-                TryToConvert('-i "'+fullpath_base+ '" -an -c:v copy -y -f mp4 "'+fullpath_base+postfix+'"');
-                if (nExitFlag == 0) {
-                    CanOpen(fullpath_base + postfix,1);
+                if (null == bForceConversion) {
+                    TryToConvert('-i "'+fullpath_base+ '" -an -c:v copy -y -f mp4 "'+fullpath_base+postfix+'"');
+                    if (nExitFlag == 0) {
+                        CanOpen(fullpath_base + postfix,1);
+                    }
                 }
                 if (null == bFlag_DoneV) {
                     Vegas.Project.MediaPool.Remove(fullpath_base + postfix);
