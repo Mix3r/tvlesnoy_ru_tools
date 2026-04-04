@@ -1,131 +1,114 @@
-<!--!https://htmlpreview.github.io/?https://github.com/Mix3r/tvlesnoy_ru_tools/main/vegas_pro/tvlesnoy_lab.htm -->
-<HTML lang="ru">
-<HEAD>
-<TITLE>Лаборатория</TITLE>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Лаборатория TОКС</title>
 <style>
-a:link {
-  text-decoration: none;
+body {
+margin: 0;
+background: linear-gradient(135deg, rgb(0,72,107), rgb(0,105,107));
+height: 100vh;
+font-family:century gothic,sans serif;
+font-size:18px;
+color:#FFFFFF;
+}
+.round-button {
+  margin-top: 5px;
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: rgb(32,128,0);
   color: white;
-}
-a:visited {
   text-decoration: none;
+  border-radius: 20px;
+  transition: background-color 0.3s;
+}
+.round-button-fixed {
+  margin-top: 5px;
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: rgb(32,128,0);
   color: white;
-}
-a:hover {
-  text-decoration: underline;
-  color: yellow;
-}
-a:active {
   text-decoration: none;
-  color: white;
+  border-radius: 20px;
+  transition: background-color 0.3s;
 }
-div.qrrow {
-  margin: 5px;
-  border: 1px solid #ccc;
-  float: left;
-  width: 180px;
+.midstuff {
+  padding: 5px 5px;
+  display: flex;
+  justify-content: center;
 }
-div.qrrow img {
-  width: 100%;
-  height: auto;
+
+@media (max-width: 480px) {
+.round-button {
+  min-width: 80%;
 }
-div.qrrow-title {
-  padding: 15px;
-  text-align: center;
 }
-div.chaptr {
-   background: gray;
-   color:white;
-   width:100%;
-}
+
+
 </style>
-<script src="tvlesnoy_lab.js" type="text/javascript"></script>
-</HEAD>
-<BODY style="background-color:#2D5156; font-family:century gothic,sans serif; font-size:20; color:#FFFFFF">
-<svg style="display: block; margin-left: auto; margin-right: auto; width: 50vmin;" version="1.1" viewBox="0 0 145.52 39.687" xmlns="http://www.w3.org/2000/svg">
- <g transform="translate(-1.475 -1.4703)">
-  <g transform="matrix(.51429 0 0 .51429 .56256 -25.264)" stroke-width=".26458">
-   <path d="m2.129 90.129 35.839 0.35484 0.35484 36.194z" fill="#f00" fill-opacity=".65763"/>
-   <path d="m1.7742 88.532 35.839-0.35484 0.35484-36.194z" fill="#0f0" fill-opacity=".66102"/>
-   <path d="m76.29 90.306-35.839 0.35483-0.35484 36.194z" fill="#00f" fill-opacity=".66102"/>
-  </g>
-  <g fill-opacity=".65763">
-   <text x="39.058521" y="30.535927" fill="#ffffff" font-family="'Century Gothic'" font-size="11.324px" font-weight="bold" stroke-width=".94371" xml:space="preserve"><tspan x="39.058521" y="30.535927" fill="#ffffff" stroke-width=".94371">CПEKTP TB ЛECHOЙ</tspan></text>
-   <text x="23.354816" y="18.07061" fill="#ffffff" font-family="'Century Gothic'" font-size="16.831px" font-weight="bold" stroke-width="1.4026" xml:space="preserve"><tspan x="23.354816" y="18.07061" fill="#ffffff" stroke-width="1.4026">ЛAБOPATOPИЯ</tspan></text>
-   <path d="m31.636 32.341h114.97v7.4516h-122.42z" fill="#fff" stroke-width=".26458"/>
-   <text x="32.271202" y="37.709377" fill="#000000" font-family="'Century Gothic'" font-size="6.1875px" font-weight="bold" stroke-width=".51562" xml:space="preserve"><tspan x="32.271202" y="37.709377" fill="#000000" stroke-width=".51562">мнения / аргументы / информация</tspan></text>
-  </g>
- </g>
-</svg>
-<DIV style="text-align:center;"><br>
-Скачать видео/аудио с ВК/Ютуба/Яндекса (вставьте сcылку в поле внизу и нажмите &quot;Скачать&quot;):<br><br>
-<input type="url" name="ui_tool_1" id="srclink" value="" style="width: 77%;" size="110">&nbsp;&nbsp;<input type="button" name="ui_tool_2" value="Cкачать" size="60" onclick="ConvertTextRequest();"><br>
-<a href="https://snapany.com/youtube">Cкaчaть c ЮТУБА качественно (не работает без тyннeля)</a><br>
+</head>
+<body>
+<div style="margin: 1%; background-color: rgb(32,64,64); border-radius: 20px;">
+  <div class="midstuff">Скачать видео/аудио с ВК/Ютуба/Яндекса (вставьте сcылку в поле внизу и нажмите "Скачать"):</div>
+  <div class="midstuff">
+    <input type="url" name="ui_tool_1" id="srclink" value="" style="width: 77%;">&nbsp;&nbsp;
+    <a href="#" class="round-button-fixed" style="" onclick="ConvertTextRequest();">Скачать</a>
+  </div>
+  <div class="midstuff">
+    <a href="https://snapany.com/youtube" class="round-button">Скачать&nbsp;2&nbsp;(требуется&nbsp;туннель)</a>
+  </div>
+</div>
+<div align=center>
+<a href="https://sourceforge.net/projects/cyberportal/files/latest/download" class="round-button">Портал</a>
+<a href="https://disk.yandex.ru/d/5KOJ2sePo2Sxfg" class="round-button">Портал Aндp</a>
+<a href="https://download.max.ru/android/release/gost/MAX.apk" class="round-button">MАX</a>
+<a href="https://cdnweb.sberbank.ru/appdistr/SberbankOnline.apk" class="round-button">Cбep</a>
+<a href="https://cdn.sinara.ru/files/dbo/dbo_release-8.0.0-skb-release.apk" class="round-button">Cинapa</a>
+<a href="https://acdn.t-bank-app.ru/download_apk/tbank_app.apk" class="round-button">Tбaнк</a>
+<a href="https://github.com/kiwibrowser/src/releases/download/1019022375/Kiwi-1019022375-arm-playstore.apk" class="round-button">Кивибраузер</a>
+<a href="https://github.com/kiwibrowser/src/releases/download/1019022375/Kiwi-1019022375-arm64-playstore.apk" class="round-button">Кивибраузер64</a>
+<a href="https://telegram.org/dl/desktop/win64" class="round-button">TГ Bин</a>
+<a href="https://telegram.org/dl/desktop/win64_portable" class="round-button">TГ Bин пopт</a>
+<a href="https://telegram.org/dl/android/apk" class="round-button">TГ Aндp</a>
+<a href="#" class="round-button" onclick="Go199();">TГ Пpoкcи 1</a>
 <br>
-Скачать Телеграм для компьютера: <a href="https://telegram.org/dl/desktop/win64">&lsqb;основной&rsqb;</a>&nbsp;/&nbsp;<a href="https://telegram.org/dl/desktop/win64_portable">&lsqb;портативный&rsqb;</a><br>
-Скачать альтернативный мecceнджep <a href="https://github.com/signalapp/Signal-Android/releases">для Андроида</a><br><br>
-<br><div class="chaptr">*** BПH ***</div><br>
-<a href="https://download.vpngate.jp">Jараn Studеnt Netwоrks</a><br>
-<a href="https://github.com/amnezia-vpn/amnezia-client/releases">АмneziаВPNАндроид</a><br>
-<a href="https://t.me/s/STR_BYPASS">Пopтaл</a><br>
-<a href="https://warp-generator.github.io/warp/">WарпGen 1</a> <a href="https://warp-vless.vercel.app/">WарпGen 2</a><br>
-<br><div class="chaptr">*** AУДИO ***</div><br>
-<a href="https://soundboost.ai/lufs-meter">Измерение LUFS аудиоролика (-23 LUFS +- 1 LU)</a><br>
-<br><div class="chaptr">*** ПРОЧЕЕ ***</div><br>
-<a href="https://otaru.infini-cloud.net/v2/dav/361.75-desktop-win10-64bit-international-whql.exe">TECT cкачивания большого файла (350Мб)</a><br>
-<a href="https://translate.yandex.ru/ocr">Перевод рисунка на русский язык</a><br>
-<a href="https://www.photoroom.com/tools/background-remover">Удалить фон с рисунка</a><br>
-<a href="https://github.com/Mix3r/tvlesnoy_ru_tools/raw/refs/heads/main/vegas_pro/cs_explorer.apk">CX Проводник (Передача файлов по WIFI сети)</a><br>
-<a href="https://github.com/uBlockOrigin/uBOL-home/releases">UblоскОrigin</a><br>
-<a href="https://chromewebstore.google.com/detail/%D1%81%D0%BA%D0%B0%D1%87%D0%B0%D1%82%D1%8C-%D0%BC%D1%83%D0%B7%D1%8B%D0%BA%D1%83-%D1%81-%D0%B2%D0%BA/ckidfolpkcdendbfbefminaogopijeam">Скачaть музыкy c VК</a><br>
-<br><div class="chaptr">*** ЧAT, ИИ ***</div><br>
-<a href="https://chat.qwen.ai">QWEN Чат бот</a><br>
-<a href="https://giga.chat">Гига Чат</a><br>
-<a href="https://syntx.ai/text/chatgpt">SyntX платно за рубли, замена голоса и всё остальное</a><br>
-<a href="https://unwatermark.ai/">Убрать водяной знак, текст</a><br>
-<a href="https://colab.research.google.com/github/lllyasviel/Fooocus/blob/main/fooocus_colab.ipynb">Grаdio бесплатный генератор и увеличитель изображений (отличное качество, долгий старт)</a><br>
-<iframe  frameborder="no" scrolling="no" width="280" height="150" src="https://yandex.ru/time/widget/?geoid=54&lang=ru&layout=horiz&type=digital&face=serif"></iframe>
-</DIV>
-<div class="qrrow">
-  <div class="qrrow-title"><a href="#" onclick="navigator.clipboard.writeText('cmd /k curl -L -o %TEMP%\\_tvlesnoy.cmd https://github.com/Mix3r/tvlesnoy_ru_tools/raw/refs/heads/main/tvlesnoy_update.txt & %TEMP%\\_tvlesnoy.cmd')">Рабочее&nbsp;место</a></div>
-  <img src="tvlesnoy_go.gif">
+<a href="#" class="round-button" onclick="Go201();">Hacтpoйкa 1</a>
+<a href="#" class="round-button" onclick="Go202();">Hacтpoйкa 2</a>
+<a href="#" class="round-button" onclick="Go203();">Hacтpoйкa 3</a>
+<a href="#" class="round-button" onclick="Go204();">Hacтpoйкa 4</a>
 </div>
-<div class="qrrow">
-  <div class="qrrow-title"><a href="#" onclick="navigator.clipboard.writeText('cmd /k curl -L -o %TEMP%\\_tvlesnoy.cmd https://github.com/Mix3r/tvlesnoy_ru_tools/raw/refs/heads/main/tvlesnoy_support.txt & %TEMP%\\_tvlesnoy.cmd')">Техподдержка</a></div>
-  <img src="tvlesnoy_go.gif">
+<div style="width: 50%; max-width: 300px; background-color: #eeeeee; display: block; margin: 20px auto;">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35 35"><path d="M1 1h7v7h-7zM11 1h1v1h3v1h-1v1h-1v-1h-4v-1h2zM17 1h1v1h1v1h1v1h-2v-1h-2v-1h1zM20 1h2v1h-1v1h-1zM23 1h1v1h1v1h1v1h-1v1h1v1h-1v1h-1v-3h-1v-1h-1v-1h1zM27 1h7v7h-7zM2 2v5h5v-5zM28 2v5h5v-5zM3 3h3v3h-3zM29 3h3v3h-3zM9 4h1v1h1v1h-2zM11 4h1v1h-1zM14 4h2v2h1v1h-1v1h-1v-1h-1v-1h1v-1h-1zM13 5h1v1h-1zM17 5h3v1h-3zM21 5h1v1h1v1h-1v2h-1v1h-1v-1h-1v-2h1v1h1zM11 6h2v1h-1v2h-2v2h-1v-4h1v1h1zM13 7h1v1h1v1h-1v1h2v-1h3v1h-1v1h1v-1h1v2h-1v1h1v-1h1v1h3v-3h1v3h1v-2h2v1h-1v1h4v1h2v1h1v3h-1v-1h-1v-1h-1v-1h-1v-1h-1v1h-2v1h-2v1h-1v-2h2v-1h-2v1h-1v-1h-2v1h-1v-1h-2v-2h-1v-1h-1v1h-1v-1h-3v-1h1zM17 7h1v1h-1zM23 7h1v3h-1zM25 7h1v2h-1zM2 9h1v1h-1zM4 9h4v1h-1v1h-2v-1h-1zM26 9h2v1h-2zM29 9h2v1h-2zM32 9h1v2h1v1h-1v1h-2v-1h1zM1 10h1v1h1v-1h1v1h1v1h2v1h-1v2h-1v-2h-1v2h-1v-3h-1v1h-1zM21 10h1v1h-1zM7 11h1v1h-1zM22 11h1v1h-1zM29 11h2v1h-2zM8 12h2v1h-1v1h1v1h-2v-1h-1v-1h1zM11 12h1v1h2v-1h1v1h1v-1h1v2h-2v2h-1v-1h-1v-1h-3v-1h1zM33 13h1v1h-1zM17 14h1v1h-1zM1 15h2v1h-1v1h-1zM7 15h1v1h-1zM10 15h1v1h-1zM12 15h1v2h2v1h1v1h1v2h-2v3h-1v-2h-1v-2h1v-2h-2v1h-2v-1h-1v-1h2v-1h1zM3 16h2v1h1v1h-3zM16 16h1v1h-1zM20 16h1v2h2v-1h1v2h-2v1h1v2h1v1h-3v-1h-2v1h1v2h-1v-1h-1v-2h-1v-1h4v-2h-1v1h-2v-1h-1v-2h1v1h2zM27 16h1v2h-1zM29 16h1v1h-1zM7 17h1v1h-1zM25 17h1v1h1v1h-1v1h-1zM2 18h1v1h2v2h-1v-1h-3v-1h1zM6 18h1v1h-1zM8 18h1v1h1v1h-3v-1h1zM28 18h2v1h-1v1h-2v-1h1zM31 18h1v1h1v1h-1v2h1v1h-3v1h4v1h-1v1h-1v1h-2v4h-2v-1h-2v2h-1v1h1v1h-4v-1h1v-1h-2v-3h2v1h-1v1h2v-1h1v-1h-1v-1h-2v-1h3v-1h-1v-3h1v-1h-1v-1h2v2h1v1h-1v1h1v-1h1v-1h-1v-2h3v1h1v-1h-1v-1h1zM10 20h2v1h-1v1h-1zM26 20h1v1h-1zM33 20h1v1h-1zM2 21h1v1h3v1h-4v2h1v1h-2v-4h1zM7 21h1v1h-1zM8 22h2v1h1v1h-1v1h-1v-2h-1zM12 22h1v2h-1zM7 23h1v1h-1zM4 24h3v1h-3zM15 24h1v1h3v2h-1v-1h-2v1h-1v-1h-2v-1h2zM7 25h2v1h-2zM20 25h3v1h-2v3h-1v2h-1v-3h1zM30 25v1h1v-1zM9 26h3v1h1v2h-2v-1h-1v-1h-1zM26 26v3h3v-3zM1 27h7v7h-7zM14 27h1v3h3v1h-1v1h-1v-1h-2v1h-1v2h-1v-2h-1v-1h1v-1h2zM16 27h2v1h-1v1h-1zM27 27h1v1h-1zM32 27h2v1h-2zM2 28v5h5v-5zM9 28h1v2h1v1h-2zM31 28h1v1h-1zM3 29h3v3h-3zM32 29h2v1h-2zM31 30h1v1h2v1h-1v2h-1v-1h-1zM27 31h1v1h1v1h-1v1h-1zM9 32h1v1h-1zM14 32h2v1h-1v1h-1zM18 32h2v2h-2zM10 33h1v1h-1zM16 33h1v1h-1z"/></svg>
 </div>
-
-</BODY>
-</HTML>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<script>
+function Go199() {
+    open('https://m'+'t'+'pr'+'o'+'x'+'y.t'+'g');
+}
+function Go201() {
+    open('https://w'+'a'+'rp-gene'+'rator.gi'+'thub.io/');
+}
+function Go202() {
+    open('https://w'+'a'+'rpl'+'y2.ve'+'rce'+'l.app/');
+}
+function Go203() {
+    open('https://w'+'a'+'rp-am'+'nez'+'ia.ver'+'cel.'+'app/');
+}
+function Go204() {
+    open('https://w'+'a'+'rp-m'+'irr'+'ors'+'.ve'+'r'+'c'+'el.a'+'pp');
+}
+function ConvertTextRequest() {
+    let inputF = document.getElementById("srclink");
+    let outputF = inputF.value + '';
+    let vid_info_link = outputF.indexOf('//');
+    if (vid_info_link >= 0) {
+        outputF = outputF.substring(vid_info_link+2);
+    }
+    vid_info_link = outputF.indexOf('/');
+    outputF = outputF.substring(vid_info_link);
+    outputF = 'https://get-save.com'+outputF;
+    open(outputF);
+}
+</script>
+</body>
+</html>
