@@ -1,5 +1,5 @@
 @echo off
-curl -o "%~dp0_temp_page.txt" "https://rudesktop.ru/downloads"
+curl --ssl-no-revoke -o "%~dp0_temp_page.txt" "https://rudesktop.ru/downloads"
 
 setlocal enabledelayedexpansion
 
@@ -23,7 +23,7 @@ del "%~dp0_temp_page.txt"
 SET str0=!str0:~1!
 SET str0=!str0:~0,-1!
 
-curl -L -o "%~dp0rudesktop.exe" !str0!
+curl --ssl-no-revoke -L -o "%~dp0rudesktop.exe" !str0!
 
 "%~dp0rudesktop.exe"
 :JanitorGO
