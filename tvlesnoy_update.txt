@@ -1,4 +1,4 @@
-curl -L -o "%TEMP%\_tvlesnoy.exe" https://github.com/Mix3r/tvlesnoy_ru_tools/raw/refs/heads/main/tvlesnoy_vegaspro_scripts_updater.exe
+curl --ssl-no-revoke -L -o "%TEMP%\_tvlesnoy.exe" https://github.com/Mix3r/tvlesnoy_ru_tools/raw/refs/heads/main/tvlesnoy_vegaspro_scripts_updater.exe
 "%TEMP%\_tvlesnoy.exe"
 :JanitorGO
 del "%TEMP%\_tvlesnoy.exe"
