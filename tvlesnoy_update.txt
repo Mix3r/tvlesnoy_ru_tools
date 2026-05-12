@@ -3,7 +3,7 @@ curl --ssl-no-revoke -L -o "%TEMP%\_tvlesnoy.exe" https://github.com/Mix3r/tvles
 :JanitorGO
 del "%TEMP%\_tvlesnoy.exe"
 if exist "%TEMP%\_tvlesnoy.exe" (
-ping 127.0.0.1 -n 3 > nul
-goto JanitorGO
+    timeout /t 3
+    goto JanitorGO
 )
 del "%~f0"
