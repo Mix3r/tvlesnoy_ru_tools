@@ -1,5 +1,5 @@
 @echo off
-curl --ssl-no-revoke -o "%~dp0_temp_page.txt" "https://rudesktop.ru/downloads"
+curl --ssl-no-revoke -o "%~dp0_temp_page.txt" "https://rudesktop.ru/downloads/"
 
 setlocal enabledelayedexpansion
 
