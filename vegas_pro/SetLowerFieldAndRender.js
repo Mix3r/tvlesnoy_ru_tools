@@ -94,7 +94,9 @@ try {
                               proevt.Selected = null;
                               protrk.Events[proevt.Index+1].Start = protrk.Events[proevt.Index+1].Start+Timecode.FromMilliseconds(1000);
                               protrk.Events[proevt.Index+1].FadeIn.Length = Timecode.FromMilliseconds(640);
-                              protrk.Events[proevt.Index+1].FadeIn.Curve = CurveType.Fast;
+                              protrk.Events[proevt.Index+1].FadeIn.Curve = CurveType.Linear;
+                              protrk.Events[proevt.Index].FadeOut.Length = Timecode.FromMilliseconds(320);
+                              protrk.Events[proevt.Index].FadeOut.Curve = CurveType.Fast;
                               for (var undrevt in Vegas.Project.Tracks[protrk.Index+1].Events) {
                                   for (var undrevttake in undrevt.Takes) {
                                       if (undrevttake.Name == "Главное") {
@@ -120,7 +122,9 @@ try {
                               proevt.Selected = null;
                               protrk.Events[proevt.Index+1].Start = protrk.Events[proevt.Index+1].Start+Timecode.FromMilliseconds(1000);
                               protrk.Events[proevt.Index+1].FadeIn.Length = Timecode.FromMilliseconds(640);
-                              protrk.Events[proevt.Index+1].FadeIn.Curve = CurveType.Fast;
+                              protrk.Events[proevt.Index+1].FadeIn.Curve = CurveType.Linear;
+                              protrk.Events[proevt.Index].FadeOut.Length = Timecode.FromMilliseconds(320);
+                              protrk.Events[proevt.Index].FadeOut.Curve = CurveType.Fast;
                               var audevt = new AudioEvent(Vegas.Transport.CursorPosition,Timecode.FromMilliseconds(4500));
                               Vegas.Project.Tracks[protrk.Index+1].Events.Add(audevt);
                               TrackEvent(audevt).Loop = null;
@@ -154,7 +158,9 @@ try {
                               proevt.Selected = null;
                               protrk.Events[proevt.Index+1].Start = protrk.Events[proevt.Index+1].Start+Timecode.FromMilliseconds(500);
                               protrk.Events[proevt.Index+1].FadeIn.Length = Timecode.FromMilliseconds(640);
-                              protrk.Events[proevt.Index+1].FadeIn.Curve = CurveType.Fast;
+                              protrk.Events[proevt.Index+1].FadeIn.Curve = CurveType.Linear;
+                              protrk.Events[proevt.Index].FadeOut.Length = Timecode.FromMilliseconds(320);
+                              protrk.Events[proevt.Index].FadeOut.Curve = CurveType.Fast;
                               for (var undrevt in Vegas.Project.Tracks[protrk.Index+1].Events) {
                                   for (var undrevttake in undrevt.Takes) {
                                       if (undrevttake.Name == "! В-В-ЖЖЖИК !") {
@@ -179,7 +185,9 @@ try {
                               proevt.Selected = null;
                               protrk.Events[proevt.Index+1].Start = protrk.Events[proevt.Index+1].Start+Timecode.FromMilliseconds(1080);
                               protrk.Events[proevt.Index+1].FadeIn.Length = Timecode.FromMilliseconds(640);
-                              protrk.Events[proevt.Index+1].FadeIn.Curve = CurveType.Fast;
+                              protrk.Events[proevt.Index+1].FadeIn.Curve = CurveType.Linear;
+                              protrk.Events[proevt.Index].FadeOut.Length = Timecode.FromMilliseconds(320);
+                              protrk.Events[proevt.Index].FadeOut.Curve = CurveType.Fast;
                               for (var undrevt in Vegas.Project.Tracks[protrk.Index+1].Events) {
                                   for (var undrevttake in undrevt.Takes) {
                                       if (undrevttake.Name == "погоду") {
