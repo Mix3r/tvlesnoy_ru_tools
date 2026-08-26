@@ -9,14 +9,16 @@ import System.Windows.Forms;
 import Sony.Vegas;
 import ScriptPortal.Vegas;
 var nTmpFPS = Vegas.Project.Video.FrameRate;
-
+var nLowerThirdCenter = 0;
+var nLowerThirdCount = 0;
+var writer : StreamWriter = null;
 
 try {
-	//Vegas.Project.Video.Width = 720;
-	//Vegas.Project.Video.Height = 576;
+    var sTempCatPath = Vegas.Project.Video.PrerenderedFilesFolder+"";
+    if (Vegas.Project.FilePath != null) {
+        sTempCatPath = Path.GetDirectoryName(Vegas.Project.FilePath)+"\\";
+    }
 	Vegas.Project.Video.FrameRate = 25;
-	//Vegas.Project.Video.FieldOrder = "ProgressiveScan";
-	//Vegas.Project.Video.PixelAspectRatio = 1.4568;       // 1.0926;
 	Vegas.Project.Video.MotionBlurType = "Gaussian";
 	Vegas.Project.Video.DeinterlaceMethod = "InterpolateFields";
 	Vegas.Project.Video.RenderQuality = "Best";
@@ -109,6 +111,24 @@ try {
                                                         }
                                                 }
                                         }
+                                        //////
+                                        if (null != TrackEvent(evnts.item()).ActiveTake.Media) {
+                                            if (null == TrackEvent(evnts.item()).ActiveTake.Media.IsValid()) {
+                                            } else {
+                                                if (TrackEvent(evnts.item()).ActiveTake.Media.IsOffline()) {
+                                                } else {
+                                                    if (TrackEvent(evnts.item()).ActiveTake.Media.FilePath == "tvlesnoy_lowerthird") {
+                                                        nLowerThirdCenter = TrackEvent(evnts.item()).Length.ToMilliseconds();
+                                                        nLowerThirdCenter = Math.round(nLowerThirdCenter * 0.5);
+                                                        Vegas.Transport.CursorPosition = TrackEvent(evnts.item()).Start+Timecode.FromMilliseconds(nLowerThirdCenter);
+                                                        Vegas.UpdateUI();
+                                                        nLowerThirdCount = nLowerThirdCount + 1;
+                                                        Vegas.SaveSnapshot(sTempCatPath+"tmp_lower3rd_preview"+nLowerThirdCount.ToString()+".jpg",ImageFileFormat.JPEG);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        ///////
                                 }
                                 if (VideoEvent(evnts.item()).ResampleMode == "Force") {
                                         // don't change resample mode
@@ -167,9 +187,9 @@ try {
     // add ! before file name
     var renderStatus = ofn.lastIndexOf('\\');
     ofn = ofn.substring(0,renderStatus+1) + "\!" + ofn.substring(renderStatus+1);
-
-    if (MessageBox.Show("Значок надо?", "Значок СПЕКТР-МАИ в правом углу", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes) {
-	    var Titlestrack = FindTrack("LOGOTYPE");
+    var Titlestrack = null;
+    if (MessageBox.Show("Водяной знак надо?", "Водяной знак в центре видео", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes) {
+	    Titlestrack = FindTrack("LOGOTYPE");
         if (null == Titlestrack) {
             Titlestrack = new VideoTrack(0, "LOGOTYPE");
 		    Vegas.Project.Tracks.Add(Titlestrack);
@@ -201,17 +221,40 @@ try {
             var moveby1 = new VideoMotionVertex(Vegas.Project.Video.Width/d_width,Vegas.Project.Video.Height/d_height);
             key_frame.ScaleBy(moveby1);
 	    }
+    }
 
-        renderStatus = Vegas.Render(ofn, renderTemplateWAV,Vegas.SelectionStart,Timecode.FromMilliseconds(3000));
-	    renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.SelectionStart,Vegas.SelectionLength);
-
-        var TitlestrackKeep = FindTrack("keeplogo");
-        if (null == TitlestrackKeep) {
-                Vegas.Project.Tracks.Remove(Titlestrack);
+    renderStatus = Vegas.Render(ofn, renderTemplateWAV,Vegas.SelectionStart,Timecode.FromMilliseconds(3000));
+    if (renderStatus == "Complete") {
+        if (nLowerThirdCount > 0) {
+            writer = new StreamWriter(sTempCatPath+"tmp_lower3rd_summary.html", false, System.Text.Encoding.Unicode);
+            writer.WriteLine("<html>");
+            writer.WriteLine("<head>");
+            writer.WriteLine("<title>");
+            writer.WriteLine(ofn);
+            writer.WriteLine("</title>");
+            writer.WriteLine("</head>");
+            writer.WriteLine("<body>");
+            renderStatus = 0;
+            while (renderStatus < nLowerThirdCount) {
+                renderStatus = renderStatus + 1;
+                writer.WriteLine("<img src=\"tmp_lower3rd_preview"+renderStatus+".jpg\" width=900>");
+            }
+            writer.WriteLine("</body>");
+            writer.WriteLine("</html>");
+            writer.Close();
+            var prog1 = new System.Diagnostics.Process();
+            prog1.StartInfo.FileName = "explorer.exe";
+            prog1.StartInfo.Arguments = sTempCatPath+"tmp_lower3rd_summary.html";
+            prog1.StartInfo.UseShellExecute = false;
+            prog1.StartInfo.CreateNoWindow = true;
+            prog1.Start();
         }
-    } else {
-        renderStatus = Vegas.Render(ofn, renderTemplateWAV,Vegas.SelectionStart,Timecode.FromMilliseconds(3000));
         renderStatus = Vegas.Render(ofn, renderTemplate,Vegas.SelectionStart,Vegas.SelectionLength);
+    }
+    if (null != Titlestrack) {
+        if (null == FindTrack("keeplogo")) {
+            Vegas.Project.Tracks.Remove(Titlestrack);
+        }
     }
 
 }
