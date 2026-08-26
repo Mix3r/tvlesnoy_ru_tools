@@ -226,7 +226,7 @@ try {
     renderStatus = Vegas.Render(ofn, renderTemplateWAV,Vegas.SelectionStart,Timecode.FromMilliseconds(3000));
     if (renderStatus == "Complete") {
         if (nLowerThirdCount > 0) {
-            writer = new StreamWriter(sTempCatPath+"tmp_lower3rd_summary.html", false, System.Text.Encoding.Unicode);
+            writer = new StreamWriter(sTempCatPath+"tmp_lower3rd_summary.hta", false, System.Text.Encoding.Unicode);
             writer.WriteLine("<html>");
             writer.WriteLine("<head>");
             writer.WriteLine("<title>");
@@ -244,7 +244,7 @@ try {
             writer.Close();
             var prog1 = new System.Diagnostics.Process();
             prog1.StartInfo.FileName = "explorer.exe";
-            prog1.StartInfo.Arguments = sTempCatPath+"tmp_lower3rd_summary.html";
+            prog1.StartInfo.Arguments = sTempCatPath+"tmp_lower3rd_summary.hta";
             prog1.StartInfo.UseShellExecute = false;
             prog1.StartInfo.CreateNoWindow = true;
             prog1.Start();
