@@ -122,8 +122,11 @@ try {
                                                         nLowerThirdCenter = Math.round(nLowerThirdCenter * 0.5);
                                                         Vegas.Transport.CursorPosition = TrackEvent(evnts.item()).Start+Timecode.FromMilliseconds(nLowerThirdCenter);
                                                         Vegas.UpdateUI();
+                                                        if (nLowerThirdCount == 0) {
+                                                            Directory.CreateDirectory(sTempCatPath+"_temp");
+                                                        }
                                                         nLowerThirdCount = nLowerThirdCount + 1;
-                                                        Vegas.SaveSnapshot(sTempCatPath+"tmp_lower3rd_preview"+nLowerThirdCount.ToString()+".jpg",ImageFileFormat.JPEG);
+                                                        Vegas.SaveSnapshot(sTempCatPath+"_temp\\titles_preview"+nLowerThirdCount.ToString()+".jpg",ImageFileFormat.JPEG);
                                                     }
                                                 }
                                             }
@@ -226,7 +229,7 @@ try {
     renderStatus = Vegas.Render(ofn, renderTemplateWAV,Vegas.SelectionStart,Timecode.FromMilliseconds(3000));
     if (renderStatus == "Complete") {
         if (nLowerThirdCount > 0) {
-            writer = new StreamWriter(sTempCatPath+"tmp_lower3rd_summary.hta", false, System.Text.Encoding.Unicode);
+            writer = new StreamWriter(sTempCatPath+"_temp\\titles_preview.hta", false, System.Text.Encoding.Unicode);
             writer.WriteLine("<html>");
             writer.WriteLine("<head>");
             writer.WriteLine("<title>");
@@ -237,14 +240,14 @@ try {
             renderStatus = 0;
             while (renderStatus < nLowerThirdCount) {
                 renderStatus = renderStatus + 1;
-                writer.WriteLine("<img src=\"tmp_lower3rd_preview"+renderStatus+".jpg\" width=900>");
+                writer.WriteLine("<img src=\"titles_preview"+renderStatus+".jpg\" width=900>");
             }
             writer.WriteLine("</body>");
             writer.WriteLine("</html>");
             writer.Close();
             var prog1 = new System.Diagnostics.Process();
             prog1.StartInfo.FileName = "explorer.exe";
-            prog1.StartInfo.Arguments = sTempCatPath+"tmp_lower3rd_summary.hta";
+            prog1.StartInfo.Arguments = sTempCatPath+"_temp\\titles_preview.hta";
             prog1.StartInfo.UseShellExecute = false;
             prog1.StartInfo.CreateNoWindow = true;
             prog1.Start();
