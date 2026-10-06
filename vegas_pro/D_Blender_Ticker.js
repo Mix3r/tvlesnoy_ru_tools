@@ -1,5 +1,5 @@
 /** 
-20260318.0
+20261006.0
  **/ 
 
 import System;
@@ -178,8 +178,6 @@ try {
             if (sCustomParmA != "") {
                 TryToConvert(sCustomParmA);
             } else {
-                //postfix = ".a.wav";
-                //TryToConvert('-i "'+fullpath_base+'" -vn -c:a pcm_s16le -ar 48000 -y "'+fullpath_base+postfix+'"');
                 postfix = ".a";
                 TryToConvert('-i "'+fullpath_base+'" -vn -c:a pcm_s16le -ar 48000 -y -f wav "'+fullpath_base+postfix+'"');
                 //TryToConvert('-i "'+fullpath_base+'" -vn -c:a flac -sample_fmt s16 -ar 48000 -y -f flac "'+fullpath_base+postfix+'"');
@@ -271,7 +269,7 @@ function CreateGeneratedMedia(ticker_track, presetName) {
   if (!media.IsValid()) {
       throw "failed to create media; " + presetName + " (" + presetName + ")";
   }
-  var stream = media.Streams[0]; //The "video" stream
+  var stream = media.Streams[0]; // video stream
   var newEvent = new VideoEvent(new Timecode(Vegas.Transport.CursorPosition), ttl_length);
   ticker_track.Events.Add(newEvent);
   var take = new Take(stream);
@@ -315,12 +313,12 @@ function CanOpen(f_path,bGetProbe) {
             // retrieve fps probe for first try
             if (sTmpStm.FrameRate > 2.0 && bGetProbe == 1) {
                 var tmpPostfix = ".v.tmp";
-                TryToConvert('-i "'+f_path+ '" -an -c:v libx264 -preset ultrafast -t 1 -y -f mp4 "'+f_path+tmpPostfix+'"');
+                TryToConvert('-i "'+f_path+ '" -an -c:v libx264 -vf scale=16:12 -preset ultrafast -t 1 -y -f mp4 "'+f_path+tmpPostfix+'"');
                 if (nExitFlag == 0) {
                     var mTempMedia = new Media(f_path+tmpPostfix);
                     for (var sTmpStm2 in mTempMedia.Streams) {
                         if (sTmpStm2.MediaType == MediaType.Video) {
-                            if (sTmpStm2.FrameRate != sTmpStm.FrameRate) {
+                            if (Math.abs(sTmpStm.FrameRate-sTmpStm2.FrameRate) > 0.5) {
                                 nExitFlag = 1;
                                 break;
                             }
@@ -389,7 +387,8 @@ function TryToConvert(sArgs) {
     prog1.StartInfo.CreateNoWindow = false;
     prog1.StartInfo.RedirectStandardError = false;
 	prog1.StartInfo.RedirectStandardOutput = false;
-    prog1.StartInfo.UseShellExecute = false;
+    //prog1.StartInfo.UseShellExecute = true;
+    //prog1.StartInfo.WindowStyle = "Minimized";
     prog1.StartInfo.FileName = sFFMpegPath;
     prog1.StartInfo.Arguments = sArgs;
     prog1.Start();
