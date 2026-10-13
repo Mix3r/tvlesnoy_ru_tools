@@ -44,9 +44,9 @@ try {
                             if (null != proxytxt) {
                                 nCCounter2 = nCCounter2 + 1;
                                 proxytxt.WriteLine("title БУФЕР "+nCCounter2+"\/"+nCCounter+" - "+Path.GetFileNameWithoutExtension(mTmpMedia.FilePath));
-                                proxytxt.WriteLine(sFFMpegPath+" -hwaccel cuvid -hwaccel_output_format cuda -y -i \""+mTmpMedia.FilePath+"\" -vf \"scale_cuda=w=-1:h=-1:format=nv12,hwdownload,format=nv12,scale=w=480:h=-1\" -c:v h264_nvenc -preset p2 -qp 25 -g 2 -movflags faststart -an -f mp4 \""+mTmpMedia.FilePath+".sfvp0\"");
+                                proxytxt.WriteLine(sFFMpegPath+" -hwaccel cuvid -hwaccel_output_format cuda -y -i \""+mTmpMedia.FilePath+"\" -c:v mjpeg -q:v 6 -color_range 2 -vf \"scale=w=-1:h=270:in_range=full:out_range=full,drawbox=x=8:y=8:w=8:h=8:color=green@0.33:t=fill\" -an -f avi \""+mTmpMedia.FilePath+".sfvp0\"");
                                 proxytxt.WriteLine("IF \%ERRORLEVEL\% NEQ 0 (");
-                                proxytxt.WriteLine("    "+sFFMpegPath+" -y -i \""+mTmpMedia.FilePath+"\" -c:v libx264 -preset ultrafast -crf 15 -g 2 -vf \"scale=480:-1:in_range=full:out_range=full:flags=lanczos\" -movflags faststart -an -f mp4 \""+mTmpMedia.FilePath+".sfvp0\"");
+                                proxytxt.WriteLine("    "+sFFMpegPath+" -y -i \""+mTmpMedia.FilePath+"\" -c:v mjpeg -q:v 6 -color_range 2 -vf \"scale=w=-1:h=270:in_range=full:out_range=full,drawbox=x=8:y=8:w=8:h=8:color=green@0.33:t=fill\" -an -f avi \""+mTmpMedia.FilePath+".sfvp0\"");
                                 proxytxt.WriteLine(")");
                             }
                         }
@@ -70,7 +70,7 @@ try {
         prog1.WaitForExit();
         prog1.StartInfo.Arguments = '/a /c "'+sTempCatPath+'_proxybuild.cmd"';
         prog1.Start(prog1.StartInfo);
-        Vegas.Project.Preview.PreviewSize = VideoPreviewSize.Full;
+        Vegas.Project.Preview.PreviewSize = VideoPreviewSize.Auto;
         Vegas.Project.Preview.RenderQuality = VideoRenderQuality.Preview;
     }
 }
