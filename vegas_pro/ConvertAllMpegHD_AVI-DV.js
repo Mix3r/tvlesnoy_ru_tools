@@ -8,7 +8,7 @@ import ScriptPortal.Vegas;
 
 try {
 
-	var templateRE = /VBR23444/;     //VBR23444   ///Internet 1920x1080-30
+	var templateRE = /CQP19/;     ///Internet 1920x1080-30
 	var extRE = /.mp4/;
 	
 	var renderer : Renderer = FindRenderer(templateRE);
@@ -21,88 +21,74 @@ try {
         if (null == renderTemplate)
                 throw "failed to find render template";
 
-        var trks = new Enumerator(Vegas.Project.Tracks);
-        while (!trks.atEnd()) {
-                var evnts = new Enumerator(Track(trks.item()).Events);
-                while (!evnts.atEnd()) {
-                        if (TrackEvent(evnts.item()).IsVideo()) {
-                                var envl_num = 0;
-                                if (null != TrackEvent(evnts.item()).ActiveTake) {
-                                        if (null != TrackEvent(evnts.item()).ActiveTake.MediaPath) {
-                                                var media3 = Vegas.Project.MediaPool[TrackEvent(evnts.item()).ActiveTake.MediaPath];
-                                                if (null != media3) {
-                                                        if (media3.IsOffline()) {
-                                                        } else {
-                                                                if (media3.HasVideo()) {
-                                                                        var mm3 = new media3.Streams();
-                                                                        if (mm3.Width == 1920 && mm3.Height == 1080) {
-                                                                                if (mm3.FrameRate == 25.000 && mm3.Format == "MPEG-2") {
-                                                                                        mm3.FieldOrder = "UpperFieldFirst";
-                                                                                //} else if (mm3.Format == "Фото - JPEG" && mm3.FrameRate == 25.000) {
-                                                                                        //mm3.FieldOrder = "UpperFieldFirst";
-                                                                                //}  else if (mm3.Format == "Sony Motion JPEG" && mm3.FrameRate == 25.000) {
-                                                                                        //mm3.FieldOrder = "UpperFieldFirst";
-                                                                                }
-                                                                        }
-                                                                        if (mm3.FieldOrder != "ProgressiveScan") {
-                                                                                envl_num = 999;
-                                                                        }
-                                                                }
-                                                        }
-                                                }
-                                        }
-                                }
-                                if (envl_num == 0) {
-                                        var envlps = new Enumerator(VideoEvent(evnts.item()).Envelopes);
-                                        while (!envlps.atEnd()) {
-                                                envl_num = envl_num + 1;
-                                                envlps.moveNext();
-                                        }
-                                }
-                                if (VideoEvent(evnts.item()).ResampleMode == "Force") {
-                                        // don't change resample mode
-                                } else if (TrackEvent(evnts.item()).PlaybackRate < 1 || envl_num > 0) {
-                                        VideoEvent(evnts.item()).ResampleMode = "Smart";
+        for (var tTmpTrk in Vegas.Project.Tracks) {
+            for (var eTmpEvt in tTmpTrk.Events) {
+                if (eTmpEvt.IsVideo()) {
+                    var bIsInterlaced = 0;
+                    if (null != eTmpEvt.ActiveTake) {
+                        if (null != eTmpEvt.ActiveTake.MediaPath) {
+                            var media3 = Vegas.Project.MediaPool[eTmpEvt.ActiveTake.MediaPath];
+                            if (null != media3) {
+                                if (media3.IsOffline()) {
                                 } else {
-                                        VideoEvent(evnts.item()).ResampleMode = "Disable";
-                                }
-                        }
-                        evnts.moveNext();
-                }
-                trks.moveNext();
-        }
-		
-        var regionEnum = new Enumerator(Vegas.Project.Regions);
-        var regioncount = 0;
-
-        while (!regionEnum.atEnd()) {
-	        var rgn : Region = Region(regionEnum.item());
-                var rlbl = rgn.Label.substring(1,2);
-                if ((rlbl == ":" || rlbl == "\\") & Vegas.Transport.LoopRegionStart <= rgn.Position & Vegas.Transport.LoopRegionStart+Vegas.Transport.LoopRegionLength >= rgn.Position+rgn.Length) {
-                        regioncount = regioncount + 1;
-	                var renderStatus = Vegas.Render(rgn.Label + "." + String(extRE).substring(2,String(extRE).length-1), renderTemplate,rgn.Position,rgn.Length);
-                }
-	        regionEnum.moveNext();
-        }
-        if (regioncount <= 0) {
-                MessageBox.Show("Регионов нет. Будет просчитана первая видеодорожка.\nПуть к просчитанным файлам соответствует пути\nкаждого видео на дорожке (_ВЫХ)");
-                var trkenum = new Enumerator(Vegas.Project.Tracks);
-                while (!trkenum.atEnd()) {
-                        var evntEnum = new Enumerator(Track(trkenum.item()).Events);
-                        while (!evntEnum.atEnd()) {
-                                if (TrackEvent(evntEnum.item()).IsVideo()) {
-                                    if (null != TrackEvent(evntEnum.item()).ActiveTake) {
-                                        if (null != TrackEvent(evntEnum.item()).ActiveTake.MediaPath) {
-                                            var media4 = TrackEvent(evntEnum.item()).ActiveTake.MediaPath;
-                                            //MessageBox.Show(media4.substring(0,media4.length-4) + "_OUT." + String(extRE).substring(2,String(extRE).length-1));
-                                            var renderStatus = Vegas.Render(media4.substring(0,media4.length-4) + "_OUT." + String(extRE).substring(2,String(extRE).length-1), renderTemplate,TrackEvent(evntEnum.item()).Start,TrackEvent(evntEnum.item()).Length);
+                                    if (media3.HasVideo()) {
+                                        var mm3 = new media3.Streams();
+                                        if (mm3.Width == 1920 && mm3.Height == 1080) {
+                                            if (mm3.FrameRate == 25.000 && mm3.Format == "MPEG-2") {
+                                                mm3.FieldOrder = "UpperFieldFirst";
+                                            }
+                                        }
+                                        if (mm3.FieldOrder != "ProgressiveScan") {
+                                            bIsInterlaced = 1;
                                         }
                                     }
                                 }
-                                evntEnum.moveNext();
+                            }
                         }
-                        trkenum.moveNext();
+                    }
+                    if (VideoEvent(eTmpEvt).ResampleMode == "Force") {
+                        // don't change resample mode
+                    } else if (eTmpEvt.PlaybackRate < 1 || bIsInterlaced == 1 || VideoEvent(eTmpEvt).Envelopes.Count > 0) {
+                        VideoEvent(eTmpEvt).ResampleMode = "Smart";
+                    } else {
+                        VideoEvent(eTmpEvt).ResampleMode = "Disable";
+                    }
                 }
+            }
+        }
+
+        var bRegionPending = 0;
+        var renderStatus = RenderStatus.Complete;
+
+        for (var rTmpRgn in Vegas.Project.Regions) {
+            var rlbl = rTmpRgn.Label.substring(1,2);
+            if ((rlbl == ":" || rlbl == "\\") & Vegas.Transport.LoopRegionStart <= rTmpRgn.Position & Vegas.Transport.LoopRegionStart+Vegas.Transport.LoopRegionLength >= rTmpRgn.Position+rTmpRgn.Length) {
+                bRegionPending = 1;
+                if (renderStatus == RenderStatus.Complete) {
+                    Vegas.Transport.CursorPosition = rTmpRgn.Position+Timecode.FromMilliseconds(Math.round(rTmpRgn.Length.ToMilliseconds() * 0.5));
+                    renderStatus = Vegas.Render(rTmpRgn.Label + "." + String(extRE).substring(2,String(extRE).length-1), renderTemplate,rTmpRgn.Position,rTmpRgn.Length);
+                }
+            }
+        }
+
+        if (bRegionPending == 0) {
+            if (MessageBox.Show("Регионов на отмеченном месте нет.\nБудет просчитаны видео, размещённые на дорожке.\nПуть к просчитанным файлам будет соответствовать\nпути каждого видео на дорожке (_ВЫХ). Просчитать?", "Просчёт всех видео в " + String(extRE).substring(2,String(extRE).length-1) + " шаблон: " + String(templateRE).substring(1,String(templateRE).length-1), MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes) {
+                for (var tTmpTrk in Vegas.Project.Tracks) {
+                    for (var eTmpEvt in tTmpTrk.Events) {
+                        if (eTmpEvt.IsVideo()) {
+                            if (null != eTmpEvt.ActiveTake) {
+                                if (null != eTmpEvt.ActiveTake.MediaPath) {
+                                    var media4 = eTmpEvt.ActiveTake.MediaPath;
+                                    if (renderStatus == RenderStatus.Complete) {
+                                        Vegas.Transport.CursorPosition = eTmpEvt.Start+Timecode.FromMilliseconds(Math.round(eTmpEvt.Length.ToMilliseconds() * 0.5));
+                                        renderStatus = Vegas.Render(media4.substring(0,media4.length-4) + "_OUT." + String(extRE).substring(2,String(extRE).length-1), renderTemplate,eTmpEvt.Start,eTmpEvt.Length);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 }
 
