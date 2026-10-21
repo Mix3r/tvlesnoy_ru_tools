@@ -4,7 +4,7 @@
 [Setup]
 AppName=Vegas Pro Scripts TVLesnoy
 AppPublisher=Mix3r_Durachok
-AppVersion=261021
+AppVersion=201125
 Compression=lzma
 DefaultDirName={autopf64}\VEGAS\VEGAS Pro 13.0
 DefaultGroupName=My Program
@@ -42,7 +42,6 @@ Name: "networktv"; Description: "Сеть TV (папка рабочих мест
 [Files]
 ; Place any regular files here
 ; Source: "{tmp}\git\*"; DestDir: "{app}\Script Menu"; Components: vid_scripts1; Flags: external recursesubdirs
-Source: "{tmp}\desktop.ini"; DestDir: "{userdesktop}\Сеть TV"; Components: networktv; Attribs: hidden; Flags: external
 Source: "curl.exe"; DestDir: "{tmp}"
 
 [Code]
@@ -423,7 +422,27 @@ begin
         end;
         // ffmpeg ends here
 
+        // add network shortcuts
+        if (WizardIsComponentSelected('networktv')) then begin
+            GitDownPath:=ExpandConstant('{tmp}');
+            GitDown('shortcuts_net_win.cab',33);
+            GitDown('shortcuts_net_dc.cab',66);
 
+            if FileExists(ExpandConstant('{tmp}\shortcuts_net_win.cab')) then begin
+                ForceDirectories(ExpandConstant('{userdesktop}\Сеть TV'));
+                if Exec('expand.exe',ExpandConstant('-F:* "{tmp}\shortcuts_net_win.cab" "{userdesktop}\Сеть TV"'), '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+                end;
+                SaveStringToFile(ExpandConstant('{userdesktop}\Сеть TV\desktop.ini'), '[.ShellClassInfo]' + #13#10 + ExpandConstant('IconResource={sys}\shell32.dll,18'), False);
+                SaveStringToFile(ExpandConstant('{userdesktop}\Сеть TV\desktop.cmd'), 'attrib +h +s "%~dp0desktop.ini"' + #13#10 + 'del "%~f0"', False);
+                if Exec('cmd.exe', ExpandConstant('/c "{userdesktop}\Сеть TV\desktop.cmd"'), '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+                end;
+            end;
+            if FileExists(ExpandConstant('{tmp}\shortcuts_net_dc.cab')) then begin
+                ForceDirectories(ExpandConstant('{autopf64}\Totalcmd_p\network'));
+                if Exec('expand.exe',ExpandConstant('-F:* "{tmp}\shortcuts_net_dc.cab" "{autopf64}\Totalcmd_p\network"'), '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+                end;
+            end;
+        end;
 
 
         ///////////////////////////////////////////
