@@ -4,7 +4,7 @@
 [Setup]
 AppName=Vegas Pro Scripts TVLesnoy
 AppPublisher=Mix3r_Durachok
-AppVersion=201125
+AppVersion=261021
 Compression=lzma
 DefaultDirName={autopf64}\VEGAS\VEGAS Pro 13.0
 DefaultGroupName=My Program
@@ -50,7 +50,7 @@ var GitDownPath:string; ProgressPage: TOutputProgressWizardPage;
 
 function GitRetreat(whattowipe:string):boolean;
 begin
-    DelayDeleteFile(GitDownPath+'\'+whattowipe,12);
+    DelayDeleteFile(GitDownPath+'\'+whattowipe,20);
     //SuppressibleMsgBox(GitDownPath+'\'+whattowipe, mbCriticalError, MB_OK, IDOK);
     Result:=true;
 end;
@@ -64,15 +64,33 @@ begin
     Result:=false;
     
     gittmp:='';
+
     for nPbar:=1 to Length(whattoget) do begin
-        if (whattoget[nPbar] = ' ') then begin
+        if (whattoget[nPbar] = '/') then begin
+            gittmp:='/';
+            break;
+        end else if (whattoget[nPbar] = ' ') then begin
             gittmp:=gittmp+'%20';
         end else begin
             gittmp:=gittmp+whattoget[nPbar];
         end;
     end;
 
-    if Exec(ExpandConstant('{tmp}\curl.exe'), ExpandConstant('-L -o "'+GitDownPath+'\'+whattoget+'" "https://github.com/Mix3r/tvlesnoy_ru_tools/raw/refs/heads/main/vegas_pro/'+gittmp+'"'), '', SW_SHOWMINNOACTIVE, ewWaitUntilTerminated, ResultCode) then begin
+    if (gittmp = '/') then begin
+        gittmp:=whattoget;
+        whattoget:='';
+        for nPbar:=Length(gittmp) downto 1 do begin
+            if (gittmp[nPbar] = '/') then begin
+                break;
+            end else begin
+                whattoget:=gittmp[nPbar]+whattoget;
+            end;
+        end;
+    end else begin
+        gittmp:='https://github.com/Mix3r/tvlesnoy_ru_tools/raw/refs/heads/main/vegas_pro/'+gittmp;
+    end;
+
+    if Exec(ExpandConstant('{tmp}\curl.exe'), ExpandConstant('--ssl-no-revoke -L -o "'+GitDownPath+'\'+whattoget+'" "'+gittmp+'"'), '', SW_SHOWMINNOACTIVE, ewWaitUntilTerminated, ResultCode) then begin
         if ResultCode = 0 then begin
             Result:=true;
         end;
@@ -149,7 +167,6 @@ begin
                     end;
                 end;
                 if GitRetreat('audio_plugin_update.exe') then begin
-                    
                 end;
             end;
             if ResultCode <> 0 then begin
@@ -246,6 +263,8 @@ begin
                                 SaveStringToFile(ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\Voukoder-x64.fio2007-config'), '[FileIO Plug-Ins]' + #13#10 + 'voukoderplug=FileIO Plug-Ins\voukoderplug\voukoderplug13.dll', False);
                             end;
                         end;
+                    end else begin
+                        SuppressibleMsgBox('Voukoder для 13 версии не загружен!', mbCriticalError, MB_OK, IDOK);
                     end;
                 end;
                 if FileExists(ExpandConstant('{autopf64}\VEGAS\Vegas Pro 20\vegas200.exe')) then begin
@@ -256,10 +275,14 @@ begin
                                 SaveStringToFile(ExpandConstant('{autopf64}\VEGAS\Vegas Pro 20\Voukoder-x64.fio2007-config'), '[FileIO Plug-Ins]' + #13#10 + 'voukoderplug=FileIO Plug-Ins\voukoderplug\voukoderplug.dll', False);
                             end;
                         end;
+                    end else begin
+                        SuppressibleMsgBox('Voukoder для 20 версии не загружен!', mbCriticalError, MB_OK, IDOK);
                     end;
                 end;
                 GitRetreat('voukoderplug13.cab');
                 GitRetreat('voukoderplug.cab');
+            end else begin
+                SuppressibleMsgBox('Voukoder не загружен!', mbCriticalError, MB_OK, IDOK);
             end;
             GitRetreat('voukdr.exe');
         end;
@@ -270,63 +293,83 @@ begin
             if FileExists(ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\vegas130.exe')) then begin
                 GitDownPath:=ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0\Script Menu');
                 ForceDirectories(GitDownPath);
-                GitDown('ConvertAllMpegHD_AVI-DV.js',2);
-                GitDown('ConvertAllMpegHD_AVI-DV.js.png',4);
-                GitDown('CTC Titles.js',6);
-                GitDown('CTC Titles.js.png',8);
-                GitDown('D_Blender_Ticker.js',10);
-                GitDown('D_Blender_Ticker.js.png',12);
-                GitDown('FdOnAir_Export.js',14);
-                GitDown('FdOnAir_Export.js.png',16);
-                GitDown('Fish_Accomplish.js',18);
-                GitDown('Fish_Accomplish.js.png',20);
-                GitDown('Norm_Arbitrary.js',22);
-                GitDown('Norm_Arbitrary.js.png',24);
-                GitDown('Remove_Doubles.js',26);
-                GitDown('Render_Youtube_1080_30p.js',28);
-                GitDown('Render_Youtube_1080_30p.js.png',30);
-                GitDown('SetHD720pAndRender.js',32);
-                GitDown('SetHD720pAndRender.js.png',34);
-                GitDown('SetLowerFieldAndRender.js',36);
-                GitDown('setlowerfieldandrender.js.png',38);
-                GitDown('SetLowerFieldAndRender_360.js',40);
-                GitDown('SetLowerFieldAndRender_360.js.png',42);
-                GitDown('WindowsMediaVideo.js',46);
-                GitDown('WindowsMediaVideo.js.png',48); 
-                GitDown('video_editor1_setup.reg',52);
-                GitDown('wingeneric_ve1.reg',54);
-                GitDown('tvlesnoy_moveleft.js',56);
-                GitDown('tvlesnoy_moveright.js',58);
-                GitDown('tvlesnoy_moveup.js',60);
-                GitDown('tvlesnoy_movedown.js',62);
-                GitDown('tvlesnoy_movenull.js',64);
-                GitDown('tvlesnoy_scaleup.js',66);
-                GitDown('tvlesnoy_scaledown.js',68);
-                GitDown('tvlesnoy_scaleup_x.js',70);
-                GitDown('tvlesnoy_scaledown_x.js',72);
-                GitDown('tvlesnoy_scalexy.js',74);
-                GitDown('tvlesnoy_rotate.js',76);
-                GitDown('tvlesnoy_vegaspro_scripts_updater.iss',78);
+                if GitDown('ConvertAllMpegHD_AVI-DV.js',2) then
+                if GitDown('ConvertAllMpegHD_AVI-DV.js.png',4) then
+                if GitDown('CTC Titles.js',6) then
+                if GitDown('CTC Titles.js.png',8) then
+                if GitDown('D_Blender_Ticker.js',10) then
+                if GitDown('D_Blender_Ticker.js.png',12) then
+                if GitDown('FdOnAir_Export.js',14) then
+                if GitDown('FdOnAir_Export.js.png',16) then
+                if GitDown('Fish_Accomplish.js',18) then
+                if GitDown('Fish_Accomplish.js.png',20) then
+                if GitDown('Norm_Arbitrary.js',22) then
+                if GitDown('Norm_Arbitrary.js.png',24) then
+                if GitDown('Remove_Doubles.js',26) then
+                if GitDown('Render_Youtube_1080_30p.js',28) then
+                if GitDown('Render_Youtube_1080_30p.js.png',30) then
+                if GitDown('SetHD720pAndRender.js',32) then
+                if GitDown('SetHD720pAndRender.js.png',34) then
+                if GitDown('SetLowerFieldAndRender.js',36) then
+                if GitDown('setlowerfieldandrender.js.png',38) then
+                if GitDown('SetLowerFieldAndRender_360.js',40) then
+                if GitDown('SetLowerFieldAndRender_360.js.png',42) then
+                if GitDown('WindowsMediaVideo.js',46) then
+                if GitDown('WindowsMediaVideo.js.png',48) then
+                if GitDown('video_editor1_setup.reg',52) then
+                if GitDown('wingeneric_ve1.reg',54) then
+                if GitDown('tvlesnoy_moveleft.js',56) then
+                if GitDown('tvlesnoy_moveright.js',58) then
+                if GitDown('tvlesnoy_moveup.js',60) then
+                if GitDown('tvlesnoy_movedown.js',62) then
+                if GitDown('tvlesnoy_movenull.js',64) then
+                if GitDown('tvlesnoy_scaleup.js',66) then
+                if GitDown('tvlesnoy_scaledown.js',68) then
+                if GitDown('tvlesnoy_scaleup_x.js',70) then
+                if GitDown('tvlesnoy_scaledown_x.js',72) then
+                if GitDown('tvlesnoy_scalexy.js',74) then
+                if GitDown('tvlesnoy_rotate.js',76) then
+                if GitDown('tvlesnoy_vegaspro_scripts_updater.iss',78) then begin
+                end;
+                if ResultCode <> 0 then begin
+                    SuppressibleMsgBox('Cкрипты не загружены!', mbCriticalError, MB_OK, IDOK);
+                end;
+
                 GitDownPath:=ExpandConstant('{autopf64}\VEGAS\VEGAS Pro 13.0');
-                GitDown('playlist_settime.exe',80);
+                if GitDown('playlist_settime.exe',80) then begin end else SuppressibleMsgBox('Диспетчер плейлиста не загружен!', mbCriticalError, MB_OK, IDOK);
+
                 GitDownPath:=ExpandConstant('{commonappdata}\Vegas Pro\13.0');
                 ForceDirectories(GitDownPath);
-                GitDown('keyboard.ini',82);
-                GitDownPath:=ExpandConstant('{userappdata}\Vegas Pro\13.0');
-                ForceDirectories(GitDownPath);
-                GitDown('keyboard.ini',84);
-                GitDownPath:=ExpandConstant('{userappdata}\Sony\Render Templates\voukoder');
-                ForceDirectories(GitDownPath);
-                GitDown('360_admin.sft2',86);
-                GitDown('CQP19.sft2',87);
-                GitDown('CQP30HEVC.sft2',88);
-                GitDownPath:=ExpandConstant('{userappdata}\VEGAS\Render Templates\voukoder');
-                ForceDirectories(GitDownPath);
-                GitDown('360_admin.sft2',89);
-                GitDown('CQP19.sft2',90);
-                GitDown('CQP30HEVC.sft2',91);
+                if GitDown('keyboard.ini',82) then begin
+                    GitDownPath:=ExpandConstant('{userappdata}\Vegas Pro\13.0');
+                    ForceDirectories(GitDownPath);
+                    if GitDown('keyboard.ini',84) then begin
+                    end;
+                end;
+                if ResultCode <> 0 then begin
+                    SuppressibleMsgBox('Быстрые команды клавиатуры не загружены!', mbCriticalError, MB_OK, IDOK);
+                end;
+
+                if (WizardIsComponentSelected('vouk')) then begin
+                    GitDownPath:=ExpandConstant('{userappdata}\Sony\Render Templates\voukoder');
+                    ForceDirectories(GitDownPath);
+                    if GitDown('360_admin.sft2',86) then
+                    if GitDown('CQP19.sft2',87) then
+                    if GitDown('CQP30HEVC.sft2',88) then begin
+                        GitDownPath:=ExpandConstant('{userappdata}\VEGAS\Render Templates\voukoder');
+                        ForceDirectories(GitDownPath);
+                        if GitDown('360_admin.sft2',89) then
+                        if GitDown('CQP19.sft2',90) then
+                        if GitDown('CQP30HEVC.sft2',91) then begin
+                        end;
+                    end;
+                    if ResultCode <> 0 then begin
+                        SuppressibleMsgBox('Профили Voukoder не загружены!', mbCriticalError, MB_OK, IDOK);
+                    end;
+                end;
+
                 GitDownPath:=ExpandConstant('{autopf64}\VEGAS');
-                GitDown('tvlesnoy_banners.veg',92);
+                if GitDown('tvlesnoy_banners.veg',92) then begin end else SuppressibleMsgBox('Титры не загружены!', mbCriticalError, MB_OK, IDOK);
                 if Exec('reg.exe',ExpandConstant('IMPORT "{autopf64}\VEGAS\VEGAS Pro 13.0\Script Menu\wingeneric_ve1.reg"'), '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then begin
                 end else begin
                 end;
@@ -341,6 +384,47 @@ begin
         // sound edit section
         //if () then begin
         //end;
+
+        // Double Commander TV goes here
+        if (WizardIsComponentSelected('doublecmd_p')) then begin
+            GitDownPath:=ExpandConstant('{tmp}');
+            if GitDown('dc32.exe',50) then begin
+                // success
+                ResultCode:= -999;
+                While ResultCode <> 0 do begin
+                    if Exec(GitDownPath+'\dc32.exe', '/S', '', SW_SHOWMINNOACTIVE, ewWaitUntilTerminated, ResultCode) then begin
+                    end else begin
+                        Sleep(2000);
+                    end;
+                end;
+            end;
+            if GitRetreat('dc32.exe') then begin
+            end;
+            if ResultCode <> 0 then begin
+                SuppressibleMsgBox('Double Commander не загружен!', mbCriticalError, MB_OK, IDOK);
+            end;
+        end;
+
+        // FFMPEG goes here
+        if (WizardIsComponentSelected('ffmpeg_p')) then begin
+            GitDownPath:=ExpandConstant('{tmp}');
+            if GitDown('https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl-shared.zip',50) then begin
+                if GitDown('setup_ffmpeg_latest.cmd',75) then begin
+                    if Exec('cmd.exe', ExpandConstant('/c "{tmp}\setup_ffmpeg_latest.cmd"'), '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then begin
+                        While (FileExists(ExpandConstant('{tmp}\setup_ffmpeg_latest.cmd')) = True) do begin
+                            Sleep(2000);
+                        end;
+                    end;
+                end;
+            end;
+            if GitRetreat('ffmpeg-master-latest-win64-gpl-shared.zip') then
+            if GitRetreat('setup_ffmpeg_latest.cmd') then begin
+            end;
+        end;
+        // ffmpeg ends here
+
+
+
 
         ///////////////////////////////////////////
 
